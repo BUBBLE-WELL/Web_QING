@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cui Wanqing - Tagged Portfolio</title>
+  <meta name="description" content="Cui Wanqing's static portfolio: a conversation-driven evidence browser for spatial data, platform governance, and design work." />
+  <meta property="og:title" content="Cui Wanqing - Tagged Portfolio" />
+  <meta property="og:description" content="A conversation-driven portfolio with tagged evidence for spatial data, platform governance, and design work." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./kg-app.css" />
+  <script src="./kg-app.js" defer></script>
+</head>
+<body data-state="landing">
+  <div id="static-web" aria-hidden="true">
+    <svg viewBox="0 0 420 420">
+      <g fill="none" stroke="rgba(0,0,0,0.1)" stroke-width="1">
+        <circle cx="350" cy="70" r="42"></circle>
+        <circle cx="350" cy="70" r="88"></circle>
+        <circle cx="350" cy="70" r="142"></circle>
+        <path d="M350 0v210M280 10l140 140M210 70h210M250 170L420 0M300 205L400 0"></path>
+        <path d="M350 70 250 170 300 205 350 70 210 70 280 10 350 70 420 150"></path>
+      </g>
+      <g fill="currentColor">
+        <circle cx="350" cy="70" r="3"></circle>
+        <circle cx="250" cy="170" r="2.3"></circle>
+        <circle cx="300" cy="205" r="2.3"></circle>
+        <circle cx="210" cy="70" r="2.3"></circle>
+        <circle cx="280" cy="10" r="2.3"></circle>
+      </g>
+    </svg>
+  </div>
+
+  <div id="spider-wrap">
+    <div id="thread"></div>
+    <div class="spider-cluster">
+    <svg id="spider-icon" viewBox="92.415 16.813 115.862 62.992" aria-hidden="true">
+      <g fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <rect x="129.032" y="47.044" width="41.823" height="28.761" rx="7"></rect>
+        <rect x="139.786" y="40.276" width="19.845" height="10.553" rx="34"></rect>
+        <path d="M168.425 47.088C182.059 38.587 184.117 36.784 184.117 36.784L188.233 20.813" fill="none"></path>
+        <path d="M168.425 55.091L186.059 48.334L196.135 34.571" fill="none"></path>
+        <path d="M168.425 63.297L186.961 58.042L204.277 40.275" fill="none"></path>
+        <path d="M168.424 71.81S189.068 67.806 187.107 67.556C185.147 67.306 201.639 55.295 201.639 55.295" fill="none"></path>
+        <path d="M132.267 47.088C118.634 38.587 116.576 36.784 116.576 36.784L112.46 20.813" fill="none"></path>
+        <path d="M132.267 55.091L114.634 48.334L104.558 34.571" fill="none"></path>
+        <path d="M132.267 63.297L113.732 58.042L96.416 40.275" fill="none"></path>
+        <path d="M132.268 71.811S111.625 67.807 113.585 67.557C115.546 67.307 99.054 55.295 99.054 55.295" fill="none"></path>
+      </g>
+      <g fill="#fafafa" stroke="currentColor" stroke-width="2">
+        <rect x="141.529" y="41.541" width="5.174" height="6.579" rx="2.6"></rect>
+        <rect x="151.944" y="41.542" width="5.174" height="6.579" rx="2.6"></rect>
+      </g>
+    </svg>
+    <button id="lang-toggle-landing" class="lang-toggle-landing" type="button" aria-label="Switch language / 切换语言">EN</button>
+    </div>
+  </div>
+
+  <section id="landing" class="screen active" aria-label="首页">
+    <div class="landing-copy">
+      <p class="sys-line" data-i18n="sys-line">空间数据 / 平台治理 / 设计</p>
+      <h1 id="hero-text" class="hero-text"></h1>
+      <p id="hero-sub" class="hero-sub" data-i18n="hero-sub">起点：地图漏了什么？为什么？</p>
+      <div id="hi-area" class="hi-area">
+        <button id="hi-bubble" class="hi-bubble" type="button"><span class="hi-dot"></span><span data-i18n="say-hi">打招呼</span></button>
+      </div>
+      <p class="landing-alt"><button type="button" id="workshop-skip" class="landing-skip" data-i18n="workshop-skip">or, jump to the AI workshop →</button></p>
+    </div>
+  </section>
+
+  <main id="story-view" class="story-view" aria-label="带标签的作品集故事">
+    <header class="story-topbar">
+      <div>
+        <span class="app-kicker">Cui Wanqing</span>
+        <strong>空间数据 · 治理 · 错位之间</strong>
+      </div>
+      <div class="story-topbar-actions">
+        <button id="back-landing" class="chrome-btn" type="button">返回</button>
+        <button id="lang-toggle" class="chrome-btn lang-toggle" type="button" aria-label="切换语言 / Switch language">EN</button>
+      </div>
+    </header>
+
+    <section class="story-shell">
+      <aside class="left-rail" aria-label="对话索引、工作坊入口、联系">
+        <button id="workshop-exit-rail" class="workshop-exit-rail" type="button" data-workshop-exit aria-label="退出工作坊，返回作品页">
+          <span>返回作品页</span>
+        </button>
+        <button id="workshop-replay" class="workshop-replay" type="button" aria-label="打开工作坊冲突预览">⚠ 工作坊冲突</button>
+        <nav id="conversation-index" class="conversation-index" aria-label="对话索引"></nav>
+        <nav id="workshop-participants" class="workshop-participants" aria-label="工作坊参与者"></nav>
+        <div class="rail-mini" aria-label="联系">
+          <a href="mailto:jellycwq@foxmail.com">jellycwq@foxmail.com</a>
+          <a href="https://linkedin.com/in/wanqing-cui">linkedin.com/in/wanqing-cui</a>
+        </div>
+      </aside>
+      <div class="main-area">
+        <div id="chat-thread" class="chat-thread" aria-live="polite"></div>
+        <section class="tag-panel" aria-label="话题标签筛选">
+          <div class="tag-head">
+            <span class="app-kicker">按话题标签筛选</span>
+            <strong id="result-label">关于</strong>
+          </div>
+          <div id="tag-row" class="tag-row"></div>
+        </section>
+
+        <section id="case-results" class="case-results" aria-label="项目结果"></section>
+        <section id="workshop-panel" class="workshop-panel" aria-label="工作坊冲突预览" tabindex="-1"></section>
+      </div>
+    </section>
+    <div id="workshop-alert" class="workshop-alert" role="status" aria-live="polite" aria-hidden="true">
+      <div class="workshop-alert-backdrop" data-workshop-close></div>
+      <section class="workshop-alert-card workshop-window" tabindex="-1">
+        <header class="workshop-titlebar">
+          <span>紧急：工作坊里 agent 冲突</span>
+          <button class="workshop-x" type="button" data-workshop-close aria-label="忽略工作坊提醒">×</button>
+        </header>
+        <div class="workshop-window-body">
+          <span class="workshop-warning">⚠ 检测到工作坊冲突</span>
+          <p id="workshop-alert-copy"> MSc thesis 工作坊：<br>三个研究 agent 僵持不下<br>议题：平台可读性能否作为 DIY 场地在 POI 数据里「存在」的标准。</p>
+          <p class="workshop-alert-topic">议题：消失的 DIY 场地</p>
+          <h2 id="workshop-alert-title">检测到工作坊冲突</h2>
+          <div class="workshop-alert-actions">
+            <button class="choice-chip" type="button" data-workshop-listen><span>旁听</span></button>
+            <button class="choice-chip secondary" type="button" data-workshop-close><span>× 忽略</span></button>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div id="role-profile-popup" class="role-profile-popup" role="dialog" aria-modal="true" aria-labelledby="role-profile-title" aria-hidden="true">
+      <div class="role-profile-backdrop" data-role-profile-close></div>
+      <section class="role-profile-card" tabindex="-1">
+        <header class="role-profile-titlebar">
+          <span>代理档案</span>
+          <button class="workshop-x" type="button" data-role-profile-close aria-label="关闭角色档案">×</button>
+        </header>
+        <div id="role-profile-content" class="role-profile-content"></div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
