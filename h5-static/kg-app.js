@@ -238,7 +238,7 @@
       iconKey: "render",
       title: "Huijing Huayuan Residential Landscape Plan",
       kicker: "lived-world housing / BIM + Twinmotion",
-      story: "Steep topography forces lived-world planning: a 12m elevation change forced service circulation to split levels, avoiding a flat-grade landscape plan that would have buried the senior-care entrance at the bottom of the slope. Two poster boards carry analysis and design narrative, with Twinmotion stills for aerial, entrance mood, and riverfront views.",
+      story: "Steep topography forces lived-world planning: a 6m elevation change forced service circulation to split levels, avoiding a flat-grade landscape plan that would have buried the senior-care entrance at the bottom of the slope. Two poster boards carry analysis and design narrative, with Twinmotion stills for aerial, entrance mood, and riverfront views.",
       evidence: "Personal statement passage for Huijing Huayuan plus benke asset map; H5 demo uses xiaoqu_1 and xiaoqu_2 poster exports side by side, then three Twinmotion thumbnails.",
       highlights: ["posters: analysis + design boards (xiaoqu_2 / xiaoqu_1)", "GIS refinement of senior care, services, landscape", "Twinmotion thumbs: aerial, entrance rain, riverside"],
       proof: [
@@ -255,7 +255,7 @@
       tags: ["#planning_design", "#visualization"],
       demo: "huijing",
       kicker_zh: "居住区规划 / BIM + Twinmotion",
-      story_zh: "在地势高差超过12米的场地，通过实地考察、GIS分析、CAD+BIM建模和立体规划，实现动线流畅、空间布局合理的规划设计，以及直观的视觉呈现。",
+      story_zh: "在地势高差超过6米的场地，通过实地考察、GIS分析、CAD+BIM建模和立体规划，实现动线流畅、空间布局合理的规划设计，以及直观的视觉呈现。",
       evidence_zh: "个人陈述里的汇景华苑段落 + 本科资产地图；H5 并排 xiaoqu_1 / xiaoqu_2 海报导出，再加三张 Twinmotion 缩略图。",
       highlights_zh: ["海报：分析 + 设计（xiaoqu_2 / xiaoqu_1）", "住房、养老、服务、景观的 细化", "Twinmotion：鸟瞰、入口雨景、河岸"],
       proof_zh: [
