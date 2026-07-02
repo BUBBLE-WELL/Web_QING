@@ -78,16 +78,16 @@
 ],
       proof_zh: [
         ["比例偏低单元占比", "76.3% → 55.9%"],
-        ["reclassified units", "165"],
-        ["grid median contrast", "1.000 vs 0.692"],
-        ["grid sizes compared", "500 m / 1000 m / 2000 m"],
-        ["zoning effect", "Planning Area vs Subzone"]
+        ["重分类单元数", "165"],
+        ["网格中位数对比", "1.000 vs 0.692"],
+        ["对比网格尺度", "500 m / 1000 m / 2000 m"],
+        ["行政区划影响", "规划区 vs 分区"]
       ],
       analyticsMeta_zh: [
-        ["method", "MAUP + UGCoP 参数扫描"],
-        ["spatial scales", "500 m / 1000 m / 2000 m 网格 + 缓冲"],
-        ["reclassified units", "165 个规划单元"],
-        ["reproducibility", "notebook 流水线，输出可复用"]
+        ["方法", "MAUP + UGCoP 参数扫描"],
+        ["空间尺度", "500 m / 1000 m / 2000 m 网格 + 缓冲"],
+        ["重分类单元", "165 个规划单元"],
+        ["可复现性", "notebook 流水线，输出可复用"]
       ],
       analyticsTermConvention:
         'In this experiment, "poor" refers to a low hawker-to-chain ratio (i.e., S_u < 1), reflecting the spatial proportionality of two types of food outlets rather than absolute food deprivation or socioeconomic poverty.',
@@ -133,17 +133,17 @@
         "多源空间数据要合成单一 ground truth 时，实体解析难题会原样迁移"
       ],
       proof_zh: [
-        ["matching method", "hybrid entity resolution"],
-        ["embedding model", "BGE-M3"],
-        ["sample size", "20–30 venues purposive"],
-        ["platform sources", "Amap, ShowStart, Xiaohongshu"],
-        ["pairwise comparisons", "intra-Amap + inter-platform"]
+        ["匹配方法", "混合实体解析"],
+        ["嵌入模型", "BGE-M3"],
+        ["样本量", "20–30 个场地（目的性抽样）"],
+        ["平台来源", "Amap、ShowStart、小红书"],
+        ["成对比较", "Amap 平台内 + 平台间"]
       ],
       analyticsMeta_zh: [
-        ["platform families", "地图 / 票务 / 社交内容"],
-        ["method", "实体匹配 + BGE-M3 相似度"],
-        ["sample frame", "20–30 个上海音乐场地"],
-        ["risk surface", "可发现性与排名漂移"]
+        ["平台类别", "地图 / 票务 / 社交内容"],
+        ["方法", "实体匹配 + BGE-M3 相似度"],
+        ["抽样范围", "20–30 个上海音乐场地"],
+        ["风险面", "可发现性与排名漂移"]
       ]
     },
     {
@@ -183,15 +183,15 @@
         "治理绑在带地点风险的模型行为上"
       ],
       proof_zh: [
-        ["literature window", "2006–2026"],
-        ["operational controls", "4"],
-        ["course context", "GeoAI ethics synthesis"]
+        ["文献时间窗", "2006–2026"],
+        ["可操作控制项", "4"],
+        ["课程背景", "GeoAI 伦理综述"]
       ],
       analyticsMeta_zh: [
-        ["literature window", "2006–2026 GeoAI 伦理综述"],
-        ["output", "4 条可操作控制项"],
-        ["governance angle", "带地点风险的模型问责"],
-        ["use case", "空间 AI 系统上线前清单"]
+        ["文献时间窗", "2006–2026 GeoAI 伦理综述"],
+        ["产出", "4 条可操作控制项"],
+        ["治理视角", "带地点风险的模型问责"],
+        ["使用场景", "空间 AI 系统上线前清单"]
       ]
     },
     {
@@ -221,15 +221,15 @@
       evidence_zh: "个人陈述里的夏庄（永阳、溧水、南京）项目笔记 + 本科图像清单；六张图没有单独分析板，所以叙事优先。",
       highlights_zh: ["田野 + GIS 细化写在 ps.md", "产出：建模、海报、视频", "Twinmotion 一对：先读布局，再读氛围"],
       proof_zh: [
-        ["planning place", "夏庄，永阳，溧水，南京"],
-        ["process", "田野 + GIS 细化"],
-        ["viz stack", "ArchiCAD + Twinmotion"],
-        ["H5 demo", "layout + atmosphere stills"]
+        ["规划地点", "夏庄，永阳，溧水，南京"],
+        ["流程", "田野 + GIS 细化"],
+        ["可视化工具", "ArchiCAD + Twinmotion"],
+        ["H5 演示", "布局图 + 氛围渲染"]
       ],
       designMeta_zh: [
-        ["site", "永阳，南京"],
-        ["plan", "乡村规划"],
-        ["visual output", "CAD+BIM+Twinmotion 规划范围建模+渲染"]
+        ["场地", "永阳，南京"],
+        ["方案", "乡村规划"],
+        ["视觉产出", "CAD+BIM+Twinmotion 规划范围建模+渲染"]
       ]
     },
     {
@@ -259,15 +259,15 @@
       evidence_zh: "个人陈述里的汇景华苑段落 + 本科资产地图；H5 并排 xiaoqu_1 / xiaoqu_2 海报导出，再加三张 Twinmotion 缩略图。",
       highlights_zh: ["海报：分析 + 设计（xiaoqu_2 / xiaoqu_1）", "住房、养老、服务、景观的 细化", "Twinmotion：鸟瞰、入口雨景、河岸"],
       proof_zh: [
-        ["site driver", "显著高差"],
-        ["poster row", "huijing-poster-1 + huijing-poster-2"],
-        ["thumb row", "鸟瞰 + 入口 + 河岸"],
-        ["viz stack", "ArchiCAD + Twinmotion"]
+        ["场地驱动因素", "显著高差"],
+        ["海报组", "huijing-poster-1 + huijing-poster-2"],
+        ["缩略图组", "鸟瞰 + 入口 + 河岸"],
+        ["可视化工具", "ArchiCAD + Twinmotion"]
       ],
       designMeta_zh: [
-        ["site", "陡坡住区景观"],
-        ["plan", "服务、养老与景观细化"],
-        ["visual output", "海报板 + Twinmotion 静帧"]
+        ["场地", "陡坡住区景观"],
+        ["方案", "服务、养老与景观细化"],
+        ["视觉产出", "海报板 + Twinmotion 静帧"]
       ]
     }
   ];
@@ -294,7 +294,8 @@
     profileIntro_zh: "新加坡国立大学应用地理信息系统硕士（NUS MSc Applied GIS），预计 2026 年 9 月毕业。设计背景让我从质性角度读空间——动线、氛围、地方意味着什么；GIS 训练让我检验这些读法在更大尺度上是否站得住脚。两者互相校准。这就是我在意的工作缝隙，本作品集则是认真对待它时能做成的雏形。",
     contact: {
       email: "jellycwq@foxmail.com",
-      linkedin: "linkedin.com/in/wanqing-cui"
+      linkedin: "linkedin.com/in/wanqing-cui",
+      github: "github.com/BUBBLE-WELL"
     }
   };
 
@@ -364,8 +365,8 @@
     kicker_zh: "旁听对话",
     title_en: "The Missing DIY Venue",
     title_zh: "消失的地下音乐场地",
-    intro_en: "Three agents are reviewing the same portfolio evidence from semantic, ethical, and field-operation angles. You are watching the method conflict, not chatting with them.",
-    intro_zh: "三个 agent 正在从语义、伦理和现场运营角度复查同一组数据。看看他们讨论了什么。"
+    intro_en: "Three agents (GPT-5.5, Kimi-K2.5, DeepSeek-Reasoner) review the same portfolio evidence from semantic, ethical, and field-operation angles. This is a curated debate: you are watching the method conflict in observer mode, not chatting with a live system.",
+    intro_zh: "三个 agent（GPT-5.5、Kimi-K2.5、DeepSeek-Reasoner）从语义、伦理和现场运营角度复查同一组数据。这是一场精选整理过的辩论：你处于旁听模式，观察方法冲突，而不是与实时系统对话。"
   };
   var WORKSHOP_CARDS = [
     {
@@ -2415,10 +2416,26 @@
     }
   }
 
+  function injectContactLinks() {
+    var rail = document.querySelector(".rail-mini");
+    if (!rail || !PROFILE.contact || !PROFILE.contact.github) return;
+    if (rail.querySelector('[data-contact="github"]')) return;
+    var raw = String(PROFILE.contact.github).trim();
+    if (!raw) return;
+    var link = document.createElement("a");
+    link.href = /^https?:\/\//.test(raw) ? raw : "https://" + raw;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.setAttribute("data-contact", "github");
+    link.textContent = raw;
+    rail.appendChild(link);
+  }
+
   function boot() {
     initPortfolioLanguageFromDom();
     syncLandingText();
     bindChrome();
+    injectContactLinks();
     bindWorkshopAlert();
     if (startWorkshopAlertPreviewFromHash()) return;
     setView("chat");
