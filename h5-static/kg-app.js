@@ -217,11 +217,11 @@
       tags: ["#planning_design", "#visualization"],
       demo: "xiazhuang",
       kicker_zh: "实地规划 / BIM + Twinmotion",
-      story_zh: "丽水某村的田野调查 + GIS 辅助布局：最初提出三条动线，GIS 叠加分析发现第二条穿过洪涝风险区，直接被否掉。留下的那条自发路径成了组织后续所有体量的主轴。Twinmotion 让这套逻辑在任何人争论条文之前就先看得懂。",
-      evidence_zh: "个人陈述里的小庄（永阳、丽水、南京）项目笔记 + 本科图像清单；六张图没有单独分析板，所以叙事优先。",
+      story_zh: "溧水乡村的实地调研与 GIS 辅助布局：提出三条动线方案，GIS 叠加显示第二条穿过洪水风险区，排除；剩下的欲望线成为后续体量组织的主轴。Twinmotion 让方案在争论条文之前先变得可读。",
+      evidence_zh: "个人陈述里的夏庄（永阳、溧水、南京）项目笔记 + 本科图像清单；六张图没有单独分析板，所以叙事优先。",
       highlights_zh: ["田野 + GIS 细化写在 ps.md", "产出：建模、海报、视频", "Twinmotion 一对：先读布局，再读氛围"],
       proof_zh: [
-        ["规划地点", "夏庄，永阳，南京"],
+        ["规划地点", "夏庄，永阳，溧水，南京"],
         ["流程", "田野 + GIS 细化"],
         ["可视化工具", "ArchiCAD + Twinmotion"],
         ["H5 演示", "布局图 + 氛围渲染"]
@@ -238,7 +238,7 @@
       iconKey: "render",
       title: "Huijing Huayuan Residential Landscape Plan",
       kicker: "lived-world housing / BIM + Twinmotion",
-      story: "Steep topography forces lived-world planning: a 12m elevation change forced service circulation to split levels, avoiding a flat-grade landscape plan that would have buried the senior-care entrance at the bottom of the slope. Two poster boards carry analysis and design narrative, with Twinmotion stills for aerial, entrance mood, and riverfront views.",
+      story: "Steep topography forces lived-world planning: a 6m elevation change forced service circulation to split levels, avoiding a flat-grade landscape plan that would have buried the senior-care entrance at the bottom of the slope. Two poster boards carry analysis and design narrative, with Twinmotion stills for aerial, entrance mood, and riverfront views.",
       evidence: "Personal statement passage for Huijing Huayuan plus benke asset map; H5 demo uses xiaoqu_1 and xiaoqu_2 poster exports side by side, then three Twinmotion thumbnails.",
       highlights: ["posters: analysis + design boards (xiaoqu_2 / xiaoqu_1)", "GIS refinement of senior care, services, landscape", "Twinmotion thumbs: aerial, entrance rain, riverside"],
       proof: [
@@ -255,7 +255,7 @@
       tags: ["#planning_design", "#visualization"],
       demo: "huijing",
       kicker_zh: "居住区规划 / BIM + Twinmotion",
-      story_zh: "在有地势高差较大，超过6米的场地， 通过实地考察、GIS分析、CAD+BIM建模和立体规划，实现动线流畅、空间布局规范合理的规划设计，以及只管的视觉呈现。",
+      story_zh: "在地势高差超过6米的场地，通过实地考察、GIS分析、CAD+BIM建模和立体规划，实现动线流畅、空间布局合理的规划设计，以及直观的视觉呈现。",
       evidence_zh: "个人陈述里的汇景华苑段落 + 本科资产地图；H5 并排 xiaoqu_1 / xiaoqu_2 海报导出，再加三张 Twinmotion 缩略图。",
       highlights_zh: ["海报：分析 + 设计（xiaoqu_2 / xiaoqu_1）", "住房、养老、服务、景观的 细化", "Twinmotion：鸟瞰、入口雨景、河岸"],
       proof_zh: [
@@ -283,7 +283,7 @@
     expected: "Sep 2026",
     tools: [
       ["Python", "GeoPandas", "NumPy", "GEE", "ArcGIS Pro", "QGIS", "SQL", "JavaScript" ],
-      ["AutoCAD", "ArchiCAD(BIM)", "Twinmotion", "Figma", "SketchUp"," Photoshop"," Premiere Pro", "Tableau"  ]
+      ["AutoCAD", "ArchiCAD(BIM)", "Twinmotion", "Figma", "SketchUp", "Photoshop", "Premiere Pro", "Tableau"]
     ],
     languages: [
       { lang: "EN", level: 0.92, note: "IELTS 8.0", note_zh: "学术（IELTS 8.0）" },
