@@ -1,0 +1,18 @@
+# Default-deny: only the reviewed runtime artifact is uploaded.
+*
+!index.html
+!kg-app.css
+!kg-app.js
+!posthog-analytics.js
+!assets/
+!assets/maup-ugcop-subzone-panel.png
+!assets/xiazhuang-layout.png
+!assets/xiazhuang-atmosphere.png
+!assets/huijing-poster-1.web.jpg
+!assets/huijing-poster-2.web.jpg
+!assets/huijing-entrance.png
+!assets/huijing-riverside.web.jpg
+!pics/
+!pics/zhijian_QA Lead.svg
+!pics/guijujie_Ethics Compliance.svg
+!pics/shouyin_Field Ops.svg

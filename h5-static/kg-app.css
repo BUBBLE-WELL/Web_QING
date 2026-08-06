@@ -35,6 +35,11 @@ body {
   min-height: 100%;
 }
 
+html {
+  scrollbar-gutter: stable;
+  background: var(--bg);
+}
+
 body {
   overflow-x: hidden;
   background:
@@ -243,7 +248,8 @@ body[data-state="story"] #landing {
 }
 
 .hero-sub.show,
-.hi-area.show {
+.hi-area.show,
+.landing-alt.show {
   opacity: 1;
 }
 
@@ -293,6 +299,7 @@ body[data-state="story"] #landing {
   z-index: 12;
   display: none;
   min-height: 100vh;
+  min-height: 100dvh;
   flex-direction: column;
 }
 
@@ -380,6 +387,7 @@ body[data-workshop="active"] .story-topbar .chrome-btn:hover {
   display: grid;
   width: min(1120px, calc(100% - 2rem));
   min-height: calc(100vh - 54px);
+  min-height: calc(100dvh - 54px);
   grid-template-columns: 200px minmax(0, 1fr);
   align-items: start;
   gap: 1rem;
@@ -396,7 +404,9 @@ body[data-view="split"] .story-shell {
   top: 72px;
   display: grid;
   min-height: calc(100vh - 108px);
+  min-height: calc(100dvh - 108px);
   max-height: calc(100vh - 108px);
+  max-height: calc(100dvh - 108px);
   grid-template-rows: auto auto minmax(0, 1fr) auto;
   gap: 0.5rem;
   min-width: 0;
@@ -406,9 +416,13 @@ body[data-view="split"] .story-shell {
   display: grid;
   gap: 1rem;
   min-width: 0;
+  min-height: 0;
   max-height: calc(100vh - 108px);
+  max-height: calc(100dvh - 108px);
   overflow-y: auto;
   overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(17, 17, 17, 0.28) transparent;
   padding: 0.4rem 0 2.5rem;
   scroll-behavior: auto;
 }
@@ -420,6 +434,8 @@ body[data-view="split"] .story-shell {
   gap: 0.28rem;
   overflow-y: auto;
   overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(17, 17, 17, 0.28) transparent;
   padding: 0.4rem 0 0.75rem;
 }
 
@@ -662,6 +678,27 @@ body[data-view="split"] .chat-thread {
   color: #ffffff;
 }
 
+.tag-chip.keyboard-focus {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-color: var(--green);
+  color: #ffffff;
+  background: #13261d;
+  box-shadow: 0 0 0 3px rgba(43, 182, 115, 0.12);
+}
+
+.tag-chip.keyboard-focus:hover {
+  border-color: var(--green);
+  color: #ffffff;
+  background: #13261d;
+}
+
+.choice-chip.keyboard-focus {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-color: var(--green);
+  color: var(--ink);
+}
 
 .tag-row {
   display: flex;
@@ -1210,6 +1247,139 @@ body[data-view="tag"] .case-results-inner {
   padding-top: 0.2rem;
 }
 
+.case-card .mini-demo img {
+  cursor: zoom-in;
+}
+
+/* Image preview lightbox (scoped; do not reuse generic .modal rules) */
+#img-lightbox[hidden] {
+  display: none !important;
+}
+
+#img-lightbox.lightbox-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 75;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(0.75rem, env(safe-area-inset-top)) max(0.75rem, env(safe-area-inset-right))
+    max(0.75rem, env(safe-area-inset-bottom)) max(0.75rem, env(safe-area-inset-left));
+  box-sizing: border-box;
+  visibility: hidden;
+  pointer-events: none;
+  transition: visibility 0s linear 200ms;
+}
+
+#img-lightbox.lightbox-overlay.is-open {
+  visibility: visible;
+  pointer-events: auto;
+  transition: none;
+}
+
+#img-lightbox .lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  margin: 0;
+  background: rgba(18, 16, 32, 0.92);
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+
+#img-lightbox.lightbox-overlay.is-open .lightbox-backdrop {
+  opacity: 1;
+}
+
+#img-lightbox.lightbox-overlay.is-closing .lightbox-backdrop {
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+
+#img-lightbox .lightbox-figure {
+  position: relative;
+  z-index: 2;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: min(90vw, 100%);
+  max-height: 90vh;
+  margin: 0;
+  padding: 0.5rem;
+  border: 1px solid rgba(180, 160, 255, 0.25);
+  border-radius: 8px;
+  background: rgba(17, 17, 17, 0.35);
+  box-shadow:
+    0 28px 56px rgba(8, 6, 22, 0.65),
+    0 0 0 1px rgba(143, 122, 229, 0.12);
+}
+
+#img-lightbox .lightbox-close {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 6px;
+  border: 1px solid rgba(180, 160, 255, 0.35);
+  background: rgba(18, 16, 32, 0.55);
+  color: rgba(200, 190, 255, 0.95);
+  font-family: var(--sans);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+#img-lightbox .lightbox-close:hover,
+#img-lightbox .lightbox-close:focus-visible {
+  background: rgba(143, 122, 229, 0.22);
+  color: #f8f8f4;
+  border-color: rgba(180, 160, 255, 0.55);
+  outline: none;
+}
+
+#img-lightbox .lightbox-img {
+  display: block;
+  max-width: 90vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+#img-lightbox .lightbox-img.lightbox-img--huijing-poster {
+  max-width: 80vw;
+  max-height: 90vh;
+}
+
+#img-lightbox .lightbox-caption {
+  margin: 0.45rem 0 0;
+  padding: 0 0.25rem;
+  max-width: min(90vw, 52rem);
+  color: rgba(200, 190, 255, 0.88);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  line-height: 1.45;
+  text-align: center;
+}
+
+#img-lightbox .lightbox-caption:empty {
+  display: none;
+}
+
 .demo-bim-tm {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1398,7 +1568,7 @@ body[data-view="tag"] .case-results-inner {
 
 .label-compare {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1px;
   overflow: hidden;
   border: 1px solid var(--border);
@@ -1727,6 +1897,57 @@ body[data-workshop="active"] .workshop-panel {
   background: rgba(252, 250, 250, 0.9);
 }
 
+.workshop-intro-card .workshop-message[data-speaker="workshop-intro"],
+.workshop-dialogue .workshop-message[data-speaker="workshop-intro"] {
+  opacity: 1;
+  transform: none;
+}
+
+.workshop-intro-card {
+  display: flex;
+  margin-bottom: 0.25rem;
+}
+
+.workshop-intro-card .workshop-intro-avatar,
+.workshop-dialogue .workshop-intro-avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--soft);
+  color: var(--ink);
+}
+
+.workshop-dialogue .workshop-intro-avatar .avatar-spider {
+  width: 19px;
+  height: 19px;
+}
+
+.workshop-intro-card .workshop-intro-message .workshop-bubble h3,
+.workshop-dialogue .workshop-intro-message .workshop-bubble h3 {
+  margin: 0.2rem 0 0.35rem;
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.workshop-intro-card .workshop-intro-body,
+.workshop-dialogue .workshop-intro-body {
+  margin: 0;
+  color: var(--body);
+  font-size: 0.72rem;
+  line-height: 1.55;
+}
+
+.workshop-panel-head--controls-only {
+  justify-content: flex-end;
+}
+
 .workshop-dialogue .workshop-message[data-speaker="field_ops"] .workshop-bubble {
   background: rgba(250, 252, 250, 0.9);
 }
@@ -1976,6 +2197,30 @@ body[data-workshop="active"] .workshop-panel {
   gap: 0.2rem;
 }
 
+.workshop-turns-label:not(.is-visible) {
+  display: none;
+}
+
+.workshop-turns-label.is-visible {
+  animation: workshopTurnRailIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.workshop-turn-index button.is-visible {
+  display: grid;
+  animation: workshopTurnRailIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes workshopTurnRailIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .workshop-turn-index button {
   display: grid;
   grid-template-columns: 3ch minmax(0, 1fr);
@@ -1990,6 +2235,10 @@ body[data-workshop="active"] .workshop-panel {
   font-size: 0.55rem;
   line-height: 1.28;
   text-align: left;
+}
+
+.workshop-turn-index button:not(.is-visible) {
+  display: none;
 }
 
 .workshop-turn-index button:hover,
@@ -2362,6 +2611,8 @@ body[data-workshop="active"] .workshop-panel {
 .landing-alt {
   margin-top: 0.5rem;
   text-align: right;
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
 .landing-skip {
@@ -2378,3 +2629,13 @@ body[data-workshop="active"] .workshop-panel {
   color: var(--ink);
 }
 
+/* Firefox layout compatibility (harmless in Chrome) */
+@supports (-moz-appearance: none) {
+  .choice-row {
+    align-self: flex-end;
+  }
+
+  .left-rail {
+    align-self: start;
+  }
+}

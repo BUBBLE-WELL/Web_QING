@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
   "use strict";
 
   var STATIC_MESSAGES = {
@@ -34,7 +34,7 @@
     "#embedding": "用向量比较含义/语义",
     "#data_quality": "数据来源、数据质量，如何影响模型和决策",
     "#platform_governance": "搜索、地图与产品风险",
-    "#geoai": "带地点风险的 AI 系统",
+    "#geoai": "具有地域适用风险的 AI 系统",
     "#ethics": "问责与可争辩性，相关政策与研究",
     "#taxonomy": "命名与标签体系",
     "#planning_design": "从GIS，实地调查，政策分析到规划设计",
@@ -53,10 +53,10 @@
       highlights: ["poor-unit share: 76.3% -> 55.9%", "reclassified planning units: 165", "default scale choice becomes data quality risk", "multi-scale parameter sweep", "hawker vs. chain sensitivity"],
       proof: [
         ["poor-unit share", "76.3% -> 55.9%"],
-        ["reclassified units", "165"],
-        ["grid median contrast", "1.000 vs 0.692"],
-        ["grid sizes compared", "500 m / 1000 m / 2000 m"],
-        ["zoning effect", "Planning Area vs Subzone"]
+        ["重分类单元数", "165"],
+        ["网格中位数对比", "1.000 vs 0.692"],
+        ["对比网格尺度", "500 m / 1000 m / 2000 m"],
+        ["行政区划影响", "规划区 vs 分区"]
       ],
       analyticsMeta: [
         ["method", "MAUP + UGCoP parameter sweep"],
@@ -78,10 +78,10 @@
 ],
       proof_zh: [
         ["比例偏低单元占比", "76.3% → 55.9%"],
-        ["重分类单元数", "165"],
-        ["网格中位数对比", "1.000 vs 0.692"],
-        ["对比网格尺度", "500 m / 1000 m / 2000 m"],
-        ["行政区划影响", "规划区 vs 分区"]
+        ["reclassified units", "165"],
+        ["grid median contrast", "1.000 vs 0.692"],
+        ["grid sizes compared", "500 m / 1000 m / 2000 m"],
+        ["zoning effect", "Planning Area vs Subzone"]
       ],
       analyticsMeta_zh: [
         ["方法", "MAUP + UGCoP 参数扫描"],
@@ -100,49 +100,51 @@
       iconKey: "tag",
       title: "POI Semantic Audit",
       kicker: "discoverability",
-      story: "When Amap calls a venue 'bar' and Xiaohongshu calls it 'livehouse', the same place becomes invisible to one search context and viral in another. I measured this gap across 20-30 Shanghai venues to quantify how platform classification choices affect discoverability.",
-      evidence: "Thesis using hybrid entity resolution and BGE-M3 embedding-based semantic similarity measurement to compare music venue representations across Amap, ShowStart, and Xiaohongshu for 20-30 purposively sampled venues in Shanghai.",
+      story: "When Amap calls a venue 'bar' and Xiaohongshu calls it 'livehouse', the same place becomes invisible to one search context and viral in another. I measured this gap across a 67-venue list (42 reviewed, 25 candidates), with 339 platform observations; 32 venues entered semantic-direction probing.",
+      evidence: "Thesis using hybrid entity resolution, BGE-M3 embedding-based semantic similarity, and difference-vector direction probing across a 67-venue list (42 reviewed, 25 candidates) and 339 platform observations; 32 venues entered post-submission probing. Direction probing = external jieba dictionary (n=153,290).",
       highlights: [
         "intra-platform comparison: Amap typecode vs. keytag",
         "inter-platform pairwise cosine similarity",
         "discoverability under three use contexts",
+        "Post-submission extension: venue-specific difference-vector direction probing found a stable Amap-side signal (320/320 reached |z|≥3); 19/32 pointed to sports/leisure, while the XHS text side showed no stable direction — representational force may sit in the image channel.",
         "The same entity-resolution challenge applies wherever multi-source spatial data must merge into a single ground truth."
       ],
       proof: [
         ["matching method", "hybrid entity resolution"],
         ["embedding model", "BGE-M3"],
-        ["sample size", "20-30 venues purposive"],
+        ["sample size", "67 venues purposive; 42 reviewed, 25 candidates; 32 in post-submission probing"],
         ["platform sources", "Amap, ShowStart, Xiaohongshu"],
         ["pairwise comparisons", "intra-Amap + inter-platform"]
       ],
       analyticsMeta: [
         ["platform families", "mapping / ticketing / social-content"],
-        ["method", "entity matching + BGE-M3 similarity"],
-        ["sample frame", "20-30 Shanghai music venues"],
+        ["method", "entity matching + BGE-M3 similarity + difference-vector direction probing"],
+        ["sample frame", "67 Shanghai music venues (32 in anchor probing)"],
         ["risk surface", "venue discovery and ranking drift"]
       ],
       tags: ["#embedding", "#taxonomy", "#platform_governance", "#spatial_data"],
       demo: "poi",
       kicker_zh: "能不能被搜到",
-      story_zh: "Amap 标成「酒吧」、Xiaohongshu 写成 livehouse，同一个地点在一种搜索里隐身，在另一种语境里爆红。我在上海通过目的性抽样选取了 20–30 个音乐场地，量化平台分类怎么改写「能不能被搜到」。",
-      evidence_zh: "学位论文：混合实体解析 + BGE-M3 embedding 语义相似度，对照 Amap、ShowStart、Xiaohongshu 上 20–30 个上海音乐场地的表征。",
+      story_zh: "Amap 标成「酒吧」、Xiaohongshu 写成 livehouse，同一个地点在一种搜索里隐身，在另一种语境里爆红。我使用 67 个场馆清单（42 个已审核，25 个候选），汇总 339 条平台观测；其中 32 个进入语义方向探测。",
+      evidence_zh: "学位论文：67 个场馆清单（42 个已审核，25 个候选），339 条平台观测。其中 32 个进入提交后探测；方法为实体匹配 + BGE-M3 相似度 + 差异向量方向探测。核心发现：direction probing = 外部 jieba 词典（n=153,290）。",
       highlights_zh: [
         "平台内对照：Amap typecode vs keytag",
         "平台间成对余弦相似度",
         "三种使用情境下的发现性",
+        "提交后延伸：venue-specific 差异向量方向探测显示，分歧方向由 Amap 分类 schema 驱动（320/320 达 |z|≥3；19/32 指向「体育/休闲」），而 XHS 文本端无收敛方向——表征力量可能在图片通道",
         "多源空间数据要合成单一 ground truth 时，实体解析难题会原样迁移"
       ],
       proof_zh: [
         ["匹配方法", "混合实体解析"],
         ["嵌入模型", "BGE-M3"],
-        ["样本量", "20–30 个场地（目的性抽样）"],
+        ["样本量", "67 个场馆目的性抽样；42 个已审核，25 个候选；32 个进入提交后探测"],
         ["平台来源", "Amap、ShowStart、小红书"],
         ["成对比较", "Amap 平台内 + 平台间"]
       ],
       analyticsMeta_zh: [
         ["平台类别", "地图 / 票务 / 社交内容"],
-        ["方法", "实体匹配 + BGE-M3 相似度"],
-        ["抽样范围", "20–30 个上海音乐场地"],
+        ["方法", "实体匹配 + BGE-M3 相似度 + 差异向量方向探测"],
+        ["抽样范围", "67 个上海音乐场地（32 个进入 anchor probing）"],
         ["风险面", "可发现性与排名漂移"]
       ]
     },
@@ -174,13 +176,13 @@
       tags: ["#geoai", "#ethics", "#platform_governance", "#spatial_data"],
       demo: "geoai",
       kicker_zh: "问责盲区",
-      story_zh: "对2006-2026年 GeoAI 和相关领域关于伦理和问责的讨论进行文献综述，总结出四条相关的自查标准。比如：训练区域和部署区域不一致要先 flag，别让模型默认新加坡密度能套到乡村部署。跨学科阅读让我把 STS、批判性 GIS 等讨论收成上线前可勾选的几条清单，用可执行步骤约束带地点风险的模型，少做粗暴外推。",
+      story_zh: "对 2006—2026 年 GeoAI 和相关领域关于伦理与问责的讨论进行文献综述，总结出四条自查标准。例如：训练区域和部署区域不一致时应先作标记，避免模型默认新加坡的城市密度可以直接套用到乡村部署。跨学科阅读让我把 STS、批判性 GIS 等讨论转化为上线前可核验的清单，用可执行步骤约束存在地域适用风险的模型，减少不当外推。",
       evidence_zh: "文献综述：critical GIS、VGI 偏差、空间异质性与算法问责串起来。",
       highlights_zh: [
         "控制项之一：上线前 flag 训练区 vs 部署区错配，而不是默认城市密度能外推到乡村。",
         "时间窗：2006–2026 综述",
         "产出：4 条可操作控制项",
-        "治理绑在带地点风险的模型行为上"
+        "治理要求对应具有地域适用风险的模型行为"
       ],
       proof_zh: [
         ["文献时间窗", "2006–2026"],
@@ -190,7 +192,7 @@
       analyticsMeta_zh: [
         ["文献时间窗", "2006–2026 GeoAI 伦理综述"],
         ["产出", "4 条可操作控制项"],
-        ["治理视角", "带地点风险的模型问责"],
+        ["治理视角", "具有地域适用风险的模型问责"],
         ["使用场景", "空间 AI 系统上线前清单"]
       ]
     },
@@ -217,17 +219,17 @@
       tags: ["#planning_design", "#visualization"],
       demo: "xiazhuang",
       kicker_zh: "实地规划 / BIM + Twinmotion",
-      story_zh: "溧水乡村的实地调研与 GIS 辅助布局：提出三条动线方案，GIS 叠加显示第二条穿过洪水风险区，排除；剩下的欲望线成为后续体量组织的主轴。Twinmotion 让方案在争论条文之前先变得可读。",
-      evidence_zh: "个人陈述里的夏庄（永阳、溧水、南京）项目笔记 + 本科图像清单；六张图没有单独分析板，所以叙事优先。",
+      story_zh: "实地调研和 GIS 叠加一起决定了夏庄的规划骨架：最初提出三条村庄动线，GIS 叠加显示第二条穿过洪涝风险区，因此被排除。保留下来的生活动线成为后续建筑体量和公共空间组织的主轴，Twinmotion 则把布局关系先转成可读的空间画面。",
+      evidence_zh: "个人陈述里的南京市溧水区永阳街道夏庄项目笔记 + 本科图像清单；六张图没有单独分析板，所以叙事优先。",
       highlights_zh: ["田野 + GIS 细化写在 ps.md", "产出：建模、海报、视频", "Twinmotion 一对：先读布局，再读氛围"],
       proof_zh: [
-        ["规划地点", "夏庄，永阳，溧水，南京"],
+        ["规划地点", "南京市溧水区永阳街道夏庄"],
         ["流程", "田野 + GIS 细化"],
         ["可视化工具", "ArchiCAD + Twinmotion"],
         ["H5 演示", "布局图 + 氛围渲染"]
       ],
       designMeta_zh: [
-        ["场地", "永阳，南京"],
+        ["场地", "南京市溧水区永阳街道夏庄"],
         ["方案", "乡村规划"],
         ["视觉产出", "CAD+BIM+Twinmotion 规划范围建模+渲染"]
       ]
@@ -255,7 +257,7 @@
       tags: ["#planning_design", "#visualization"],
       demo: "huijing",
       kicker_zh: "居住区规划 / BIM + Twinmotion",
-      story_zh: "在地势高差超过6米的场地，通过实地考察、GIS分析、CAD+BIM建模和立体规划，实现动线流畅、空间布局合理的规划设计，以及直观的视觉呈现。",
+      story_zh: "在地势高差较大、超过 6 米的场地，通过实地考察、GIS 分析、CAD+BIM 建模和立体规划，实现动线流畅、空间布局规范合理的规划设计，以及直观的视觉呈现。",
       evidence_zh: "个人陈述里的汇景华苑段落 + 本科资产地图；H5 并排 xiaoqu_1 / xiaoqu_2 海报导出，再加三张 Twinmotion 缩略图。",
       highlights_zh: ["海报：分析 + 设计（xiaoqu_2 / xiaoqu_1）", "住房、养老、服务、景观的 细化", "Twinmotion：鸟瞰、入口雨景、河岸"],
       proof_zh: [
@@ -275,15 +277,15 @@
 
   var PROFILE = {
     roles: [
-      { label: "GIS Researcher", icon: "MAP" },
-      { label: "Urban Planner", icon: "PLAN" },
-      { label: "Vibe Coder", icon: "CODE" }
+      { label: "Data & Spatial Analyst", label_zh: "数据与空间分析", icon: "MAP" },
+      { label: "Trust & Safety / AI Governance", label_zh: "平台安全与 AI 治理", icon: "GOV" },
+      { label: "User Research & Platform Insights", label_zh: "用户研究与平台洞察", icon: "INSIGHT" }
     ],
-    degree: "NUS Msc in Applied GIS",
+    degree: "NUS MSc in Applied GIS",
     expected: "Sep 2026",
     tools: [
-      ["Python", "GeoPandas", "NumPy", "GEE", "ArcGIS Pro", "QGIS", "SQL", "JavaScript" ],
-      ["AutoCAD", "ArchiCAD(BIM)", "Twinmotion", "Figma", "SketchUp", "Photoshop", "Premiere Pro", "Tableau"]
+      ["Python", "GeoPandas", "NumPy", "GEE", "ArcGIS Pro", "QGIS", "SQL", "JavaScript", "PyTorch"],
+      ["AutoCAD", "ArchiCAD (BIM)", "Twinmotion", "Figma", "SketchUp", "Photoshop", "Premiere Pro"]
     ],
     languages: [
       { lang: "EN", level: 0.92, note: "IELTS 8.0", note_zh: "学术（IELTS 8.0）" },
@@ -293,7 +295,7 @@
     profileIntro_en: "NUS MSc Applied GIS, Sep 2026. The design background taught me to read space qualitatively — desire lines, atmosphere, what a place means. The GIS research taught me to verify whether that reading holds at scale. Each one made the other more honest. That's the gap I work in, and this portfolio is a prototype of what happens when you take it seriously.",
     profileIntro_zh: "新加坡国立大学应用地理信息系统硕士（NUS MSc Applied GIS），预计 2026 年 9 月毕业。设计背景让我从质性角度读空间——动线、氛围、地方意味着什么；GIS 训练让我检验这些读法在更大尺度上是否站得住脚。两者互相校准。这就是我在意的工作缝隙，本作品集则是认真对待它时能做成的雏形。",
     contact: {
-      email: "jellycwq@foxmail.com",
+      email: "jellycwq@outlook.com",
       linkedin: "linkedin.com/in/wanqing-cui",
       github: "github.com/BUBBLE-WELL"
     }
@@ -318,11 +320,11 @@
     {
       speaker_id: "qa_lead",
       display_name_en: "QA Lead",
-      display_name_zh: "质检员",
+      display_name_zh: "QA 负责人",
       model: "GPT-5.5-medium",
       real_world_role_zh: "数据质量 / POI 数据产品",
       what_i_do_en: ["Set entity-resolution thresholds", "Keep confirmed POI layer clean", "Route disputed samples to annex"],
-      what_i_do_zh: ["设定实体解析阈值", "守住 confirmed POI 主层干净", "有争议的样本分流到附录"],
+      what_i_do_zh: ["设定实体消歧阈值", "维护已确认 POI 主数据层的质量", "将争议样本转入附录复核"],
       style_note: "short engineering decision language",
       style_note_zh: "短句工程决策口吻",
       avatar_path: "pics/zhijian_QA%20Lead.svg",
@@ -331,11 +333,11 @@
     {
       speaker_id: "ethics_compliance",
       display_name_en: "Ethical",
-      display_name_zh: "规矩姐",
+      display_name_zh: "伦理合规",
       model: "Kimi-K2.5",
       real_world_role_zh: "算法合规 / AI 治理",
       what_i_do_en: ["Check what the pipeline excludes", "Catch performative compliance", "Require caveat and audit trail"],
-      what_i_do_zh: ["顺着流水线看它排除了啥", "揪表演式合规", "要可见 caveat 和审计痕迹"],
+      what_i_do_zh: ["检查数据流程中的排除机制", "识别形式化合规风险", "要求明确披露适用限制并保留审计记录"],
       style_note: "policy brief risk diagnosis",
       style_note_zh: "政策简报式风险诊断",
       avatar_path: "pics/guijujie_Ethics%20Compliance.svg",
@@ -344,11 +346,11 @@
     {
       speaker_id: "field_ops",
       display_name_en: "Field Ops",
-      display_name_zh: "古法策划",
+      display_name_zh: "实地运营",
       model: "DeepSeek-Reasoner",
       real_world_role_zh: "用户研究 / 非标商户运营",
       what_i_do_en: ["Visit venues with no POI", "Report what the map omits", "Push back when legibility equals erasure"],
-      what_i_do_zh: ["去没有 POI 的场地见人", "写地图没记下来的事", "可读性等于抹除时顶回去"],
+      what_i_do_zh: ["实地核查缺少 POI 记录的场所", "记录地图未能呈现的现场信息", "当数据可读性造成对象消失时提出异议"],
       style_note: "field notes with concrete scenes",
       style_note_zh: "带具体场景的现场笔记",
       avatar_path: "pics/shouyin_Field%20Ops.svg",
@@ -359,7 +361,7 @@
     index[profile.speaker_id] = profile;
     return index;
   }, {});
-  /** Observer panel copy — single source; language via workshopLanguage (see workshopPanelText). */
+  /** Observer panel copy — single source; language via appState.lang.workshop (see workshopPanelText). */
   var WORKSHOP_PANEL = {
     kicker_en: "observer mode",
     kicker_zh: "旁听对话",
@@ -440,9 +442,9 @@
         "tension_en": "The confirmed layer must stay auditable while edge cases get a governed path.",
         "tension_zh": "确认层需要可审计，边缘案例也需要制度化入口。",
         "summary_en": "I keep entity-resolution threshold strict. I route disputed items to annex/manual review. Output: excluded from confirmed POI layer.",
-        "summary_zh": "我保持实体解析阈值严格；我将争议样本分流到附录或人工复核；输出是不进入 confirmed POI 主层。",
+        "summary_zh": "我保持严格的实体消歧阈值，将争议样本转入附录或人工复核；结论是不纳入已确认 POI 主数据层。",
         "original_en": "- Rule enforced: entity inclusion requires multi-source confirmation, buffer checks, and platform evidence. Do not promote a single-platform trace to geocoded POI.\n- Evidence found: ShowStart has one listing plus event signal. That is activity evidence, not location-confirmed POI evidence.\n- Evidence not found: Amap returns no matching POI within 50 m, 100 m, or 200 m. Xiaohongshu has no clear geotagged corroboration.\n- Methodology boundary: Ethics and Field Ops are right that hidden venues can be erased by legibility requirements. But that is a reporting limitation, not a basis to override entity-resolution thresholds.\n- Acceptable compromise: keep exclusion from the confirmed POI layer, add a qualitative annex flag: single-platform, intentionally low-legibility venue; manual follow-up recommended.\n\nDecision implication: exclude from confirmed POI layer; include only as manual-review annex.",
-        "translated_zh": "- 执行规则：实体纳入需要多源确认、缓冲区检查与平台证据。不能把单平台痕迹提升为地理编码 POI。\n- 已有证据：ShowStart 有一次列表和活动信号。这是活动证据，不是位置确认的 POI 证据。\n- 缺失证据：Amap 在 50 m、100 m、200 m 内没有匹配 POI。小红书没有清晰的地理标签佐证。\n- 方法边界：Ethics 与 Field Ops 对可读性规则会抹除隐藏场地的判断是对的。但这是报告限制，不是覆盖实体解析阈值的理由。\n- 可接受折中：保持其排除在 confirmed POI 主层之外，增加质性附录标记：单平台、低可读性、建议人工跟进。\n\n决策含义：排除在 confirmed POI 主层之外，仅作为人工复核附录保留。",
+        "translated_zh": "- 执行规则：实体纳入需要多源确认、缓冲区检查与平台证据。不能把单平台痕迹提升为地理编码 POI。\n- 已有证据：ShowStart 有一次列表和活动信号。这是活动证据，不是位置已确认的 POI 证据。\n- 缺失证据：Amap 在 50 m、100 m、200 m 内没有匹配 POI。小红书没有清晰的地理标签佐证。\n- 方法边界：伦理合规与实地运营角色指出，可读性规则可能抹除隐蔽场地。但这是需要披露的方法限制，不是覆盖实体消歧阈值的理由。\n- 可接受折中：不将其纳入已确认 POI 主数据层，同时增加质性附录标记：单平台证据、低可读性、建议人工跟进。\n\n决策含义：不纳入已确认 POI 主数据层，仅作为人工复核附录保留。",
         "actions": [
             {
                 "kind": "jump_case",
@@ -471,7 +473,7 @@
         "summary_en": "This risks accountability drift after deployment; I require sensitivity flags, downstream disclosure, and a shadow table.",
         "summary_zh": "我判断上线后存在问责漂移风险；我要求敏感性标记、下游披露与影子表并行落地。",
         "original_en": "QA reframes the issue as a low-legibility venue, but the deeper problem is a pipeline assumption: the system treats platform confirmation as the only valid route to existence.\n\nI require three operational guardrails:\n\n1. **Sensitivity layer flag** in the matched dataset for disputed venues.\n2. **Mandatory downstream disclosure** built into the visualization layer.\n3. **Parallel shadow table** preserving the epistemic boundary between measurable venues and known-to-exist venues.\n\nWithout these controls, the annex becomes a soft apology rather than an accountability mechanism.",
-        "translated_zh": "QA 把问题重述为低可读性场地，但更深的问题是流水线假设：系统把平台确认当作存在的唯一有效路径。\n\n我要求三个可执行护栏：\n\n1. 在匹配数据集中为争议场地设置**敏感性层标记**。\n2. 将**强制下游披露**嵌入可视化层。\n3. 保留**并行影子表**，维持可测量场地与已知存在场地之间的认识边界。\n\n如果没有这些控制项，附录只是柔性道歉，而不是问责机制。",
+        "translated_zh": "QA 将问题重述为低可读性场地，但更深层的问题在于数据流程的假设：系统把平台确认视为证明场地存在的唯一有效路径。\n\n我要求三个可执行护栏：\n\n1. 在匹配数据集中为争议场地设置**敏感性层标记**。\n2. 将**强制下游披露**嵌入可视化层。\n3. 保留**并行影子表**，维持可测量场地与已知存在场地之间的认知边界。\n\n如果没有这些控制项，附录只是象征性补救，而不是问责机制。",
         "actions": [
             {
                 "kind": "jump_case",
@@ -529,7 +531,7 @@
         "summary_en": "I set controls: sensitivity_flag, visibility_tier, review_required. Output: auditable split workflow.",
         "summary_zh": "我设定控制项：sensitivity_flag、visibility_tier、review_required；输出是可审计的分流流程。",
         "original_en": "- Rules enforced: inclusion requires multi-source confirmation: ShowStart/name evidence, georeferenced POI or coordinate confidence, platform corroboration, and buffer checks against nearby candidates.\n- Evidence state: ShowStart-only trace exists; Amap georeferenced POI is zero; Xiaohongshu clear posts are zero; no stable coordinate anchor. Under entity resolution, that is insufficient for conflation.\n- Ethics proposal accepted with limits: add sensitivity_flag, evidence_gap_reason, visibility_tier, and review_required fields. Keep a shadow table for non-public audit records.\n- Field Ops concern accepted: mandatory disclosure should not mean public disclosure. Report aggregated counts and methodological limitations publicly; keep venue-level shadow entries access-controlled.\n- Implementation-safe compromise: main dataset excludes the venue; annex records it as unconfirmed_sensitive_candidate; public report says one ShowStart-only DIY/noise venue was withheld from the mapped POI layer due to insufficient corroboration and exposure risk.\n\nDecision implication: exclude from confirmed POI layer; include only in protected shadow table / annex as needs manual review.",
-        "translated_zh": "- 执行规则：纳入需要多源确认，包括 ShowStart / 名称证据、地理编码 POI 或坐标置信、平台佐证，以及与附近候选点的缓冲区检查。\n- 证据状态：只有 ShowStart 痕迹；Amap 地理编码 POI 为零；小红书清晰帖子为零；没有稳定坐标锚点。按实体解析标准，这不足以进行合并。\n- 有限制接受 Ethics 方案：增加 sensitivity_flag、evidence_gap_reason、visibility_tier 与 review_required 字段。为非公开审计记录保留影子表。\n- 接受 Field Ops 的风险提醒：强制披露不应等于公开披露。公开报告只给聚合计数与方法限制，场地级影子条目保持访问控制。\n- 实现安全折中：主数据集排除该场地；附录将其记录为 unconfirmed_sensitive_candidate；公开报告说明有一个 ShowStart-only 的 DIY/noise 场地因佐证不足与暴露风险未进入地图 POI 层。\n\n决策含义：排除在 confirmed POI 主层之外，仅作为需要人工复核的受保护影子表 / 附录记录。",
+        "translated_zh": "- 执行规则：纳入需要多源确认，包括 ShowStart 或名称证据、地理编码 POI 或坐标置信度、平台佐证，以及与附近候选点的缓冲区检查。\n- 证据状态：目前仅有 ShowStart 痕迹；Amap 地理编码 POI 为零；小红书清晰帖子为零；没有稳定坐标锚点。按实体消歧标准，这不足以进行融合。\n- 有条件接受伦理合规方案：增加敏感性标记、证据缺口原因、可见性等级与复核要求字段，并为非公开审计记录保留影子表。\n- 接受实地运营角色的风险提醒：强制披露不等于公开披露。公开报告仅提供聚合计数与方法限制，场地级影子记录保持访问控制。\n- 实施折中：主数据集排除该场地；附录将其记录为未确认的敏感候选对象；公开报告说明，一个仅有 ShowStart 证据的非正式音乐场地因佐证不足与暴露风险未进入地图 POI 层。\n\n决策含义：不纳入已确认 POI 主数据层，仅保留在受保护的影子表与附录中，等待人工复核。",
         "actions": [
             {
                 "kind": "jump_case",
@@ -552,13 +554,13 @@
         "title_en": "Prevent Performative Compliance",
         "title_zh": "防止表演性合规",
         "highlight_en": "Exclusion logic must be discoverable, logged by tier, appealable through future review, and visibly caveated.",
-        "highlight_zh": "排除逻辑必须可发现、分级留痕、可持续申诉，并带可见 caveat。",
+        "highlight_zh": "排除逻辑必须可发现、分级留痕、可持续申诉，并明确标注适用限制。",
         "tension_en": "Without verifiability and appeals, ethics language masks governance power.",
         "tension_zh": "没有可验证与可申诉，伦理话语会遮蔽治理权力。",
         "summary_en": "This risks becoming performative ethics; I require discoverable exclusion logic, tiered logs, living appeals, and a visible caveat.",
-        "summary_zh": "我判断这有变成表演性伦理的风险；我要求可发现的排除逻辑、分级日志、持续申诉和可见 caveat。",
+        "summary_zh": "我判断这有沦为形式化合规的风险；我要求可发现的排除逻辑、分级日志、持续申诉机制，以及明确的适用限制说明。",
         "original_en": "The proposal achieves **procedural protection** because data is retained, but it risks **performative ethics** if the shadow table's existence substitutes for actionable accountability.\n\n**Procedurally valid:** shadow tables preserve data integrity without contaminating confirmed POI; sensitivity fields allow differentiated access controls; aggregate disclosure avoids individual venue exposure.\n\n**Normatively concerning:** if the shadow table is invisible to downstream analysts, the exclusion operates identically to deletion, just with better audit trails for the system. Aggregate disclosure can become an alibi when it reports excluded counts without letting anyone understand why the exclusion happened.\n\nMinimum accountability conditions:\n\n1. **Reflexive transparency:** the shadow table's existence must be discoverable without privileged access.\n2. **Tiered access with burden of justification:** sensitivity fields must trigger graded release protocols, not binary hide/show.\n3. **Living exclusion log with appeal path:** a venue excluded in one cycle must be able to become confirmed later without rebuilding the entire dataset.\n4. **Methodological acknowledgment in output:** any POI product using this pipeline must surface a caveat that DIY and informal venues may be underrepresented.\n\nFinal question: does the shadow table serve epistemic humility, or institutional protection? If the latter dominates, the proposal is performative.",
-        "translated_zh": "这个方案实现了**程序性保护**，因为数据被保留了；但如果影子表的存在替代了可执行问责，它就会变成**表演性伦理**。\n\n**程序上有效：**影子表保护数据完整性，同时不污染 confirmed POI；敏感性字段允许差异化访问控制；聚合披露避免暴露单个场地。\n\n**规范上仍有问题：**如果影子表对下游分析者不可见，那么排除的效果与删除相同，只是系统拥有了更好的审计轨迹。聚合披露如果只报告排除数量，却不让人理解为什么排除，就会变成借口。\n\n最低问责条件：\n\n1. **反身透明：**影子表的存在本身必须在无特权访问下可被发现。\n2. **带有理由负担的分级访问：**敏感字段应触发分级释放协议，而不是二元隐藏 / 显示。\n3. **带申诉路径的动态排除日志：**某个周期被排除的场地，之后应能变成确认记录，而不需要重建整个数据集。\n4. **输出中的方法承认：**任何使用该 POI 流水线的产品，都必须可见地提示 DIY 与非正式场地可能被低估。\n\n最后的问题是：影子表服务的是认识上的谦逊，还是机构自保？如果后者占主导，这就是表演性合规。",
+        "translated_zh": "这个方案实现了**程序性保护**，因为数据被保留了；但如果影子表的存在替代了可执行问责，它就会沦为**形式化合规**。\n\n**程序上有效：**影子表保护数据完整性，同时不影响已确认 POI 主数据层；敏感性字段允许差异化访问控制；聚合披露避免暴露单个场地。\n\n**规范上仍有问题：**如果影子表对下游分析者不可见，那么排除的效果与删除相同，只是系统拥有了更完善的审计记录。聚合披露如果只报告排除数量，却不解释排除原因，就可能成为免责依据。\n\n最低问责条件：\n\n1. **反思性透明：**影子表的存在本身必须在无特权访问的情况下可被发现。\n2. **附带论证义务的分级访问：**敏感字段应触发分级开放协议，而不是简单的隐藏或显示。\n3. **带申诉路径的动态排除日志：**某个周期被排除的场地，之后应能转为确认记录，而不需要重建整个数据集。\n4. **输出中的方法论声明：**任何使用该 POI 数据流程的产品，都必须明确提示非正式音乐场地可能被低估。\n\n最后的问题是：影子表服务的是认知谦逊，还是机构自保？如果后者占主导，这就是形式化合规。",
         "actions": [
             {
                 "kind": "jump_tag",
@@ -587,7 +589,7 @@
         "summary_en": "I see another gate forming at the governance layer. Hidden spaces do not become imaginary because platforms cannot read them.",
         "summary_zh": "我看到治理层正在形成另一道门；平台读不出来，不代表那些隐蔽空间是虚构的。",
         "original_en": "The floorboards groan under boots: sweat, beer, and mildew cling. A blown fuse blacks out the back room; someone's phone flashlight traces the bass amp.\n\nDatabases do not see the nod that lets the broke kid in, the whispered clean up before 4 that keeps police away, or the silence that falls when a known undercover walks past.\n\nYour ethical appeal boards and tiered watch lists? That is a new door policy. But who polices the police? Who sees the strung-out artist you would exclude, and how is their moral weight discounted?\n\nReframing: when your visible caveat becomes a velvet rope for trust debts, does institutional protection become just another lock on the basement door?",
-        "translated_zh": "靴子踩过地板，木板发出响声；汗味、啤酒味和霉味黏在一起。保险丝烧断，后屋一片黑，有人用手机手电照着贝斯音箱。\n\n数据库看不见那个让没钱孩子进门的点头，看不见为了避开警察而低声传递的“4 点前收拾完”，也看不见熟悉的便衣路过时全场突然安静。\n\n你们的伦理申诉委员会和分级观察名单？那也是一种新的门禁制度。但谁来监督监督者？谁看见那个你们会排除的疲惫艺术家？他们的道德重量又如何被折算？\n\n重新提问：当可见 caveat 变成信任债务的绒绳门槛，机构保护是否只是地下室门上的另一把锁？",
+        "translated_zh": "靴子踩过地板，木板发出响声；汗味、啤酒味和霉味混在一起。保险丝烧断，后屋一片黑，有人用手机手电照着贝斯音箱。\n\n数据库看不见那个让经济拮据的年轻人进门的默契，也看不见为了降低执法风险而低声传递的“4 点前收拾完”，更看不见熟悉的便衣人员路过时全场突然安静。\n\n伦理申诉委员会和分级观察名单也可能成为新的准入制度。但谁来监督监督者？谁能看见那些可能被系统排除、身心俱疲的艺术家？他们的利益又如何被衡量？\n\n重新提问：当适用限制说明变成划分信任资格的门槛时，机构保护是否只是地下室门上的另一把锁？",
         "actions": [
             {
                 "kind": "jump_case",
@@ -616,7 +618,7 @@
         "summary_en": "I do not lower inclusion threshold. I enforce auditability, SLA, and immutable history.",
         "summary_zh": "我不下调纳入阈值；我执行可审计性、SLA 与不可变历史。",
         "original_en": "- Rule enforced: inclusion still requires multi-source confirmation: spatial buffer match, platform evidence, and corroborating venue identity. A shadow table is metadata, not a POI record.\n- Evidence state: ShowStart-only trace is insufficient. Amap has no georeferenced POI. Xiaohongshu has no clear independent posts. No stable coordinates, address, operator identity, or cross-platform alias chain.\n- Governance control: every exclusion row must store reason code, source dates, query terms, buffer radius, embedding score range, reviewer ID, and reproducibility notes.\n- Appeal control: new evidence triggers manual review within a fixed SLA, for example 5 working days. Accepted evidence types include coordinates, event flyers with address, screenshots with dates, organizer links, or repeat platform traces.\n- Access control: shadow table writes require logged reviewer access, immutable append-only history, and monthly audit sampling. No silent deletion, no private blacklist, no institutional veto field.\n\nDecision implication: exclude from confirmed POI layer; retain in auditable shadow table; needs manual review if new evidence arrives.",
-        "translated_zh": "- 执行规则：纳入仍然需要多源确认，包括空间缓冲匹配、平台证据与场地身份佐证。影子表是元数据，不是 POI 记录。\n- 证据状态：ShowStart-only 痕迹不足。Amap 没有地理编码 POI。小红书没有清晰独立帖子。没有稳定坐标、地址、运营者身份或跨平台别名链。\n- 治理控制：每一条排除记录必须存储原因代码、来源日期、查询词、缓冲半径、embedding 分数范围、审核者 ID 与可复现说明。\n- 申诉控制：新证据触发固定 SLA 内的人工复核，例如 5 个工作日。可接受证据包括坐标、带地址活动海报、带日期截图、组织者链接或重复平台痕迹。\n- 访问控制：影子表写入需要记录审核者访问、不可变追加历史和月度抽样审计。没有静默删除，没有私有黑名单，没有机构否决字段。\n\n决策含义：排除在 confirmed POI 主层之外；保留在可审计影子表中；新证据出现时进入人工复核。",
+        "translated_zh": "- 执行规则：纳入仍然需要多源确认，包括空间缓冲匹配、平台证据与场地身份佐证。影子表是元数据，不是 POI 记录。\n- 证据状态：仅有 ShowStart 痕迹不足以完成确认。Amap 没有地理编码 POI，小红书没有清晰的独立帖子，也没有稳定坐标、地址、运营者身份或跨平台别名链。\n- 治理控制：每一条排除记录必须存储原因代码、来源日期、查询词、缓冲半径、嵌入相似度分数区间、审核者 ID 与可复现说明。\n- 申诉控制：新证据触发固定服务时限内的人工复核，例如 5 个工作日。可接受证据包括坐标、带地址的活动海报、带日期截图、组织者链接或重复平台痕迹。\n- 访问控制：影子表写入需要保留审核者访问记录、不可变的追加历史和月度抽样审计。不得静默删除，不设私有黑名单，也不设机构否决字段。\n\n决策含义：不纳入已确认 POI 主数据层；保留在可审计影子表中；新证据出现时进入人工复核。",
         "actions": [
             {
                 "kind": "jump_case",
@@ -641,11 +643,11 @@
         "highlight_en": "Procedural improvements are real, but the normative disagreement remains open.",
         "highlight_zh": "程序改进是真实的，但规范性分歧仍然开放。",
         "tension_en": "Process closure cannot substitute for cross-role normative review.",
-        "tension_zh": "流程收口不能替代跨角色规范审查。",
+        "tension_zh": "流程闭环不能替代跨角色的规范性审查。",
         "summary_en": "The question is not whether procedures improved; the question is whether the normative dispute is still live.",
         "summary_zh": "问题不只是流程是否改进，而是规范性分歧是否仍然存在。",
         "original_en": "QA's commitments address procedural integrity: thresholds, audit trails, and SLAs. This is valid and necessary. However, the normative issue persists. A system that is fair by procedure can still produce distributive harm when the underlying entity model assumes legibility and treats DIY venues as noise to be resolved away.\n\nThe shadow table preserves audit, but not necessarily presence. If excluded venues remain absent from downstream consumption, recommendation engines, or policy dashboards, spatial injustice is reproduced downstream with better documentation.\n\nStakeholders still face residual risks:\n\n- Venue operators lack standing to know they were resolved out or to contest the ontology itself.\n- Users continue to encounter a POI layer that silently under-represents alternative and subcultural spaces.\n- Analysts carry the interpretive burden of knowing exclusion happened without having a parallel would-be map.\n\nConcrete next actions:\n\n1. **Sensitivity reporting:** every POI export should include a shadow count metric by neighborhood.\n2. **Qualitative annex:** the thesis workflow should maintain a parallel unresolved venue note populated by Field Ops.\n3. **Exclusion review:** before thesis finalization, QA Lead, Field Ops, and Ethics Compliance should manually sample 10 shadow-table entries and ask whose absence shaped the result.\n\nWhat is accepted: the audit infrastructure is operationally sound and reduces silent deletion risks.\n\nWhat remains unresolved: whether verifiable cross-platform presence is itself a threshold that privileges capitalized, platform-integrated venues over DIY ones.",
-        "translated_zh": "QA 的承诺解决了程序完整性：阈值、审计轨迹与 SLA。这是有效且必要的。但规范问题仍然存在。一个在程序上公平的系统，如果其底层实体模型假设可读性，并把 DIY 场地当成需要消解的噪声，仍然会制造分配性伤害。\n\n影子表保留了审计，但不一定保留了存在。如果被排除的场地仍然缺席于下游消费、推荐系统或政策仪表盘，那么空间不公只是带着更好的文档在下游重演。\n\n相关方仍有剩余风险：\n\n- 场地运营者没有资格知道自己被 resolved out，也难以争辩本体设定本身。\n- 用户继续看到一个静默低估另类与亚文化空间的 POI 层。\n- 分析者承担解释负担：知道发生了排除，却没有一张并行的“本可存在”地图。\n\n具体下一步：\n\n1. **敏感性报告：**每次 POI 导出都应按街区包含 shadow count 指标。\n2. **质性附录：**thesis 工作流应维护一份由 Field Ops 填写的 unresolved venue note。\n3. **排除复核：**在 thesis 定稿前，QA Lead、Field Ops 与 Ethics Compliance 应手动抽样 10 条影子表记录，追问是谁的缺席塑造了结果。\n\n已接受：审计基础设施在操作上成立，并降低了静默删除风险。\n\n仍未解决：跨平台可验证存在是否本身就是一个偏向资本化、平台整合场地的阈值。",
+        "translated_zh": "QA 的承诺回应了程序完整性问题，包括阈值、审计记录与服务时限。这些措施有效且必要，但规范性问题仍然存在。一个在程序上公平的系统，如果其底层实体模型预设了可读性，并把非正式音乐场地视为需要消除的噪声，仍可能造成分配性伤害。\n\n影子表保留了审计记录，但不一定保留场地在下游系统中的存在。如果被排除的场地仍然缺席于推荐系统或政策仪表盘，那么空间不公可能只是带着更完善的文档在下游重演。\n\n相关方仍面临以下风险：\n\n- 场地运营者无从得知自己已被排除，也难以质疑实体模型的设定。\n- 用户继续面对一个系统性低估另类与亚文化空间的 POI 数据层。\n- 分析者知道排除已经发生，却没有一张并行的候选场地地图作为参照。\n\n具体下一步：\n\n1. **敏感性报告：**每次 POI 导出都应按街区提供影子记录数量指标。\n2. **质性附录：**论文工作流应维护一份由实地运营角色填写的待核实场地记录。\n3. **排除复核：**在论文定稿前，QA 负责人、实地运营与伦理合规角色应手动抽样 10 条影子表记录，检查哪些对象的缺席影响了最终结果。\n\n已接受：审计基础设施在操作层面成立，并降低了静默删除风险。\n\n仍未解决：将跨平台可验证性作为存在门槛，是否会系统性偏向资本更充足、平台整合程度更高的场地。",
         "actions": [
             {
                 "kind": "jump_tag",
@@ -680,59 +682,117 @@
     "back to controls": "回到控制项",
     "jump to governance controls": "跳转到治理控制项"
   };
-  var messages = [];
-  var activeTag = "All";
-  var currentView = "chat";
-  var expandedCaseIds = new Set();
-  var messageId = 0;
-  var typingLine = 0;
-  var conversationState = "landing";
-  var workshopPreviewShown = false;
-  var workshopAlertSeen = false;
-  var workshopReplayAvailable = false;
-  var workshopActive = false;
-  var workshopAlertOpen = false;
-  var workshopAlertAutoDismissTimer = null;
-  var workshopAlertHovering = false;
-  var roleProfileOpen = false;
-  var roleProfileReturnFocus = null;
-  var workshopLanguage = "en";
-  var portfolioLanguage = "en";
-  var workshopVisibleCards = 0;
-  var workshopOpenCards = new Set();
-  var workshopAutoPlay = true;
-  var workshopAutoPlayTimer = null;
-  var typingTimer = null;
-  var dotsTimer = null;
-  var currentSpiderRight = null;
-  var cachedFollowUpChips = [];
+  var appState = {
+    lang: {
+      portfolio: "en",
+      workshop: "en"
+    },
+    view: "chat",
+    chat: {
+      messages: [],
+      nextMessageId: 0,
+      typingLine: 0,
+      conversationState: "landing",
+      cachedFollowUpChips: []
+    },
+    portfolio: {
+      activeTag: "All",
+      expandedCaseIds: new Set(),
+      tagNavMode: false
+    },
+    workshop: {
+      previewShown: false,
+      alertSeen: false,
+      replayAvailable: false,
+      active: false,
+      directEntry: false,
+      alertOpen: false,
+      alertHovering: false,
+      visibleCards: 0,
+      openCards: new Set(),
+      autoPlay: true
+    },
+    roleProfile: {
+      open: false,
+      returnFocus: null
+    },
+    analytics: {
+      entered: false,
+      expandedProjectIds: new Set(),
+      evidenceUsed: false,
+      workshopEntered: false,
+      workshopDeepAction: false,
+      reportedDiscoveryLevels: new Set()
+    }
+  };
+  var runtime = {
+    timers: {
+      typing: null,
+      dots: null,
+      workshopAutoPlay: null,
+      workshopAlertAutoDismiss: null
+    },
+    raf: {
+      spiderLanding: null
+    },
+    animation: {
+      currentSpiderRight: null,
+      currentSpiderLength: null
+    },
+    cache: {}
+  };
 
   function qs(id) {
     return document.getElementById(id);
   }
 
+  function track(eventName, properties) {
+    if (window.QingAnalytics) window.QingAnalytics.capture(eventName, properties || {});
+  }
+
+  function updateFeatureDiscovery() {
+    var analytics = appState.analytics;
+    var core = analytics.entered && analytics.expandedProjectIds.size >= 1;
+    var deep = core && (analytics.evidenceUsed || analytics.workshopEntered);
+    var full = core && analytics.workshopEntered && analytics.workshopDeepAction;
+    [["core", core], ["deep", deep], ["full", full]].forEach(function (entry) {
+      if (!entry[1] || analytics.reportedDiscoveryLevels.has(entry[0])) return;
+      analytics.reportedDiscoveryLevels.add(entry[0]);
+      track("feature_discovery_reached", { discovery_level: entry[0] });
+    });
+  }
+
+  function markEvidenceInteraction(projectId, interactionType) {
+    appState.analytics.evidenceUsed = true;
+    track("project_evidence_interacted", {
+      project_id: projectId || "unknown",
+      interaction_type: interactionType
+    });
+    updateFeatureDiscovery();
+  }
+
   function initPortfolioLanguageFromDom() {
     var lang = (document.documentElement.getAttribute("lang") || "en").toLowerCase();
-    portfolioLanguage = lang.indexOf("zh") === 0 ? "zh" : "en";
-    workshopLanguage = portfolioLanguage;
+    appState.lang.portfolio = lang.indexOf("zh") === 0 ? "zh" : "en";
+    appState.lang.workshop = appState.lang.portfolio;
   }
 
   function syncLangToggleButton() {
     var langBtn = qs("lang-toggle");
     if (!langBtn) return;
-    langBtn.textContent = portfolioLanguage === "zh" ? "EN" : "中文";
+    langBtn.textContent = appState.lang.portfolio === "zh" ? "EN" : "中文";
   }
 
   function syncLandingText() {
     document.querySelectorAll("[data-i18n]").forEach(function (el) {
       var key = el.getAttribute("data-i18n");
       if (key && LANDING_TEXTS[key]) {
-        el.textContent = LANDING_TEXTS[key][portfolioLanguage];
+        el.textContent = LANDING_TEXTS[key][appState.lang.portfolio];
       }
     });
     var landingBtn = qs("lang-toggle-landing");
     if (landingBtn) {
-      landingBtn.textContent = portfolioLanguage === "zh" ? "EN" : "中文";
+      landingBtn.textContent = appState.lang.portfolio === "zh" ? "EN" : "中文";
     }
   }
 
@@ -743,52 +803,149 @@
     if (message.role === "assistant" && message.kind === "text" && message._staticTyping === true) {
       return message.content;
     }
-    return STATIC_MESSAGES[message.staticKey][portfolioLanguage];
+    return STATIC_MESSAGES[message.staticKey][appState.lang.portfolio];
+  }
+
+  function captureInteractiveDomState() {
+    var mainArea = document.querySelector(".main-area");
+    return {
+      scrollTop: mainArea ? mainArea.scrollTop : 0,
+      focus: stableFocusTarget(document.activeElement)
+    };
+  }
+
+  function restoreInteractiveDomState(state) {
+    var mainArea = document.querySelector(".main-area");
+    if (mainArea) mainArea.scrollTop = state.scrollTop;
+    var target = state.focus ? document.querySelector(state.focus) : null;
+    if (target && typeof target.focus === "function") target.focus();
+  }
+
+  function stableFocusTarget(el) {
+    if (!el || el === document.body) return "";
+    if (el.id) return "#" + cssEscape(el.id);
+    var caseDetails = el.closest && el.closest("[data-case-details]");
+    if (caseDetails) {
+      return '[data-case-details="' + cssEscape(caseDetails.getAttribute("data-case-details")) + '"] summary';
+    }
+    var tag = el.getAttribute && (el.getAttribute("data-tag") || el.getAttribute("data-tag-jump"));
+    if (tag) return '[data-tag="' + cssEscape(tag) + '"], [data-tag-jump="' + cssEscape(tag) + '"]';
+    return "";
+  }
+
+  function cssEscape(value) {
+    if (window.CSS && typeof window.CSS.escape === "function") return window.CSS.escape(String(value || ""));
+    return String(value || "").replace(/["\\]/g, "\\$&");
+  }
+
+  function syncPortfolioLanguageInPlace() {
+    syncTagButtonsLanguage();
+    syncResultLeadBlocks();
+    syncVisibleCaseCardsLanguage();
+    syncResultLabel();
+  }
+
+  function syncTagButtonsLanguage() {
+    document.querySelectorAll("[data-tag], [data-tag-jump]").forEach(function (button) {
+      var tag = button.getAttribute("data-tag") || button.getAttribute("data-tag-jump");
+      if (!tag) return;
+      button.setAttribute("aria-label", tagAria(tag));
+      button.classList.toggle("active", tag === appState.portfolio.activeTag || (!appState.portfolio.activeTag && tag === "All"));
+    });
+  }
+
+  function syncResultLeadBlocks() {
+    if (appState.view !== "overview" && appState.view !== "split") return;
+    var root = qs("case-results");
+    if (!root) return;
+    var html = appState.view === "overview" ? overviewBlock() : taxonomyBlock();
+    var template = document.createElement("template");
+    template.innerHTML = html;
+    root.querySelectorAll(":scope > .overview-block, :scope > .about-page, :scope > .help-block").forEach(function (node) {
+      node.remove();
+    });
+    root.insertBefore(template.content, root.firstChild);
+  }
+
+  function syncVisibleCaseCardsLanguage() {
+    CASES.forEach(function (item) {
+      var card = document.querySelector('[data-case-card="' + cssEscape(item.id) + '"]');
+      if (!card) return;
+      syncCaseCardLanguage(item, card);
+    });
+    document.querySelectorAll(".case-group[data-category]").forEach(function (group) {
+      var title = group.querySelector(".case-group-title");
+      if (!title) return;
+      title.textContent = group.getAttribute("data-category") === "design" ? t("design work", "设计类项目") : t("research work", "研究类项目");
+    });
+  }
+
+  function syncCaseCardLanguage(item, card) {
+    var kicker = card.querySelector(".case-kicker");
+    var story = card.querySelector("[data-case-story]");
+    if (kicker) kicker.textContent = caseKicker(item);
+    if (story) story.textContent = caseStory(item);
+    card.querySelectorAll("[data-tag-jump]").forEach(function (button) {
+      var tag = button.getAttribute("data-tag-jump");
+      if (tag) button.setAttribute("aria-label", tagAria(tag));
+    });
+    var details = card.querySelector("[data-case-details]");
+    if (!details) return;
+    var wasOpen = details.open;
+    details.innerHTML =
+      '<summary data-case-summary>' + cardDetailSummary(item) + '</summary>' +
+      whyItMattersBlock(item) +
+      analyticsMetaBlock(item) +
+      designMetaBlock(item) +
+      highlightsBlock(item) +
+      keyInsightBlock(item) +
+      '<div class="mini-demo">' + demoBlock(item.demo) + '</div>';
+    details.open = wasOpen;
+    bindDemoInteractions(card);
   }
 
   function togglePortfolioLanguage() {
-    portfolioLanguage = portfolioLanguage === "zh" ? "en" : "zh";
-    workshopLanguage = portfolioLanguage;
-    document.body.dataset.lang = portfolioLanguage;
-    document.documentElement.setAttribute("lang", portfolioLanguage === "zh" ? "zh-CN" : "en");
-    window.clearTimeout(typingTimer);
-    window.clearTimeout(dotsTimer);
-    typingTimer = null;
-    dotsTimer = null;
-    messages = messages.filter(function (m) {
+    appState.lang.portfolio = appState.lang.portfolio === "zh" ? "en" : "zh";
+    appState.lang.workshop = appState.lang.portfolio;
+    document.body.dataset.lang = appState.lang.portfolio;
+    document.documentElement.setAttribute("lang", appState.lang.portfolio === "zh" ? "zh-CN" : "en");
+    track("language_switched", { language: appState.lang.portfolio, surface: "portfolio" });
+    window.clearTimeout(runtime.timers.typing);
+    window.clearTimeout(runtime.timers.dots);
+    runtime.timers.typing = null;
+    runtime.timers.dots = null;
+    appState.chat.messages = appState.chat.messages.filter(function (m) {
       return m.kind !== "dots";
     });
-    messages.forEach(function (m) {
+    appState.chat.messages.forEach(function (m) {
       if (m.staticKey && STATIC_MESSAGES[m.staticKey]) {
         m._staticTyping = false;
-        m.content = STATIC_MESSAGES[m.staticKey][portfolioLanguage];
+        m.content = STATIC_MESSAGES[m.staticKey][appState.lang.portfolio];
       }
     });
-    var mainArea = document.querySelector(".main-area");
-    var scrollTop = mainArea ? mainArea.scrollTop : 0;
+    var domState = captureInteractiveDomState();
     syncLandingText();
     syncStoryChrome();
     syncTopbarLabel();
-    renderTags();
-    renderCards();
-    if (mainArea) mainArea.scrollTop = scrollTop;
+    syncPortfolioLanguageInPlace();
     renderMessages();
     renderConversationIndex();
-    if (cachedFollowUpChips.length) {
-      syncFollowUps(cachedFollowUpChips);
+    if (appState.chat.cachedFollowUpChips.length) {
+      syncFollowUps(appState.chat.cachedFollowUpChips);
     }
-    if (workshopActive) {
-      renderWorkshopParticipants();
-      renderWorkshopPanel({ preserveScroll: true });
+    if (appState.workshop.active) {
+      syncWorkshopLanguageInPlace();
     }
+    syncOpenRoleProfileLanguage();
+    restoreInteractiveDomState(domState);
   }
 
   function t(en, zh) {
-    return portfolioLanguage === "zh" ? zh : en;
+    return appState.lang.portfolio === "zh" ? zh : en;
   }
 
   function tw(en, zh) {
-    return workshopLanguage === "zh" ? zh : en;
+    return appState.lang.workshop === "zh" ? zh : en;
   }
 
   function tagHint(key) {
@@ -806,7 +963,7 @@
   function syncTopbarLabel() {
     var btn = qs("back-landing");
     if (!btn) return;
-    btn.textContent = workshopActive ? t("exit", "退出") : t("back", "返回");
+    btn.textContent = appState.workshop.active ? t("exit", "退出") : t("back", "返回");
   }
 
   function syncStoryChrome() {
@@ -883,8 +1040,8 @@
     }
 
     function cycle() {
-      type(lines[typingLine], function () {
-        typingLine = (typingLine + 1) % lines.length;
+      type(lines[appState.chat.typingLine], function () {
+        appState.chat.typingLine = (appState.chat.typingLine + 1) % lines.length;
         erase(cycle);
       });
     }
@@ -905,12 +1062,10 @@
     settleMs: 380
   };
 
-  var spiderLandingRaf = null;
-
   function cancelSpiderLanding() {
-    if (spiderLandingRaf != null) {
-      cancelAnimationFrame(spiderLandingRaf);
-      spiderLandingRaf = null;
+    if (runtime.raf.spiderLanding != null) {
+      cancelAnimationFrame(runtime.raf.spiderLanding);
+      runtime.raf.spiderLanding = null;
     }
     var wrap = qs("spider-wrap");
     var thread = qs("thread");
@@ -933,12 +1088,14 @@
     if (!wrap || !thread) return;
     var right = spiderRightOffset();
     var px = Math.max(0, Math.round(length));
-    if (right !== currentSpiderRight) {
-      currentSpiderRight = right;
+    if (right !== runtime.animation.currentSpiderRight) {
+      runtime.animation.currentSpiderRight = right;
       document.documentElement.style.setProperty("--spider-right", right + "px");
       document.documentElement.style.setProperty("--spider-center-right", right + 29 + "px");
       wrap.style.right = right + "px";
     }
+    if (px === runtime.animation.currentSpiderLength) return;
+    runtime.animation.currentSpiderLength = px;
     wrap.style.top = px + "px";
     thread.style.height = px + "px";
   }
@@ -964,24 +1121,24 @@
       var u = Math.min(1, (now - t0) / SPIDER_SPRING.riseMs);
       setSpiderLength(peak * easeOutCubic(u));
       if (u < 1) {
-        spiderLandingRaf = requestAnimationFrame(phase1);
+        runtime.raf.spiderLanding = requestAnimationFrame(phase1);
       } else {
         t0 = now;
-        spiderLandingRaf = requestAnimationFrame(phase2);
+        runtime.raf.spiderLanding = requestAnimationFrame(phase2);
       }
     }
     function phase2(now) {
       var u = Math.min(1, (now - t0) / SPIDER_SPRING.settleMs);
       setSpiderLength(peak + (target - peak) * smoothstep(u));
       if (u < 1) {
-        spiderLandingRaf = requestAnimationFrame(phase2);
+        runtime.raf.spiderLanding = requestAnimationFrame(phase2);
       } else {
-        spiderLandingRaf = null;
+        runtime.raf.spiderLanding = null;
         wrap.classList.remove("spider-springing");
         thread.classList.remove("spider-springing");
       }
     }
-    spiderLandingRaf = requestAnimationFrame(phase1);
+    runtime.raf.spiderLanding = requestAnimationFrame(phase1);
   }
 
   function resetLandingSpider() {
@@ -1004,22 +1161,36 @@
     }, 980);
   }
 
+  var CONVERSATION_HANDLERS = {
+    USER_HI: handleConversationUserHi,
+    ABOUT_PICKED: handleConversationAboutPicked,
+    STARTER_PICKED: handleConversationStarterPicked,
+    TAG_SELECTED: handleConversationTagSelected,
+    VIEW_CHANGED: handleConversationViewChanged,
+    CASE_TOGGLED: handleConversationCaseToggled
+  };
+
   function dispatchConversation(event) {
     if (!event || !event.type) return;
-
-    if (event.type === "USER_HI") {
-      if (conversationState !== "landing") return;
+    var handler = CONVERSATION_HANDLERS[event.type];
+    if (handler) handler(event);
+  }
+  function handleConversationUserHi(event) {
+      if (appState.chat.conversationState !== "landing") return;
+      appState.analytics.entered = true;
+      track("portfolio_entered", { entry_path: "say_hi", language: appState.lang.portfolio });
+      updateFeatureDiscovery();
       cancelSpiderLanding();
-      conversationState = "after_hi";
-      messages = [];
-      activeTag = "All";
-      expandedCaseIds = new Set();
+      appState.chat.conversationState = "after_hi";
+      appState.chat.messages = [];
+      appState.portfolio.activeTag = "All";
+      appState.portfolio.expandedCaseIds = new Set();
       setView("chat");
       syncFollowUps([]);
       renderTags();
       renderCards();
       retractSpider();
-      appendMessage({ role: "user", kind: "text", staticKey: "user_hi", content: STATIC_MESSAGES.user_hi[portfolioLanguage] });
+      appendMessage({ role: "user", kind: "text", staticKey: "user_hi", content: STATIC_MESSAGES.user_hi[appState.lang.portfolio] });
       window.setTimeout(function () {
         document.body.dataset.state = "story";
         syncTopbarLabel();
@@ -1029,25 +1200,26 @@
         });
       }, 520);
       return;
-    }
+  }
 
-    if (event.type === "ABOUT_PICKED") {
+  function handleConversationAboutPicked(event) {
       clearChoiceMessages();
       appendMessage({ role: "user", kind: "text", content: event.label });
-      conversationState = "profile";
+      appState.chat.conversationState = "profile";
       typeAssistant(profileCopy(), function () {
         appendMessage({ role: "assistant", kind: "profile" });
         showStarterChoices();
         maybeShowWorkshopAlert();
       });
       return;
-    }
+  }
 
-    if (event.type === "STARTER_PICKED") {
+  function handleConversationStarterPicked(event) {
+      track("portfolio_view_selected", { view_mode: event.value });
       clearChoiceMessages();
       appendMessage({ role: "user", kind: "text", content: event.label });
       if (event.value === "overview") {
-        conversationState = "overview";
+        appState.chat.conversationState = "overview";
         setView("chat");
         typeAssistant(t(
           "Five projects, one question: when does simplifying a place change who can find it, fund it, or govern it? Start here for the structure, then go deeper by tag or card.",
@@ -1056,7 +1228,7 @@
           loadResultsShell("overview", "All", []);
         });
       } else if (event.value === "tag") {
-        conversationState = "tag";
+        appState.chat.conversationState = "tag";
         typeAssistant(t(
           "Pick a hashtag first. I will return only the cases that support that hiring or story angle.",
           "先选标签。我只返回跟招聘或故事角度相关的案例。"
@@ -1064,7 +1236,7 @@
           loadResultsShell("tag", "", []);
         });
       } else if (event.value === "grid") {
-        conversationState = "grid";
+        appState.chat.conversationState = "grid";
         typeAssistant(t(
           "Opening the project grid. This is the database-feeling view: all cards, expandable evidence, and reusable tags.",
           "打开项目网格。这里是数据库视图：所有卡片可展开，证据和标签都能复用。"
@@ -1073,14 +1245,16 @@
         });
       }
       return;
-    }
+  }
 
-    if (event.type === "TAG_SELECTED") {
+  function handleConversationTagSelected(event) {
+      track("project_filter_selected", { project_tag: event.value });
+      exitTagNavMode();
       clearChoiceMessages();
-      activeTag = event.value;
+      appState.portfolio.activeTag = event.value;
       appendMessage({ role: "user", kind: "text", content: event.value === "All" ? t("Show all projects.", "全部项目") : event.value });
       var results = filteredCases();
-      expandedCaseIds = new Set(results.length && event.value !== "All" ? [results[0].id] : []);
+      appState.portfolio.expandedCaseIds = new Set(results.length && event.value !== "All" ? [results[0].id] : []);
       setView(event.value === "All" ? "grid" : "tag");
       renderTags();
       renderCards();
@@ -1089,9 +1263,10 @@
         scrollToResults();
       });
       return;
-    }
+  }
 
-    if (event.type === "VIEW_CHANGED") {
+  function handleConversationViewChanged(event) {
+      track("portfolio_view_selected", { view_mode: event.value });
       clearChoiceMessages();
       if (event.value === "overview") {
         appendMessage({ role: "user", kind: "text", content: t("Back to overview.", "返回概览。") });
@@ -1119,24 +1294,29 @@
         });
       }
       return;
-    }
+  }
 
-    if (event.type === "CASE_TOGGLED") {
-      if (event.open) expandedCaseIds.add(event.value);
-      else expandedCaseIds.delete(event.value);
-    }
+  function handleConversationCaseToggled(event) {
+      if (event.open) {
+        appState.portfolio.expandedCaseIds.add(event.value);
+        appState.analytics.expandedProjectIds.add(event.value);
+        track("project_expanded", { project_id: event.value });
+        updateFeatureDiscovery();
+      } else {
+        appState.portfolio.expandedCaseIds.delete(event.value);
+      }
   }
 
   function setView(view) {
-    currentView = view;
+    appState.view = view;
     document.body.dataset.view = view;
-    document.body.dataset.tagSelected = activeTag ? "true" : "false";
+    document.body.dataset.tagSelected = appState.portfolio.activeTag ? "true" : "false";
     syncTopbarLabel();
   }
 
   function loadResultsShell(view, tag, expandedIds, followUps) {
-    activeTag = tag;
-    expandedCaseIds = new Set(expandedIds || []);
+    appState.portfolio.activeTag = tag;
+    appState.portfolio.expandedCaseIds = new Set(expandedIds || []);
     setView(view);
     renderTags();
     renderCards();
@@ -1144,19 +1324,19 @@
   }
 
   function createMessage(message) {
-    var next = Object.assign({ id: "m" + messageId }, message);
-    messageId += 1;
+    var next = Object.assign({ id: "m" + appState.chat.nextMessageId }, message);
+    appState.chat.nextMessageId += 1;
     return next;
   }
 
   function appendMessage(message) {
-    messages.push(createMessage(message));
+    appState.chat.messages.push(createMessage(message));
     trimMessages();
     renderMessages();
   }
 
   function trimMessages() {
-    messages = messages.filter(function (message) {
+    appState.chat.messages = appState.chat.messages.filter(function (message) {
       return message.kind !== "dots";
     });
   }
@@ -1166,23 +1346,23 @@
     var fullText;
     if (source && typeof source === "object" && source.staticKey) {
       staticKey = source.staticKey;
-      fullText = STATIC_MESSAGES[staticKey] ? STATIC_MESSAGES[staticKey][portfolioLanguage] : "";
+      fullText = STATIC_MESSAGES[staticKey] ? STATIC_MESSAGES[staticKey][appState.lang.portfolio] : "";
     } else {
       fullText = String(source || "");
     }
-    window.clearTimeout(typingTimer);
-    window.clearTimeout(dotsTimer);
-    messages = messages.filter(function (message) {
+    window.clearTimeout(runtime.timers.typing);
+    window.clearTimeout(runtime.timers.dots);
+    appState.chat.messages = appState.chat.messages.filter(function (message) {
       return message.kind !== "dots";
     });
     var dotMessage = createMessage({ role: "assistant", kind: "dots" });
     var dotId = dotMessage.id;
-    messages.push(dotMessage);
+    appState.chat.messages.push(dotMessage);
     trimMessages();
     renderMessages();
 
-    dotsTimer = window.setTimeout(function () {
-      messages = messages.filter(function (message) {
+    runtime.timers.dots = window.setTimeout(function () {
+      appState.chat.messages = appState.chat.messages.filter(function (message) {
         return message.id !== dotId;
       });
       var message = createMessage({
@@ -1192,7 +1372,7 @@
         staticKey: staticKey,
         _staticTyping: staticKey ? true : false
       });
-      messages.push(message);
+      appState.chat.messages.push(message);
       trimMessages();
       renderMessages();
 
@@ -1203,7 +1383,7 @@
         renderMessages();
         if (i < chars.length) {
           i += 2;
-          typingTimer = window.setTimeout(step, 8 + Math.random() * 10);
+          runtime.timers.typing = window.setTimeout(step, 8 + Math.random() * 10);
         } else {
           message.content = fullText;
           message._staticTyping = false;
@@ -1218,7 +1398,7 @@
   }
 
   function showStarterChoices() {
-    conversationState = "showing_starters";
+    appState.chat.conversationState = "showing_starters";
     appendMessage({
       role: "user",
       kind: "chips",
@@ -1227,7 +1407,7 @@
   }
 
   function showAboutChoice() {
-    conversationState = "intro_choice";
+    appState.chat.conversationState = "intro_choice";
     appendMessage({
       role: "user",
       kind: "chips",
@@ -1236,18 +1416,18 @@
   }
 
   function profileCopy() {
-    var text = PROFILE["profileIntro_" + portfolioLanguage];
+    var text = PROFILE["profileIntro_" + appState.lang.portfolio];
     return text || PROFILE.profileIntro_en || "";
   }
 
   function syncFollowUps(chips) {
     var nextChips = chips || [];
-    cachedFollowUpChips = nextChips.length ? nextChips.slice() : [];
+    appState.chat.cachedFollowUpChips = nextChips.length ? nextChips.slice() : [];
     renderInlineFollowUps(nextChips);
   }
 
   function clearChoiceMessages(options) {
-    messages = messages.filter(function (message) {
+    appState.chat.messages = appState.chat.messages.filter(function (message) {
       return message.kind !== "chips";
     });
     renderMessages();
@@ -1257,9 +1437,9 @@
   }
 
   function maybeShowWorkshopAlert() {
-    if (workshopPreviewShown) return;
+    if (appState.workshop.previewShown) return;
     window.setTimeout(function () {
-      if (workshopPreviewShown) return;
+      if (appState.workshop.previewShown) return;
       openWorkshopAlert();
     }, 1000);
   }
@@ -1269,39 +1449,40 @@
     if (!forced && !canAutoOpenWorkshopAlert()) return;
     var modal = qs("workshop-alert");
     if (!modal) return;
-    workshopPreviewShown = true;
-    workshopAlertOpen = true;
-    workshopAlertHovering = false;
+    appState.workshop.previewShown = true;
+    appState.workshop.alertOpen = true;
+    appState.workshop.alertHovering = false;
     modal.setAttribute("aria-hidden", "false");
     modal.classList.add("show");
-    if (workshopAlertAutoDismissTimer) {
-      window.clearTimeout(workshopAlertAutoDismissTimer);
-      workshopAlertAutoDismissTimer = null;
+    track("workshop_alert_viewed", { trigger_type: forced ? "manual" : "automatic" });
+    if (runtime.timers.workshopAlertAutoDismiss) {
+      window.clearTimeout(runtime.timers.workshopAlertAutoDismiss);
+      runtime.timers.workshopAlertAutoDismiss = null;
     }
-    workshopAlertAutoDismissTimer = window.setTimeout(function () {
-      workshopAlertAutoDismissTimer = null;
-      if (!workshopAlertOpen || workshopAlertHovering) return;
+    runtime.timers.workshopAlertAutoDismiss = window.setTimeout(function () {
+      runtime.timers.workshopAlertAutoDismiss = null;
+      if (!appState.workshop.alertOpen || appState.workshop.alertHovering) return;
       closeWorkshopAlert();
     }, 8000);
   }
 
   function canAutoOpenWorkshopAlert() {
-    return ["showing_starters", "overview", "tag", "grid", "taxonomy"].indexOf(conversationState) >= 0 && !workshopActive;
+    return ["showing_starters", "overview", "tag", "grid", "taxonomy"].indexOf(appState.chat.conversationState) >= 0 && !appState.workshop.active;
   }
 
   function closeWorkshopAlert() {
     var modal = qs("workshop-alert");
-    if (!modal || !workshopAlertOpen) return;
-    workshopAlertOpen = false;
-    workshopAlertHovering = false;
-    workshopAlertSeen = true;
-    workshopReplayAvailable = true;
+    if (!modal || !appState.workshop.alertOpen) return;
+    appState.workshop.alertOpen = false;
+    appState.workshop.alertHovering = false;
+    appState.workshop.alertSeen = true;
+    appState.workshop.replayAvailable = true;
     renderWorkshopReplay();
     modal.classList.remove("show");
     modal.setAttribute("aria-hidden", "true");
-    if (workshopAlertAutoDismissTimer) {
-      window.clearTimeout(workshopAlertAutoDismissTimer);
-      workshopAlertAutoDismissTimer = null;
+    if (runtime.timers.workshopAlertAutoDismiss) {
+      window.clearTimeout(runtime.timers.workshopAlertAutoDismiss);
+      runtime.timers.workshopAlertAutoDismiss = null;
     }
   }
 
@@ -1312,22 +1493,22 @@
     if (notifyClose) notifyClose.classList.add("workshop-notification-close");
     modal.addEventListener("mouseenter", function () {
       if (!modal.classList.contains("show")) return;
-      workshopAlertHovering = true;
-      if (workshopAlertAutoDismissTimer) {
-        window.clearTimeout(workshopAlertAutoDismissTimer);
-        workshopAlertAutoDismissTimer = null;
+      appState.workshop.alertHovering = true;
+      if (runtime.timers.workshopAlertAutoDismiss) {
+        window.clearTimeout(runtime.timers.workshopAlertAutoDismiss);
+        runtime.timers.workshopAlertAutoDismiss = null;
       }
     });
     modal.addEventListener("mouseleave", function () {
-      workshopAlertHovering = false;
-      if (!workshopAlertOpen || !modal.classList.contains("show")) return;
-      if (workshopAlertAutoDismissTimer) {
-        window.clearTimeout(workshopAlertAutoDismissTimer);
-        workshopAlertAutoDismissTimer = null;
+      appState.workshop.alertHovering = false;
+      if (!appState.workshop.alertOpen || !modal.classList.contains("show")) return;
+      if (runtime.timers.workshopAlertAutoDismiss) {
+        window.clearTimeout(runtime.timers.workshopAlertAutoDismiss);
+        runtime.timers.workshopAlertAutoDismiss = null;
       }
-      workshopAlertAutoDismissTimer = window.setTimeout(function () {
-        workshopAlertAutoDismissTimer = null;
-        if (!workshopAlertOpen || workshopAlertHovering) return;
+      runtime.timers.workshopAlertAutoDismiss = window.setTimeout(function () {
+        runtime.timers.workshopAlertAutoDismiss = null;
+        if (!appState.workshop.alertOpen || appState.workshop.alertHovering) return;
         closeWorkshopAlert();
       }, 8000);
     });
@@ -1341,7 +1522,7 @@
     if (listen) {
       listen.addEventListener("click", function () {
         closeWorkshopAlert();
-        enterWorkshop();
+        enterWorkshop("alert_listen");
       });
     }
     var replay = qs("workshop-replay");
@@ -1355,11 +1536,11 @@
       railExit.addEventListener("click", exitWorkshop);
     }
     document.addEventListener("keydown", function (event) {
-      if (roleProfileOpen) {
+      if (appState.roleProfile.open) {
         if (event.key === "Escape") closeRoleProfile();
         return;
       }
-      if (!workshopAlertOpen) return;
+      if (!appState.workshop.alertOpen) return;
       if (event.key === "Escape") {
         closeWorkshopAlert();
       }
@@ -1377,22 +1558,36 @@
     });
   }
   function renderWorkshopReplay() {
-    document.body.dataset.workshopReplay = workshopReplayAvailable ? "true" : "false";
+    document.body.dataset.workshopReplay = appState.workshop.replayAvailable ? "true" : "false";
+  }
+
+  function syncWorkshopTurnNavVisibility() {
+    var root = qs("workshop-participants");
+    if (!root) return;
+    var label = root.querySelector(".workshop-turns-label");
+    if (label) {
+      label.classList.toggle("is-visible", appState.workshop.visibleCards > 0);
+    }
+    var buttons = root.querySelectorAll(".workshop-turn-index [data-workshop-turn]");
+    buttons.forEach(function (btn, idx) {
+      btn.classList.toggle("is-visible", idx < appState.workshop.visibleCards);
+    });
   }
 
   function renderWorkshopParticipants() {
     var root = qs("workshop-participants");
     if (!root) return;
     root.innerHTML = '<div class="workshop-rail-label">' + escapeHtml(tw("participants", "参与者")) + '</div>' + ROLE_PROFILES.map(function (profile) {
-      var aria = workshopLanguage === "zh"
+      var aria = appState.lang.workshop === "zh"
         ? "打开 " + profile.display_name_en + " 的角色档案"
         : "Open profile for " + profile.display_name_en;
       return '<article class="workshop-participant" data-role-profile="' + escapeHtml(profile.speaker_id) + '" tabindex="0" role="button" aria-label="' + escapeHtml(aria) + '">' +
         workshopAvatar(profile, "workshop-participant-avatar") +
         '<div><strong>' + escapeHtml(profile.display_name_en) + '</strong><span>' + escapeHtml(profile.display_name_zh + ' / ' + profile.real_world_role_zh) + '</span></div>' +
         '</article>';
-    }).join("") + '<div class="workshop-rail-label">' + escapeHtml(tw("turns", "回合")) + '</div><div class="workshop-turn-index">' + WORKSHOP_CARDS.map(function (card) {
-      return '<button type="button" data-workshop-turn="' + escapeHtml(card.turn_id) + '"><span>' + escapeHtml(card.turn_id) + '</span><strong>' + escapeHtml(workshopText(card, "title")) + '</strong></button>';
+    }).join("") + '<div class="workshop-rail-label workshop-turns-label' + (appState.workshop.visibleCards > 0 ? " is-visible" : "") + '">' + escapeHtml(tw("turns", "回合")) + '</div><div class="workshop-turn-index">' + WORKSHOP_CARDS.map(function (card, idx) {
+      var cls = idx < appState.workshop.visibleCards ? "is-visible" : "";
+      return '<button type="button"' + (cls ? ' class="' + cls + '"' : "") + ' data-workshop-turn="' + escapeHtml(card.turn_id) + '"><span>' + escapeHtml(card.turn_id) + '</span><strong>' + escapeHtml(workshopText(card, "title")) + '</strong></button>';
     }).join("") + '</div>';
     root.querySelectorAll("[data-workshop-turn]").forEach(function (button) {
       button.addEventListener("click", function () {
@@ -1401,28 +1596,80 @@
     });
     bindRoleProfileTriggers(root);
   }
-  function renderWorkshopPanel(options) {
+
+  var WORKSHOP_INTRO_DELAY_MS = 1800;
+  var WORKSHOP_CARD_REVEAL_MS = 800;
+
+  function workshopIntroInnerMarkup() {
+    return '<div class="message workshop-message workshop-intro-message visible" data-speaker="workshop-intro">' +
+      '<span class="workshop-intro-avatar" aria-hidden="true">' + assistantAvatarSpiderMarkup() + "</span>" +
+      '<div class="bubble workshop-bubble">' +
+      '<span class="app-kicker">' + escapeHtml(workshopPanelText("kicker")) + "</span>" +
+      "<h3>" + escapeHtml(workshopPanelText("title")) + "</h3>" +
+      '<p class="workshop-intro-body">' + escapeHtml(workshopPanelText("intro")) + "</p>" +
+      "</div></div>";
+  }
+
+  function workshopPanelControlsMarkup() {
+    return '<div class="workshop-panel-controls"><div class="workshop-language-toggle" aria-label="' + escapeHtml(tw("Workshop language", "工作坊语言")) + '"><button type="button" data-workshop-lang="en" class="' + (appState.lang.workshop === "en" ? "active" : "") + '">EN</button><button type="button" data-workshop-lang="zh" class="' + (appState.lang.workshop === "zh" ? "active" : "") + '">中文</button></div>' +
+      '<button class="workshop-autoplay-btn" type="button" data-workshop-autoplay>' + (appState.workshop.autoPlay ? "\u23f8 " + tw("pause", "\u6682\u505c") : "\u25b6 " + tw("play", "\u64ad\u653e")) + "</button></div>";
+  }
+
+  function workshopPanelHeadMarkup() {
+    return '<section class="workshop-panel-head workshop-panel-head--controls-only">' + workshopPanelControlsMarkup() + "</section>";
+  }
+
+  function getWorkshopDialogue() {
+    var root = qs("workshop-panel");
+    return root ? root.querySelector(".workshop-dialogue") : null;
+  }
+
+  function mountWorkshopShell() {
     var root = qs("workshop-panel");
     if (!root) return;
+    root.innerHTML = workshopPanelHeadMarkup() +
+      '<div class="workshop-intro-card">' + workshopIntroInnerMarkup() + "</div>" +
+      '<div class="workshop-dialogue" aria-live="polite"></div>';
+    bindWorkshopPanel(root);
+  }
+
+  function refreshWorkshopIntroCard() {
+    var introCard = document.querySelector(".workshop-intro-card");
+    if (!introCard) return;
+    introCard.innerHTML = workshopIntroInnerMarkup();
+  }
+
+  function appendWorkshopDebateCard(card, dialogue, opts) {
+    if (!card || !dialogue) return null;
+    var settings = opts || {};
+    var wrap = document.createElement("div");
+    wrap.innerHTML = workshopCard(card);
+    var el = wrap.firstElementChild;
+    if (!el) return null;
+    dialogue.appendChild(el);
+    if (settings.visible) {
+      void el.offsetWidth;
+      el.classList.add("visible");
+    }
+    if (settings.scroll !== false) {
+      var scrollRoot = mainScrollRoot();
+      if (scrollRoot) scrollMainToElement(scrollRoot, el);
+    }
+    return el;
+  }
+
+  function renderWorkshopDialogue(options) {
+    var dialogue = getWorkshopDialogue();
+    if (!dialogue) return;
     var mainArea = document.querySelector(".main-area");
     var previousScrollTop = options && options.preserveScroll && mainArea ? mainArea.scrollTop : null;
-    var cards = WORKSHOP_CARDS.slice(0, Math.max(0, workshopVisibleCards));
-    root.innerHTML = '<section class="workshop-panel-head">' +
-      '<div><span class="app-kicker">' + escapeHtml(workshopPanelText("kicker")) + '</span><h2>' + escapeHtml(workshopPanelText("title")) + '</h2><p>' + escapeHtml(workshopPanelText("intro")) + '</p></div>' +
-      '<div class="workshop-panel-controls"><div class="workshop-language-toggle" aria-label="' + escapeHtml(tw("Workshop language", "工作坊语言")) + '"><button type="button" data-workshop-lang="en" class="' + (workshopLanguage === "en" ? "active" : "") + '">EN</button><button type="button" data-workshop-lang="zh" class="' + (workshopLanguage === "zh" ? "active" : "") + '">中文</button></div>' +
-      '<button class="workshop-autoplay-btn" type="button" data-workshop-autoplay>' + (workshopAutoPlay ? "\u23f8 " + tw("pause", "\u6682\u505c") : "\u25b6 " + tw("play", "\u64ad\u653e")) + "</button></div>" +
-      '</section>' +
-      '<div class="workshop-dialogue" aria-live="polite">' + cards.map(workshopCard).join("") + '</div>';
-    bindWorkshopPanel(root);
-    var msgs = root.querySelectorAll(".workshop-dialogue .workshop-message");
-    var staggerPartial = options && options.staggerEntrancePartial;
-    msgs.forEach(function (el, i) {
-      if (staggerPartial) {
-        if (i < workshopVisibleCards - 1) el.classList.add("visible");
-      } else if (i < workshopVisibleCards) {
-        el.classList.add("visible");
-      }
-    });
+    dialogue.innerHTML = "";
+    var i;
+    for (i = 0; i < appState.workshop.visibleCards; i++) {
+      appendWorkshopDebateCard(WORKSHOP_CARDS[i], dialogue, { visible: true, scroll: false });
+    }
+    var panelRoot = qs("workshop-panel");
+    if (panelRoot) bindWorkshopPanel(panelRoot);
     if (previousScrollTop !== null && mainArea) {
       window.requestAnimationFrame(function () {
         mainArea.scrollTop = previousScrollTop;
@@ -1430,56 +1677,195 @@
     }
   }
 
+  function renderWorkshopPanel(options) {
+    var root = qs("workshop-panel");
+    if (!root) return;
+    if (!root.querySelector(".workshop-intro-card")) {
+      mountWorkshopShell();
+    }
+    var head = root.querySelector(".workshop-panel-head");
+    if (head) {
+      head.outerHTML = workshopPanelHeadMarkup();
+    }
+    refreshWorkshopIntroCard();
+    renderWorkshopDialogue(options);
+  }
+
+  function ensureWorkshopCardsUpTo(count) {
+    var dialogue = getWorkshopDialogue();
+    if (!dialogue) return;
+    while (appState.workshop.visibleCards < count && appState.workshop.visibleCards < WORKSHOP_CARDS.length) {
+      appState.workshop.visibleCards += 1;
+      appendWorkshopDebateCard(WORKSHOP_CARDS[appState.workshop.visibleCards - 1], dialogue, { visible: true, scroll: false });
+    }
+    syncWorkshopTurnNavVisibility();
+    var panelRoot = qs("workshop-panel");
+    if (panelRoot) bindWorkshopPanel(panelRoot);
+  }
+
   function bindWorkshopPanel(root) {
-    root.querySelectorAll("[data-workshop-lang]").forEach(function (button) {
-      button.addEventListener("click", function () {
-        workshopLanguage = button.getAttribute("data-workshop-lang") === "zh" ? "zh" : "en";
-        portfolioLanguage = workshopLanguage;
-        renderWorkshopParticipants();
-        renderWorkshopPanel({ preserveScroll: true });
-        syncStoryChrome();
-      });
+    if (root.dataset.workshopPanelBound === "true") return;
+    root.dataset.workshopPanelBound = "true";
+    root.addEventListener("click", handleWorkshopPanelClick);
+    root.addEventListener("keydown", handleWorkshopPanelKeydown);
+    root.addEventListener("toggle", handleWorkshopDetailsToggle, true);
+  }
+
+  function handleWorkshopPanelClick(event) {
+    var root = qs("workshop-panel");
+    var target = event.target;
+    if (!root || !target || !root.contains(target)) return;
+    var langButton = target.closest("[data-workshop-lang]");
+    if (langButton && root.contains(langButton)) {
+      setWorkshopLanguage(langButton.getAttribute("data-workshop-lang"));
+      return;
+    }
+    var actionButton = target.closest("[data-workshop-action]");
+    if (actionButton && root.contains(actionButton)) {
+      stopWorkshopAutoPlayStream();
+      handleWorkshopAction(actionButton.getAttribute("data-workshop-action"), actionButton.getAttribute("data-workshop-target"));
+      return;
+    }
+    var autoPlayButton = target.closest("[data-workshop-autoplay]");
+    if (autoPlayButton && root.contains(autoPlayButton)) {
+      toggleWorkshopAutoPlay();
+      return;
+    }
+    var profileTrigger = target.closest("[data-role-profile]");
+    if (profileTrigger && root.contains(profileTrigger)) {
+      event.preventDefault();
+      openRoleProfile(profileTrigger.getAttribute("data-role-profile"), profileTrigger);
+    }
+  }
+
+  function handleWorkshopPanelKeydown(event) {
+    var root = qs("workshop-panel");
+    var trigger = event.target && event.target.closest("[data-role-profile]");
+    if (!root || !trigger || !root.contains(trigger)) return;
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    openRoleProfile(trigger.getAttribute("data-role-profile"), trigger);
+  }
+
+  function handleWorkshopDetailsToggle(event) {
+    var details = event.target;
+    if (!details || !details.matches || !details.matches(".workshop-details[data-turn-id]")) return;
+    var turnId = details.getAttribute("data-turn-id");
+    if (!turnId) return;
+    if (details.open) {
+      appState.workshop.openCards.add(turnId);
+      stopWorkshopAutoPlayStream();
+      appState.analytics.workshopDeepAction = true;
+      track("workshop_original_expanded", { turn_id: turnId });
+      updateFeatureDiscovery();
+    } else {
+      appState.workshop.openCards.delete(turnId);
+    }
+  }
+
+  function setWorkshopLanguage(lang) {
+    var domState = captureInteractiveDomState();
+    appState.lang.workshop = lang === "zh" ? "zh" : "en";
+    appState.lang.portfolio = appState.lang.workshop;
+    document.body.dataset.lang = appState.lang.portfolio;
+    document.documentElement.setAttribute("lang", appState.lang.portfolio === "zh" ? "zh-CN" : "en");
+    track("language_switched", { language: appState.lang.portfolio, surface: "workshop" });
+    syncLandingText();
+    syncStoryChrome();
+    syncTopbarLabel();
+    syncWorkshopLanguageInPlace();
+    restoreInteractiveDomState(domState);
+  }
+
+  function syncWorkshopLanguageInPlace() {
+    syncWorkshopParticipantsLanguage();
+    syncWorkshopPanelControlsLanguage();
+    refreshWorkshopIntroCard();
+    syncWorkshopVisibleCardsLanguage();
+    renderWorkshopControls();
+    syncOpenRoleProfileLanguage();
+  }
+
+  function syncWorkshopParticipantsLanguage() {
+    var root = qs("workshop-participants");
+    if (!root) return;
+    var labels = root.querySelectorAll(".workshop-rail-label");
+    if (labels[0]) labels[0].textContent = tw("participants", "参与者");
+    if (labels[1]) labels[1].textContent = tw("turns", "回合");
+    ROLE_PROFILES.forEach(function (profile) {
+      var trigger = root.querySelector('[data-role-profile="' + cssEscape(profile.speaker_id) + '"]');
+      if (!trigger) return;
+      var aria = appState.lang.workshop === "zh"
+        ? "打开 " + profile.display_name_en + " 的角色档案"
+        : "Open profile for " + profile.display_name_en;
+      trigger.setAttribute("aria-label", aria);
+      var meta = trigger.querySelector("div span");
+      if (meta) meta.textContent = profile.display_name_zh + ' / ' + profile.real_world_role_zh;
     });
-    root.querySelectorAll(".workshop-details[data-turn-id]").forEach(function (details) {
-      details.addEventListener("toggle", function () {
-        var turnId = details.getAttribute("data-turn-id");
-        if (!turnId) return;
-        if (details.open) {
-          workshopOpenCards.add(turnId);
-          stopWorkshopAutoPlayStream();
-        } else {
-          workshopOpenCards.delete(turnId);
-        }
-      });
+    WORKSHOP_CARDS.forEach(function (card) {
+      var button = root.querySelector('[data-workshop-turn="' + cssEscape(card.turn_id) + '"]');
+      var title = button ? button.querySelector("strong") : null;
+      if (title) title.textContent = workshopText(card, "title");
     });
-    root.querySelectorAll("[data-workshop-action]").forEach(function (button) {
-      button.addEventListener("click", function () {
-        stopWorkshopAutoPlayStream();
-        handleWorkshopAction(button.getAttribute("data-workshop-action"), button.getAttribute("data-workshop-target"));
-      });
+  }
+
+  function syncWorkshopPanelControlsLanguage() {
+    var head = document.querySelector("#workshop-panel .workshop-panel-head");
+    if (!head) return;
+    head.innerHTML = workshopPanelControlsMarkup();
+  }
+
+  function syncWorkshopVisibleCardsLanguage() {
+    var dialogue = getWorkshopDialogue();
+    if (!dialogue) return;
+    WORKSHOP_CARDS.slice(0, appState.workshop.visibleCards).forEach(function (card) {
+      var current = dialogue.querySelector('[data-workshop-card="' + cssEscape(card.turn_id) + '"]');
+      if (!current) return;
+      var wasVisible = current.classList.contains("visible");
+      var wrap = document.createElement("div");
+      wrap.innerHTML = workshopCard(card);
+      var next = wrap.firstElementChild;
+      if (!next) return;
+      if (wasVisible) next.classList.add("visible");
+      current.replaceWith(next);
     });
-    root.querySelectorAll("[data-workshop-autoplay]").forEach(function (button) {
-      button.addEventListener("click", function () {
-        toggleWorkshopAutoPlay();
-      });
-    });
-    bindRoleProfileTriggers(root);
+  }
+
+  function syncOpenRoleProfileLanguage() {
+    if (!appState.roleProfile.open) return;
+    var content = qs("role-profile-content");
+    var hero = content ? content.querySelector("[data-role-profile-card]") : null;
+    var profile = hero ? ROLE_PROFILE_BY_ID[hero.getAttribute("data-role-profile-card")] : null;
+    if (!content || !profile) return;
+    var lines = profile["what_i_do_" + appState.lang.workshop] || profile.what_i_do_en || [];
+    var whatLabel = content.querySelector("[data-role-profile-what-label]");
+    var whatList = content.querySelector("[data-role-profile-what-list]");
+    var styleLabel = content.querySelector("[data-role-profile-style-label]");
+    var styleBody = content.querySelector("[data-role-profile-style-body]");
+    if (whatLabel) whatLabel.textContent = appState.lang.workshop === "zh" ? "职责" : "what I do";
+    if (whatList) {
+      whatList.innerHTML = lines.map(function (item) {
+        return '<li>' + escapeHtml(item) + '</li>';
+      }).join("");
+    }
+    if (styleLabel) styleLabel.textContent = appState.lang.workshop === "zh" ? "风格说明" : "style note";
+    if (styleBody) styleBody.textContent = appState.lang.workshop === "zh" && profile.style_note_zh ? profile.style_note_zh : profile.style_note;
   }
 
   function stopWorkshopAutoPlayStream() {
-    workshopAutoPlay = false;
-    window.clearTimeout(workshopAutoPlayTimer);
-    workshopAutoPlayTimer = null;
+    appState.workshop.autoPlay = false;
+    window.clearTimeout(runtime.timers.workshopAutoPlay);
+    runtime.timers.workshopAutoPlay = null;
     renderWorkshopControls();
   }
 
   function toggleWorkshopAutoPlay() {
-    workshopAutoPlay = !workshopAutoPlay;
-    if (workshopAutoPlay) {
+    appState.workshop.autoPlay = !appState.workshop.autoPlay;
+    if (appState.workshop.autoPlay) {
       revealWorkshopCards();
     } else {
-      window.clearTimeout(workshopAutoPlayTimer);
-      workshopAutoPlayTimer = null;
+      window.clearTimeout(runtime.timers.workshopAutoPlay);
+      runtime.timers.workshopAutoPlay = null;
     }
     renderWorkshopControls();
   }
@@ -1487,7 +1873,7 @@
   function renderWorkshopControls() {
     var btn = document.querySelector("#workshop-panel [data-workshop-autoplay]");
     if (!btn) return;
-    btn.textContent = workshopAutoPlay ? "\u23f8 " + tw("pause", "暂停") : "\u25b6 " + tw("play", "播放");
+    btn.textContent = appState.workshop.autoPlay ? "\u23f8 " + tw("pause", "暂停") : "\u25b6 " + tw("play", "播放");
   }
 
   function bindRoleProfileTriggers(root) {
@@ -1511,8 +1897,11 @@
     var modal = qs("role-profile-popup");
     var content = qs("role-profile-content");
     if (!profile || !modal || !content) return;
-    roleProfileReturnFocus = source || document.activeElement;
-    roleProfileOpen = true;
+    appState.roleProfile.returnFocus = source || document.activeElement;
+    appState.roleProfile.open = true;
+    appState.analytics.workshopDeepAction = true;
+    track("workshop_role_profile_opened", { role_id: speakerId });
+    updateFeatureDiscovery();
     content.innerHTML = roleProfileContent(profile);
     modal.setAttribute("aria-hidden", "false");
     modal.classList.add("show");
@@ -1522,44 +1911,44 @@
 
   function closeRoleProfile(options) {
     var modal = qs("role-profile-popup");
-    if (!modal || !roleProfileOpen) return;
-    roleProfileOpen = false;
+    if (!modal || !appState.roleProfile.open) return;
+    appState.roleProfile.open = false;
     modal.classList.remove("show");
     modal.setAttribute("aria-hidden", "true");
     if (!options || options.returnFocus !== false) {
-      var target = roleProfileReturnFocus && document.contains(roleProfileReturnFocus) ? roleProfileReturnFocus : null;
+      var target = appState.roleProfile.returnFocus && document.contains(appState.roleProfile.returnFocus) ? appState.roleProfile.returnFocus : null;
       if (target && typeof target.focus === "function") target.focus();
     }
   }
 
   function roleProfileContent(profile) {
-    var field = "what_i_do_" + workshopLanguage;
+    var field = "what_i_do_" + appState.lang.workshop;
     var lines = profile[field] || profile.what_i_do_en || [];
-    var labWhat = workshopLanguage === "zh" ? "职责" : "what I do";
-    var labStyle = workshopLanguage === "zh" ? "风格说明" : "style note";
-    var styleBody = workshopLanguage === "zh" && profile.style_note_zh ? profile.style_note_zh : profile.style_note;
+    var labWhat = appState.lang.workshop === "zh" ? "职责" : "what I do";
+    var labStyle = appState.lang.workshop === "zh" ? "风格说明" : "style note";
+    var styleBody = appState.lang.workshop === "zh" && profile.style_note_zh ? profile.style_note_zh : profile.style_note;
     return '<div class="role-profile-hero" data-role-profile-card="' + escapeHtml(profile.speaker_id) + '">' +
       workshopAvatar(profile, "role-profile-avatar") +
       '<div><span id="role-profile-title" class="role-profile-kicker">' + escapeHtml(profile.initials || profile.speaker_id) + '</span>' +
       '<strong>' + escapeHtml(profile.display_name_en) + ' / ' + escapeHtml(profile.display_name_zh) + '</strong>' +
       '<p>' + escapeHtml(profile.real_world_role_zh) + '</p></div>' +
       '</div>' +
-      '<div class="role-profile-section"><span>' + escapeHtml(labWhat) + '</span><ul>' + lines.map(function (item) {
+      '<div class="role-profile-section"><span data-role-profile-what-label>' + escapeHtml(labWhat) + '</span><ul data-role-profile-what-list>' + lines.map(function (item) {
         return '<li>' + escapeHtml(item) + '</li>';
       }).join("") + '</ul></div>' +
-      '<div class="role-profile-section"><span>' + escapeHtml(labStyle) + '</span><p>' + escapeHtml(styleBody) + '</p></div>';
+      '<div class="role-profile-section"><span data-role-profile-style-label>' + escapeHtml(labStyle) + '</span><p data-role-profile-style-body>' + escapeHtml(styleBody) + '</p></div>';
   }
 
   function workshopText(card, field) {
-    return card[field + "_" + workshopLanguage] || card[field + "_en"] || "";
+    return card[field + "_" + appState.lang.workshop] || card[field + "_en"] || "";
   }
 
   function workshopPanelText(field) {
-    return WORKSHOP_PANEL[field + "_" + workshopLanguage] || WORKSHOP_PANEL[field + "_en"] || "";
+    return WORKSHOP_PANEL[field + "_" + appState.lang.workshop] || WORKSHOP_PANEL[field + "_en"] || "";
   }
 
   function workshopOriginalText(card) {
-    return workshopLanguage === "zh" ? card.translated_zh : card.original_en;
+    return appState.lang.workshop === "zh" ? card.translated_zh : card.original_en;
   }
 
   function workshopHasDenseOriginal(card) {
@@ -1569,7 +1958,12 @@
   }
 
   function wordCount(text) {
-    return String(text || "").trim().split(/\s+/).filter(Boolean).length;
+    var value = String(text || "").trim();
+    if (!value) return 0;
+    if (/[\u3400-\u9fff]/.test(value)) {
+      return value.replace(/\s+/g, "").length;
+    }
+    return value.split(/\s+/).filter(Boolean).length;
   }
 
   function inlineMarkdown(text) {
@@ -1603,16 +1997,16 @@
 
   function workshopCard(card) {
     var profile = ROLE_PROFILE_BY_ID[card.speaker_id] || fallbackProfile(card.speaker_id);
-    var name = workshopLanguage === "zh" ? profile.display_name_zh + ' / ' + profile.display_name_en : profile.display_name_en + ' / ' + profile.display_name_zh;
-    var originalLabel = workshopLanguage === "zh" ? "中文译文" : "Original (EN)";
-    var summaryLang = workshopLanguage === "zh" ? ' lang="zh-CN"' : "";
-    var tensionLang = workshopLanguage === "zh" ? ' lang="zh-CN"' : "";
-    var profileAria = workshopLanguage === "zh"
+    var name = appState.lang.workshop === "zh" ? profile.display_name_zh + ' / ' + profile.display_name_en : profile.display_name_en + ' / ' + profile.display_name_zh;
+    var originalLabel = appState.lang.workshop === "zh" ? "中文译文" : "Original (EN)";
+    var summaryLang = appState.lang.workshop === "zh" ? ' lang="zh-CN"' : "";
+    var tensionLang = appState.lang.workshop === "zh" ? ' lang="zh-CN"' : "";
+    var profileAria = appState.lang.workshop === "zh"
       ? "打开 " + profile.display_name_en + " 的角色档案"
       : "Open profile for " + profile.display_name_en;
     var details = workshopHasDenseOriginal(card)
-      ? '<details class="workshop-details" data-turn-id="' + escapeHtml(card.turn_id) + '"' + (workshopOpenCards.has(card.turn_id) ? " open" : "") + '><summary>' + escapeHtml(workshopLanguage === "zh" ? "展开原文" : "expand original") + '</summary>' +
-        '<div class="workshop-original single"><section' + (workshopLanguage === "zh" ? ' lang="zh-CN"' : "") + '><h4>' + escapeHtml(originalLabel) + '</h4>' + markdownToHtml(workshopOriginalText(card)) + '</section></div>' +
+      ? '<details class="workshop-details" data-turn-id="' + escapeHtml(card.turn_id) + '"' + (appState.workshop.openCards.has(card.turn_id) ? " open" : "") + '><summary>' + escapeHtml(appState.lang.workshop === "zh" ? "展开原文" : "expand original") + '</summary>' +
+        '<div class="workshop-original single"><section' + (appState.lang.workshop === "zh" ? ' lang="zh-CN"' : "") + '><h4>' + escapeHtml(originalLabel) + '</h4>' + markdownToHtml(workshopOriginalText(card)) + '</section></div>' +
         '<div class="workshop-actions">' + card.actions.map(workshopActionButton).join("") + '</div>' +
         '</details>'
       : '<div class="workshop-actions workshop-actions-compact">' + card.actions.map(workshopActionButton).join("") + '</div>';
@@ -1627,14 +2021,14 @@
       '<h3>' + escapeHtml(workshopText(card, "title")) + '</h3>' +
       '<p class="workshop-highlight">' + escapeHtml(workshopText(card, "highlight")) + '</p>' +
       '<p class="workshop-summary"' + summaryLang + '>' + escapeHtml(workshopText(card, "summary")) + '</p>' +
-      '<div class="workshop-tension"><strong>' + escapeHtml(workshopLanguage === "zh" ? "张力" : "tension") + '</strong><span' + tensionLang + '>' + escapeHtml(workshopText(card, "tension")) + '</span></div>' +
+      '<div class="workshop-tension"><strong>' + escapeHtml(appState.lang.workshop === "zh" ? "张力" : "tension") + '</strong><span' + tensionLang + '>' + escapeHtml(workshopText(card, "tension")) + '</span></div>' +
       details +
       "</div></div></div>";
   }
 
   function workshopActionLabel(action) {
     var lab = action.label || "";
-    if (workshopLanguage === "zh" && WORKSHOP_ACTION_LABEL_ZH[lab]) return WORKSHOP_ACTION_LABEL_ZH[lab];
+    if (appState.lang.workshop === "zh" && WORKSHOP_ACTION_LABEL_ZH[lab]) return WORKSHOP_ACTION_LABEL_ZH[lab];
     return lab || action.target || "";
   }
 
@@ -1654,48 +2048,32 @@
   }
 
   function revealWorkshopCards() {
-    window.clearTimeout(workshopAutoPlayTimer);
-    workshopAutoPlayTimer = null;
-    if (!workshopActive) return;
-    if (!workshopAutoPlay) return;
-    var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduceMotion) {
-      workshopVisibleCards = WORKSHOP_CARDS.length;
-      renderWorkshopPanel();
-      var panelRm = qs("workshop-panel");
-      if (panelRm) {
-        panelRm.querySelectorAll(".workshop-message").forEach(function (el) {
-          el.classList.add("visible");
-        });
-      }
-      return;
-    }
-    if (workshopVisibleCards < WORKSHOP_CARDS.length) {
-      workshopVisibleCards += 1;
-      renderWorkshopPanel({ staggerEntrancePartial: true });
-      var lastCard = WORKSHOP_CARDS[workshopVisibleCards - 1];
-      var newCard = lastCard ? document.querySelector('[data-workshop-card="' + cssEscape(lastCard.turn_id) + '"]') : null;
-      if (newCard) {
-        void newCard.offsetWidth;
-        newCard.classList.add("visible");
-      }
-      if (workshopAutoPlay && workshopVisibleCards < WORKSHOP_CARDS.length) {
-        workshopAutoPlayTimer = window.setTimeout(revealWorkshopCards, 800);
-      }
+    window.clearTimeout(runtime.timers.workshopAutoPlay);
+    runtime.timers.workshopAutoPlay = null;
+    if (!appState.workshop.active) return;
+    if (!appState.workshop.autoPlay) return;
+    var dialogue = getWorkshopDialogue();
+    if (!dialogue) return;
+    if (appState.workshop.visibleCards >= WORKSHOP_CARDS.length) return;
+    appState.workshop.visibleCards += 1;
+    appendWorkshopDebateCard(WORKSHOP_CARDS[appState.workshop.visibleCards - 1], dialogue, { visible: true, scroll: true });
+    syncWorkshopTurnNavVisibility();
+    if (appState.workshop.autoPlay && appState.workshop.visibleCards < WORKSHOP_CARDS.length) {
+      runtime.timers.workshopAutoPlay = window.setTimeout(revealWorkshopCards, WORKSHOP_CARD_REVEAL_MS);
     }
   }
 
   function scrollWorkshopToTurn(turnId) {
     var root = mainScrollRoot();
     if (!root || !turnId) return;
+    track("workshop_turn_selected", { turn_id: turnId });
     var target = document.querySelector('[data-workshop-card="' + cssEscape(turnId) + '"]');
     if (!target) {
       var index = WORKSHOP_CARDS.findIndex(function (card) { return card.turn_id === turnId; });
       if (index >= 0) {
-        window.clearTimeout(workshopAutoPlayTimer);
-        workshopAutoPlayTimer = null;
-        workshopVisibleCards = Math.max(workshopVisibleCards, index + 1);
-        renderWorkshopPanel();
+        window.clearTimeout(runtime.timers.workshopAutoPlay);
+        runtime.timers.workshopAutoPlay = null;
+        ensureWorkshopCardsUpTo(index + 1);
         target = document.querySelector('[data-workshop-card="' + cssEscape(turnId) + '"]');
       }
     }
@@ -1710,15 +2088,18 @@
   }
 
   function handleWorkshopAction(kind, target) {
+    appState.analytics.workshopDeepAction = true;
+    track("workshop_action_selected", { action_kind: kind, action_target: target || "" });
+    updateFeatureDiscovery();
     if (kind === "back_to_debate") {
       scrollWorkshopToTurn(target);
       return;
     }
     if (kind === "jump_tag") {
-      workshopActive = false;
+      appState.workshop.active = false;
       delete document.body.dataset.workshop;
       var nextTag = target || "All";
-      activeTag = nextTag;
+      appState.portfolio.activeTag = nextTag;
       var expandIds = filteredCases().length ? [filteredCases()[0].id] : [];
       loadResultsShell(nextTag === "All" ? "grid" : "tag", nextTag, expandIds);
       scrollToResults();
@@ -1726,7 +2107,7 @@
     }
     if (kind === "jump_case") {
       var match = CASES.filter(function (item) { return item.id === target; })[0];
-      workshopActive = false;
+      appState.workshop.active = false;
       delete document.body.dataset.workshop;
       loadResultsShell("grid", "All", match ? [match.id] : []);
       window.setTimeout(function () {
@@ -1743,17 +2124,17 @@
 
   function startWorkshopAlertPreviewFromHash() {
     if (window.location.hash !== "#workshop-alert") return false;
-    window.clearTimeout(typingTimer);
-    window.clearTimeout(dotsTimer);
+    window.clearTimeout(runtime.timers.typing);
+    window.clearTimeout(runtime.timers.dots);
     cancelSpiderLanding();
-    conversationState = "landing";
+    appState.chat.conversationState = "landing";
     document.body.dataset.state = "landing";
-    activeTag = "All";
-    expandedCaseIds = new Set();
-    messages = [];
-    workshopPreviewShown = false;
-    workshopReplayAvailable = true;
-    workshopActive = false;
+    appState.portfolio.activeTag = "All";
+    appState.portfolio.expandedCaseIds = new Set();
+    appState.chat.messages = [];
+    appState.workshop.previewShown = false;
+    appState.workshop.replayAvailable = true;
+    appState.workshop.active = false;
     delete document.body.dataset.workshop;
     setSpiderVisible(false);
     setSpiderLength(0);
@@ -1762,7 +2143,7 @@
     /* #workshop-alert hash: fire ABOUT after intro + about chips; delay avoids racing USER_HI typing; skip if user already chose. */
     window.setTimeout(function () {
       if (window.location.hash !== "#workshop-alert") return;
-      if (conversationState !== "intro_choice") return;
+      if (appState.chat.conversationState !== "intro_choice") return;
       dispatchConversation({ type: "ABOUT_PICKED", label: chipDisplayLabel(ABOUT_CHIPS[0]) });
       syncTopbarLabel();
     }, 16000);
@@ -1772,19 +2153,30 @@
     return true;
   }
 
-  function enterWorkshop() {
-    workshopActive = true;
-    workshopReplayAvailable = true;
-    workshopVisibleCards = 0;
-    workshopOpenCards = new Set();
-    window.clearTimeout(workshopAutoPlayTimer);
-    workshopAutoPlayTimer = null;
+  function enterWorkshop(entryPath) {
+    window.clearTimeout(runtime.timers.typing);
+    window.clearTimeout(runtime.timers.dots);
+    runtime.timers.typing = null;
+    runtime.timers.dots = null;
+    appState.analytics.entered = true;
+    appState.analytics.workshopEntered = true;
+    track("workshop_entered", {
+      entry_path: entryPath || "portfolio",
+      language: appState.lang.workshop
+    });
+    updateFeatureDiscovery();
+    appState.workshop.active = true;
+    appState.workshop.replayAvailable = true;
+    appState.workshop.openCards = new Set();
+    window.clearTimeout(runtime.timers.workshopAutoPlay);
+    runtime.timers.workshopAutoPlay = null;
     document.body.dataset.workshop = "active";
     renderWorkshopReplay();
     renderWorkshopParticipants();
-    renderWorkshopPanel();
-    if (workshopAutoPlay) {
-      revealWorkshopCards();
+    mountWorkshopShell();
+    appState.workshop.visibleCards = 0;
+    if (appState.workshop.autoPlay) {
+      runtime.timers.workshopAutoPlay = window.setTimeout(revealWorkshopCards, WORKSHOP_INTRO_DELAY_MS);
     }
     var panel = qs("workshop-panel");
     if (panel) panel.focus();
@@ -1793,9 +2185,29 @@
   }
 
   function exitWorkshop() {
-    workshopActive = false;
-    window.clearTimeout(workshopAutoPlayTimer);
-    workshopAutoPlayTimer = null;
+    if (appState.workshop.directEntry) {
+      appState.workshop.directEntry = false;
+      appState.workshop.active = false;
+      window.clearTimeout(runtime.timers.workshopAutoPlay);
+      runtime.timers.workshopAutoPlay = null;
+      delete document.body.dataset.workshop;
+      appState.chat.conversationState = "landing";
+      document.body.dataset.state = "landing";
+      appState.chat.messages = [];
+      appState.portfolio.activeTag = "All";
+      appState.portfolio.expandedCaseIds = new Set();
+      setView("chat");
+      renderMessages();
+      renderTags();
+      renderCards();
+      resetLandingSpider();
+      syncTopbarLabel();
+      syncStoryChrome();
+      return;
+    }
+    appState.workshop.active = false;
+    window.clearTimeout(runtime.timers.workshopAutoPlay);
+    runtime.timers.workshopAutoPlay = null;
     delete document.body.dataset.workshop;
     var replay = qs("workshop-replay");
     if (replay) replay.focus();
@@ -1819,7 +2231,7 @@
     var scrollRoot = mainScrollRoot();
     var shouldScroll = isNearBottom(scrollRoot);
     var distanceFromBottom = scrollRoot ? scrollRoot.scrollHeight - scrollRoot.scrollTop : 0;
-    root.innerHTML = messages.map(function (message) {
+    root.innerHTML = appState.chat.messages.map(function (message) {
       if (message.kind === "dots") {
         return assistantMessage('<div class="bubble typing-bubble"><span class="typing-dots"><span></span><span></span><span></span></span></div>', "assistant", message.id);
       }
@@ -1850,7 +2262,7 @@
   function renderConversationIndex() {
     var root = qs("conversation-index");
     if (!root) return;
-    var items = messages.filter(function (message) {
+    var items = appState.chat.messages.filter(function (message) {
       return isIndexableMessage(message);
     });
     if (!items.length) {
@@ -1903,10 +2315,14 @@
     return document.querySelector(".main-area");
   }
 
+  function mainScrollBehavior() {
+    return typeof document.documentElement.style.scrollBehavior !== "undefined" ? "smooth" : "auto";
+  }
+
   function scrollMainToElement(scrollRoot, target) {
     if (!scrollRoot || !target) return;
     var top = target.offsetTop - scrollRoot.offsetTop - 8;
-    scrollRoot.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    scrollRoot.scrollTo({ top: Math.max(0, top), behavior: mainScrollBehavior() });
     scrollRoot.querySelectorAll(".message.index-target").forEach(function (messageEl) {
       messageEl.classList.remove("index-target");
     });
@@ -1957,9 +2373,9 @@
   }
 
   function filteredCases() {
-    if (!activeTag || activeTag === "All") return CASES;
+    if (!appState.portfolio.activeTag || appState.portfolio.activeTag === "All") return CASES;
     return CASES.filter(function (item) {
-      return item.tags.indexOf(activeTag) !== -1;
+      return item.tags.indexOf(appState.portfolio.activeTag) !== -1;
     });
   }
 
@@ -1972,11 +2388,12 @@
     var root = qs("tag-row");
     if (!root) return;
     root.innerHTML = TAGS.map(function (tag) {
-      var active = tag === activeTag || (!activeTag && tag === "All");
+      var active = tag === appState.portfolio.activeTag || (!appState.portfolio.activeTag && tag === "All");
       return '<button type="button" class="tag-chip' + (active ? " active" : "") + '" aria-label="' + tagAria(tag) + '" data-tag="' + escapeHtml(tag) + '"><span>' + escapeHtml(tag) + '</span></button>';
     }).join("");
     root.querySelectorAll("[data-tag]").forEach(function (button) {
       button.addEventListener("click", function () {
+        exitTagNavMode();
         dispatchConversation({ type: "TAG_SELECTED", value: button.getAttribute("data-tag") });
       });
     });
@@ -1984,33 +2401,26 @@
 
   function renderCards() {
     var root = qs("case-results");
-    var label = qs("result-label");
     if (!root) return;
     var results = filteredCases();
-    document.body.dataset.tagSelected = activeTag ? "true" : "false";
-    if (label) {
-      if (currentView === "chat") label.textContent = t("About", "关于");
-      else if (currentView === "overview") label.textContent = t("Overview", "概览");
-      else if (currentView === "split") label.textContent = t("Taxonomy", "标签说明");
-      else if (!activeTag) label.textContent = t("Choose a hashtag", "选一个标签");
-      else label.textContent = activeTag === "All" ? t("All projects", "全部项目") : activeTag + t(" results", " 结果");
-    }
+    document.body.dataset.tagSelected = appState.portfolio.activeTag ? "true" : "false";
+    syncResultLabel();
 
-    if (currentView === "chat") {
+    if (appState.view === "chat") {
       root.innerHTML = "";
-    } else if (currentView === "overview") {
+    } else if (appState.view === "overview") {
       root.innerHTML = overviewBlock() + groupedCaseCards(results, function () {
         return false;
       }, true) + '<div id="results-followup-bot"></div>';
-    } else if (currentView === "split") {
+    } else if (appState.view === "split") {
       root.innerHTML = taxonomyBlock() + groupedCaseCards(results, function (item) {
-        return expandedCaseIds.has(item.id);
+        return appState.portfolio.expandedCaseIds.has(item.id);
       }, false) + '<div id="results-followup-bot"></div>';
-    } else if (!activeTag && currentView === "tag") {
+    } else if (!appState.portfolio.activeTag && appState.view === "tag") {
       root.innerHTML = '<div class="empty-state"><strong>' + escapeHtml(t("Pick a hashtag.", "先选标签，项目卡片才会出现。")) + '</strong><span>' + escapeHtml(t("The project cards appear after the filter choice, so tag mode has a clear job.", "选定标签后才出卡片，避免空转。")) + '</span></div>';
     } else {
       root.innerHTML = groupedCaseCards(results, function (item) {
-        return expandedCaseIds.has(item.id);
+        return appState.portfolio.expandedCaseIds.has(item.id);
       }, false) + '<div id="results-followup-bot"></div>';
     }
 
@@ -2026,6 +2436,16 @@
     });
     bindDemoInteractions(root);
     syncStoryChrome();
+  }
+
+  function syncResultLabel() {
+    var label = qs("result-label");
+    if (!label) return;
+    if (appState.view === "chat") label.textContent = t("About", "关于");
+    else if (appState.view === "overview") label.textContent = t("Overview", "概览");
+    else if (appState.view === "split") label.textContent = t("Taxonomy", "标签说明");
+    else if (!appState.portfolio.activeTag) label.textContent = t("Choose a hashtag", "选一个标签");
+    else label.textContent = appState.portfolio.activeTag === "All" ? t("All projects", "全部项目") : appState.portfolio.activeTag + t(" results", " 结果");
   }
 
   function groupedCaseCards(results, expandedFn, preview) {
@@ -2097,7 +2517,8 @@
     return '<section class="profile-panel" aria-label="' + escapeHtml(t("Profile snapshot", "个人简介")) + '">' +
       '<div class="profile-role-row">' +
       PROFILE.roles.map(function (role) {
-        return '<span class="profile-role-pill">' + escapeHtml(role.label) + '</span>';
+        var label = appState.lang.portfolio === "zh" && role.label_zh ? role.label_zh : role.label;
+        return '<span class="profile-role-pill">' + escapeHtml(label) + '</span>';
       }).join("") +
       '</div>' +
       '<p class="profile-degree-line"><strong>' + escapeHtml(PROFILE.degree) + ' / ' + escapeHtml(PROFILE.expected) + '</strong></p>' +
@@ -2110,7 +2531,7 @@
       }).join("") +
       '<p class="profile-languages-text">' +
       PROFILE.languages.map(function (item) {
-        var note = portfolioLanguage === "zh" && item.note_zh ? item.note_zh : item.note;
+        var note = appState.lang.portfolio === "zh" && item.note_zh ? item.note_zh : item.note;
         return escapeHtml(item.lang) + " (" + escapeHtml(note) + ")";
       }).join(" \u00b7 ") +
       "</p>" +
@@ -2128,42 +2549,42 @@
   }
 
   function caseStory(item) {
-    return portfolioLanguage === "zh" && item.story_zh ? item.story_zh : item.story;
+    return appState.lang.portfolio === "zh" && item.story_zh ? item.story_zh : item.story;
   }
 
   function caseKicker(item) {
-    return portfolioLanguage === "zh" && item.kicker_zh ? item.kicker_zh : item.kicker;
+    return appState.lang.portfolio === "zh" && item.kicker_zh ? item.kicker_zh : item.kicker;
   }
 
   function caseEvidence(item) {
-    return portfolioLanguage === "zh" && item.evidence_zh ? item.evidence_zh : item.evidence;
+    return appState.lang.portfolio === "zh" && item.evidence_zh ? item.evidence_zh : item.evidence;
   }
 
   function caseHighlights(item) {
-    return portfolioLanguage === "zh" && item.highlights_zh ? item.highlights_zh : item.highlights;
+    return appState.lang.portfolio === "zh" && item.highlights_zh ? item.highlights_zh : item.highlights;
   }
 
   function caseProof(item) {
-    return portfolioLanguage === "zh" && item.proof_zh ? item.proof_zh : item.proof;
+    return appState.lang.portfolio === "zh" && item.proof_zh ? item.proof_zh : item.proof;
   }
 
   function caseAnalyticsMeta(item) {
-    return portfolioLanguage === "zh" && item.analyticsMeta_zh ? item.analyticsMeta_zh : item.analyticsMeta;
+    return appState.lang.portfolio === "zh" && item.analyticsMeta_zh ? item.analyticsMeta_zh : item.analyticsMeta;
   }
 
   function caseDesignMeta(item) {
-    return portfolioLanguage === "zh" && item.designMeta_zh ? item.designMeta_zh : item.designMeta;
+    return appState.lang.portfolio === "zh" && item.designMeta_zh ? item.designMeta_zh : item.designMeta;
   }
 
   function caseCard(item, open) {
-    return '<article class="case-card">' +
+    return '<article class="case-card" data-case-card="' + escapeHtml(item.id) + '">' +
       '<div class="case-head"><span class="case-icon" aria-hidden="true">' + iconSvg(item.iconKey) + '</span><div><span class="case-kicker">' + escapeHtml(caseKicker(item)) + '</span><h2>' + escapeHtml(item.title) + '</h2></div></div>' +
-      '<p>' + escapeHtml(caseStory(item)) + '</p>' +
+      '<p data-case-story>' + escapeHtml(caseStory(item)) + '</p>' +
       '<div class="card-tags">' + item.tags.map(function (tag) {
         return '<button type="button" class="tag-chip" aria-label="' + tagAria(tag) + '" data-tag-jump="' + escapeHtml(tag) + '"><span>' + escapeHtml(tag) + '</span></button>';
       }).join("") + '</div>' +
       '<details class="case-details" data-case-details="' + escapeHtml(item.id) + '"' + (open ? " open" : "") + '>' +
-      '<summary>' + cardDetailSummary(item) + '</summary>' +
+      '<summary data-case-summary>' + cardDetailSummary(item) + '</summary>' +
       whyItMattersBlock(item) +
       analyticsMetaBlock(item) +
       designMetaBlock(item) +
@@ -2188,7 +2609,7 @@
 
   function highlightsBlock(item) {
     var list = caseHighlights(item);
-    return '<div class="case-detail-section">' +
+    return '<div class="case-detail-section highlights-section">' +
       '<div class="case-section-label">' + escapeHtml(t("takeaways", "要点")) + '</div>' +
       '<div class="highlight-list">' + list.map(function (highlight) {
         return '<span>' + escapeHtml(highlight) + '</span>';
@@ -2202,9 +2623,9 @@
   }
 
   function whyItMattersBlock(item) {
-    return '<div class="case-detail-section">' +
+    return '<div class="case-detail-section why-section">' +
       '<div class="case-proof">' +
-      '<div class="proof-row"><span>' + escapeHtml(t("why it matters", "为什么重要")) + '</span><strong>' + escapeHtml(caseEvidence(item)) + '</strong></div>' +
+      '<div class="proof-row why-row"><span>' + escapeHtml(t("why it matters", "为什么重要")) + '</span><strong>' + escapeHtml(caseEvidence(item)) + '</strong></div>' +
       '</div></div>';
   }
 
@@ -2214,7 +2635,7 @@
     var convention = "";
     if (item.analyticsTermConvention || item.analyticsTermConvention_zh) {
       var convText =
-        portfolioLanguage === "zh" && item.analyticsTermConvention_zh
+        appState.lang.portfolio === "zh" && item.analyticsTermConvention_zh
           ? item.analyticsTermConvention_zh
           : item.analyticsTermConvention || item.analyticsTermConvention_zh;
       convention =
@@ -2240,7 +2661,7 @@
 
   function keyInsightBlock(item) {
     var proofRows = caseProof(item);
-    return '<div class="case-detail-section">' +
+    return '<div class="case-detail-section key-insight-section">' +
       '<div class="case-section-label">' + escapeHtml(t("key insight", "核心发现")) + '</div>' +
       '<div class="case-proof">' +
       proofRows.map(function (row) {
@@ -2268,7 +2689,7 @@
         '</div>';
     }
     if (type === "poi") {
-      return '<div class="label-compare"><span>' + escapeHtml(t("Map: Bar", "地图：酒吧")) + '</span><span>' + escapeHtml(t("Content: Livehouse", "内容：Livehouse")) + '</span><span>' + escapeHtml(t("Ticketing: Performance venue", "票务：演出场地")) + '</span></div>';
+      return '<div class="label-compare"><span>' + escapeHtml(t("Map: Bar", "地图：酒吧")) + '</span><span>' + escapeHtml(t("Content: Livehouse", "内容：Livehouse")) + '</span><span>' + escapeHtml(t("Ticketing: Performance venue", "票务：演出场地")) + '</span><span>' + escapeHtml(t("Probe: sports goods / food service / footwear & apparel", "探针：体育用品业 / 餐饮业 / 服装鞋帽")) + '</span></div>';
     }
     if (type === "xiazhuang") {
       return '<div class="demo-bim-tm" role="group" aria-label="Xiazhuang Twinmotion stills">' +
@@ -2291,11 +2712,211 @@
     return '<div class="control-list"><span>' + escapeHtml(t("disclosure", "披露")) + '</span><span>' + escapeHtml(t("place-aware impact", "地点相关影响")) + '</span><span>' + escapeHtml(t("contestability", "可争辩性")) + '</span><span>' + escapeHtml(t("spatial data governance", "空间数据治理")) + '</span></div>';
   }
 
+  var imageLightboxCloseTimer = null;
+  var imageLightboxLastThumb = null;
+  var imageLightboxScrollY = 0;
+  var imageLightboxPrevOverflow = "";
+  var imageLightboxPrevHtmlOverflow = "";
+  var imageLightboxPrevBodyPosition = "";
+  var imageLightboxPrevBodyTop = "";
+  var imageLightboxPrevBodyWidth = "";
+  var imageLightboxDocKeydown = null;
+  var imageLightboxClickBound = false;
+  var LIGHTBOX_FADE_MS = 200;
+
+  function lockPageScrollForLightbox() {
+    imageLightboxScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+    imageLightboxPrevHtmlOverflow = document.documentElement.style.overflow;
+    imageLightboxPrevOverflow = document.body.style.overflow;
+    imageLightboxPrevBodyPosition = document.body.style.position;
+    imageLightboxPrevBodyTop = document.body.style.top;
+    imageLightboxPrevBodyWidth = document.body.style.width;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = "-" + imageLightboxScrollY + "px";
+    document.body.style.width = "100%";
+    document.body.style.overflow = "hidden";
+  }
+
+  function unlockPageScrollForLightbox() {
+    document.documentElement.style.overflow = imageLightboxPrevHtmlOverflow;
+    document.body.style.position = imageLightboxPrevBodyPosition;
+    document.body.style.top = imageLightboxPrevBodyTop;
+    document.body.style.width = imageLightboxPrevBodyWidth;
+    document.body.style.overflow = imageLightboxPrevOverflow;
+    window.scrollTo(0, imageLightboxScrollY);
+    imageLightboxScrollY = 0;
+    imageLightboxPrevHtmlOverflow = "";
+    imageLightboxPrevOverflow = "";
+    imageLightboxPrevBodyPosition = "";
+    imageLightboxPrevBodyTop = "";
+    imageLightboxPrevBodyWidth = "";
+  }
+
+  function lightboxCaptionFromSource(img) {
+    var parent = img.parentElement;
+    if (parent && parent.tagName === "FIGCAPTION") {
+      var c1 = parent.cloneNode(true);
+      c1.querySelectorAll("img").forEach(function (n) {
+        n.remove();
+      });
+      return c1.textContent.replace(/\s+/g, " ").trim();
+    }
+    var fig = img.closest("figure");
+    if (fig) {
+      var cap = fig.querySelector("figcaption");
+      if (cap) {
+        var c2 = cap.cloneNode(true);
+        c2.querySelectorAll("img").forEach(function (n) {
+          n.remove();
+        });
+        return c2.textContent.replace(/\s+/g, " ").trim();
+      }
+    }
+    return "";
+  }
+
+  function ensureImageLightboxDom() {
+    var wrap = document.getElementById("img-lightbox");
+    if (!wrap) {
+      wrap = document.createElement("div");
+    wrap.id = "img-lightbox";
+    wrap.className = "lightbox-overlay";
+    wrap.setAttribute("aria-modal", "true");
+    wrap.setAttribute("role", "dialog");
+    wrap.setAttribute("aria-label", t("Image preview", "图片预览"));
+    wrap.innerHTML =
+      '<div class="lightbox-backdrop" data-lightbox-close></div>' +
+      '<figure class="lightbox-figure">' +
+      '<button type="button" class="lightbox-close" data-lightbox-close aria-label="' +
+      escapeHtml(t("Close preview", "关闭预览")) +
+      '">\u00d7</button>' +
+      '<img src="" alt="" class="lightbox-img" decoding="async" />' +
+      '<figcaption class="lightbox-caption"></figcaption>' +
+      "</figure>";
+      document.body.appendChild(wrap);
+    }
+    if (!imageLightboxClickBound) {
+      imageLightboxClickBound = true;
+      wrap.addEventListener("click", function (e) {
+        if (e.target.closest("[data-lightbox-close]")) {
+          closeImageLightbox();
+        }
+      });
+    }
+    return wrap;
+  }
+
+  function onImageLightboxDocKeydown(e) {
+    var box = document.getElementById("img-lightbox");
+    if (!box || !box.classList.contains("is-open") || box.classList.contains("is-closing")) return;
+    if (e.key === "Escape") {
+      e.preventDefault();
+      closeImageLightbox();
+      return;
+    }
+    if (e.key !== "Tab") return;
+    var closeBtn = box.querySelector(".lightbox-close");
+    var lim = box.querySelector(".lightbox-img");
+    if (!closeBtn || !lim) return;
+    if (e.shiftKey) {
+      if (document.activeElement === closeBtn) {
+        e.preventDefault();
+        lim.focus();
+      }
+    } else {
+      if (document.activeElement === lim) {
+        e.preventDefault();
+        closeBtn.focus();
+      }
+    }
+  }
+
+  function openImageLightbox(sourceImg) {
+    if (!sourceImg || sourceImg.tagName !== "IMG") return;
+    var box = ensureImageLightboxDom();
+    if (box.classList.contains("is-open") || box.classList.contains("is-closing")) return;
+    var lim = box.querySelector(".lightbox-img");
+    var capEl = box.querySelector(".lightbox-caption");
+    if (!lim || !capEl) return;
+    imageLightboxLastThumb = sourceImg;
+    sourceImg.setAttribute("tabindex", "-1");
+    var src = sourceImg.currentSrc || sourceImg.getAttribute("src") || "";
+    var caseCard = sourceImg.closest("[data-case-card]");
+    markEvidenceInteraction(caseCard ? caseCard.getAttribute("data-case-card") : "unknown", "image_lightbox");
+    lim.src = src;
+    lim.alt = sourceImg.getAttribute("alt") || "";
+    lim.setAttribute("tabindex", "0");
+    var capText = lightboxCaptionFromSource(sourceImg);
+    capEl.textContent = capText;
+    var isHuijingPoster = /huijing-poster/i.test(src);
+    lim.classList.toggle("lightbox-img--huijing-poster", isHuijingPoster);
+    lockPageScrollForLightbox();
+    box.removeAttribute("hidden");
+    box.setAttribute("aria-hidden", "false");
+    box.classList.remove("is-closing");
+    if (!imageLightboxDocKeydown) {
+      imageLightboxDocKeydown = onImageLightboxDocKeydown;
+      document.addEventListener("keydown", imageLightboxDocKeydown, true);
+    }
+    window.requestAnimationFrame(function () {
+      void box.offsetWidth;
+      box.classList.add("is-open");
+      var closeBtn = box.querySelector(".lightbox-close");
+      if (closeBtn) closeBtn.focus();
+    });
+  }
+
+  function closeImageLightbox() {
+    var box = document.getElementById("img-lightbox");
+    if (!box || !box.classList.contains("is-open") || box.classList.contains("is-closing")) return;
+    box.classList.remove("is-open");
+    box.classList.add("is-closing");
+    window.clearTimeout(imageLightboxCloseTimer);
+    imageLightboxCloseTimer = window.setTimeout(function () {
+      finishImageLightboxClose(box);
+    }, LIGHTBOX_FADE_MS);
+  }
+
+  function finishImageLightboxClose(box) {
+    imageLightboxCloseTimer = null;
+    if (!box || !box.parentNode) return;
+    box.classList.remove("is-closing", "is-open");
+    var lim = box.querySelector(".lightbox-img");
+    var capEl = box.querySelector(".lightbox-caption");
+    if (lim) {
+      lim.src = "";
+      lim.alt = "";
+      lim.removeAttribute("tabindex");
+      lim.classList.remove("lightbox-img--huijing-poster");
+    }
+    if (capEl) capEl.textContent = "";
+    box.setAttribute("hidden", "");
+    box.setAttribute("aria-hidden", "true");
+    unlockPageScrollForLightbox();
+    if (imageLightboxDocKeydown) {
+      document.removeEventListener("keydown", imageLightboxDocKeydown, true);
+      imageLightboxDocKeydown = null;
+    }
+    var thumb = imageLightboxLastThumb;
+    imageLightboxLastThumb = null;
+    if (thumb && thumb.ownerDocument) {
+      try {
+        thumb.focus({ preventScroll: true });
+      } catch (err) {
+        thumb.focus();
+      }
+      thumb.removeAttribute("tabindex");
+    }
+  }
+
   function bindDemoInteractions(root) {
+    if (!root) return;
     root.querySelectorAll("[data-action='maup-toggle']").forEach(function (button) {
       button.addEventListener("click", function () {
         var demo = button.closest(".maup-demo");
         if (!demo) return;
+        markEvidenceInteraction("maup_ugcop", "buffer_toggle");
         var is500 = demo.dataset.radius === "500";
         demo.dataset.radius = is500 ? "1000" : "500";
         button.textContent = is500 ? t("Switch back to 500 m radius", "切回 500 m") : t("What if the buffer radius changes to 1000 m?", "缓冲半径改成 1000 m 会怎样？");
@@ -2341,6 +2962,171 @@
       .replace(/'/g, "&#039;");
   }
 
+  function isAssistantTyping() {
+    if (runtime.timers.typing !== null || runtime.timers.dots !== null) return true;
+    return appState.chat.messages.some(function (message) {
+      return message.kind === "dots" || message._staticTyping;
+    });
+  }
+
+  function isPortfolioKeyboardBlocked() {
+    if (appState.workshop.active || appState.roleProfile.open || appState.workshop.alertOpen) return true;
+    var lightbox = document.getElementById("img-lightbox");
+    if (lightbox && lightbox.classList.contains("is-open")) return true;
+    var active = document.activeElement;
+    if (!active) return false;
+    var tag = active.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return true;
+    if (active.isContentEditable) return true;
+    return false;
+  }
+
+  function clearKeyboardFocus() {
+    document.querySelectorAll(".keyboard-focus").forEach(function (el) {
+      el.classList.remove("keyboard-focus");
+    });
+  }
+
+  function exitTagNavMode() {
+    appState.portfolio.tagNavMode = false;
+    var row = qs("tag-row");
+    if (!row) return;
+    row.querySelectorAll(".tag-chip").forEach(function (chip) {
+      chip.classList.remove("keyboard-focus");
+      chip.removeAttribute("tabindex");
+    });
+  }
+
+  function isTagRowVisible() {
+    var panel = document.querySelector(".tag-panel");
+    if (!panel) return false;
+    return window.getComputedStyle(panel).display !== "none";
+  }
+
+  function getTagChips() {
+    var row = qs("tag-row");
+    if (!row) return [];
+    return Array.prototype.filter.call(row.querySelectorAll(".tag-chip"), function (chip) {
+      return chip.offsetParent !== null;
+    });
+  }
+
+  function focusTagChip(chip) {
+    clearKeyboardFocus();
+    appState.portfolio.tagNavMode = true;
+    var tags = getTagChips();
+    tags.forEach(function (t) {
+      t.classList.remove("keyboard-focus");
+      t.removeAttribute("tabindex");
+    });
+    chip.classList.add("keyboard-focus");
+    chip.setAttribute("tabindex", "0");
+    chip.focus();
+  }
+
+  function moveTagFocus(delta) {
+    var tags = getTagChips();
+    if (!tags.length) return;
+    var current = document.querySelector("#tag-row .tag-chip.keyboard-focus");
+    var index = current ? tags.indexOf(current) : -1;
+    if (index < 0) index = 0;
+    else index = (index + delta + tags.length) % tags.length;
+    focusTagChip(tags[index]);
+  }
+
+  function getVisibleChoiceChips() {
+    var list = [];
+    var thread = qs("chat-thread");
+    if (thread) {
+      thread.querySelectorAll(".choice-row .choice-chip, .inline-followup .choice-chip").forEach(function (chip) {
+        if (chip.offsetParent !== null) list.push(chip);
+      });
+    }
+    var follow = qs("results-followup-bot");
+    if (follow) {
+      follow.querySelectorAll(".choice-chip").forEach(function (chip) {
+        if (chip.offsetParent !== null && list.indexOf(chip) < 0) list.push(chip);
+      });
+    }
+    return list;
+  }
+
+  function activateChoiceChip(chip) {
+    if (!chip) return;
+    clearKeyboardFocus();
+    exitTagNavMode();
+    chip.click();
+  }
+
+  function confirmFocusedTag() {
+    var chip = document.querySelector("#tag-row .tag-chip.keyboard-focus");
+    if (!chip) return;
+    var value = chip.getAttribute("data-tag");
+    if (!value) return;
+    exitTagNavMode();
+    dispatchConversation({ type: "TAG_SELECTED", value: value });
+  }
+
+  function onPortfolioKeydown(event) {
+    if (isPortfolioKeyboardBlocked()) return;
+    if (event.key === "Escape") {
+      if (appState.portfolio.tagNavMode) {
+        event.preventDefault();
+        exitTagNavMode();
+        if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+      }
+      return;
+    }
+    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+      if (!appState.portfolio.tagNavMode || !isTagRowVisible()) return;
+      event.preventDefault();
+      moveTagFocus(event.key === "ArrowLeft" ? -1 : 1);
+      return;
+    }
+    if (event.key !== "Enter") return;
+    if (isAssistantTyping()) {
+      event.preventDefault();
+      return;
+    }
+    var focusedChip = document.querySelector(".choice-chip.keyboard-focus");
+    var chips = getVisibleChoiceChips();
+    if (focusedChip && chips.indexOf(focusedChip) >= 0) {
+      event.preventDefault();
+      activateChoiceChip(focusedChip);
+      return;
+    }
+    if (chips.length) {
+      event.preventDefault();
+      activateChoiceChip(chips[0]);
+      return;
+    }
+    var focusedTag = document.querySelector("#tag-row .tag-chip.keyboard-focus");
+    if (focusedTag && appState.portfolio.tagNavMode) {
+      event.preventDefault();
+      confirmFocusedTag();
+      return;
+    }
+    if (isTagRowVisible()) {
+      event.preventDefault();
+      var tags = getTagChips();
+      if (!tags.length) return;
+      if (!appState.portfolio.tagNavMode) focusTagChip(tags[0]);
+      else confirmFocusedTag();
+    }
+  }
+
+  function bindPortfolioKeyboard() {
+    if (document.body.dataset.portfolioKeyboardBound === "true") return;
+    document.body.dataset.portfolioKeyboardBound = "true";
+    document.addEventListener("keydown", onPortfolioKeydown, true);
+    document.addEventListener("click", function (event) {
+      var chip = event.target.closest(".tag-chip, .choice-chip");
+      if (!chip) return;
+      clearKeyboardFocus();
+      if (chip.classList.contains("tag-chip")) exitTagNavMode();
+    }, true);
+  }
+
   function bindChrome() {
     var hiBubble = qs("hi-bubble");
     var backLanding = qs("back-landing");
@@ -2363,25 +3149,25 @@
     }
     if (backLanding) {
       backLanding.addEventListener("click", function () {
-        if (workshopActive) {
+        if (appState.workshop.active) {
           exitWorkshop();
           return;
         }
-        conversationState = "landing";
-        window.clearTimeout(typingTimer);
-        window.clearTimeout(dotsTimer);
+        appState.chat.conversationState = "landing";
+        window.clearTimeout(runtime.timers.typing);
+        window.clearTimeout(runtime.timers.dots);
         document.body.dataset.state = "landing";
-        messages = [];
-        activeTag = "All";
-        expandedCaseIds = new Set();
+        appState.chat.messages = [];
+        appState.portfolio.activeTag = "All";
+        appState.portfolio.expandedCaseIds = new Set();
         closeWorkshopAlert();
-        workshopPreviewShown = false;
-        workshopAlertSeen = false;
-        workshopReplayAvailable = false;
-        workshopActive = false;
-        workshopVisibleCards = 0;
-        window.clearTimeout(workshopAutoPlayTimer);
-        workshopAutoPlayTimer = null;
+        appState.workshop.previewShown = false;
+        appState.workshop.alertSeen = false;
+        appState.workshop.replayAvailable = false;
+        appState.workshop.active = false;
+        appState.workshop.visibleCards = 0;
+        window.clearTimeout(runtime.timers.workshopAutoPlay);
+        runtime.timers.workshopAutoPlay = null;
         delete document.body.dataset.workshop;
         renderWorkshopReplay();
         setView("chat");
@@ -2398,22 +3184,31 @@
     var workshopSkip = qs("workshop-skip");
     if (workshopSkip) {
       workshopSkip.addEventListener("click", function () {
-        if (document.body.dataset.state === "landing") {
-          cancelSpiderLanding();
-          conversationState = "overview";
-          messages = [];
-          activeTag = "All";
-          expandedCaseIds = new Set();
-          retractSpider();
-          document.body.dataset.state = "story";
-          loadResultsShell("overview", "All", []);
-          renderMessages();
-          syncTopbarLabel();
-          syncStoryChrome();
-        }
-        openWorkshopAlert({ force: true });
+        if (document.body.dataset.state !== "landing") return;
+        appState.analytics.entered = true;
+        track("portfolio_entered", { entry_path: "workshop_skip", language: appState.lang.portfolio });
+        updateFeatureDiscovery();
+        cancelSpiderLanding();
+        setSpiderVisible(false);
+        setSpiderLength(0);
+        document.body.dataset.state = "story";
+        appState.workshop.directEntry = true;
+        syncTopbarLabel();
+        syncStoryChrome();
+        enterWorkshop("workshop_skip");
       });
     }
+    bindPortfolioKeyboard();
+  }
+
+  function bindImageLightboxDelegation() {
+    ensureImageLightboxDom();
+    document.addEventListener("click", function (e) {
+      var img = e.target.closest ? e.target.closest(".mini-demo img") : null;
+      if (!img) return;
+      e.preventDefault();
+      openImageLightbox(img);
+    });
   }
 
   function injectContactLinks() {
@@ -2436,6 +3231,7 @@
     syncLandingText();
     bindChrome();
     injectContactLinks();
+    bindImageLightboxDelegation();
     bindWorkshopAlert();
     if (startWorkshopAlertPreviewFromHash()) return;
     setView("chat");
@@ -2447,6 +3243,8 @@
     window.setTimeout(function () {
       qs("hero-sub").classList.add("show");
       qs("hi-area").classList.add("show");
+      var landingAlt = qs("landing-alt");
+      if (landingAlt) landingAlt.classList.add("show");
     }, 1300);
     window.addEventListener("resize", function () {
       if (document.body.dataset.state === "landing") {
@@ -2460,5 +3258,9 @@
     syncStoryChrome();
   }
 
-  document.addEventListener("DOMContentLoaded", boot);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
 }());

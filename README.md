@@ -1,16 +1,27 @@
+# Web_QING
 
-# Cui Wanqing's Personal Website. Or is it?
+Cui Wanqing's bilingual portfolio and project archive.
 
+## Visit the website
 
-你可以：
+- [中国访问 / Visit from China](http://47.84.16.168/webqing/)
+- [海外访问 / Visit from overseas](https://tiny-waterfall-0f0a.jellycwq.workers.dev/)
 
-1. 打招呼
-2. 进入工作坊观看 AI Agent 据理力争 →
-3. maybe more !
+<details>
+<summary>Maintainer notes</summary>
 
+This repository is the reviewed public-release mirror. Development happens in the local `re-job-hunter/h5/h5-static` workspace; do not develop the application independently here.
 
-## Vercel deployment:
+### Release contract
 
-https://project-web-qing-2urr1xx13-qing-s-projects.vercel.app/
+1. Validate the development source.
+2. Promote only paths in `h5/release/public-files.txt` with `promote-webqing.ps1`.
+3. Review the release-branch diff, then commit, open a pull request, and merge to `main`.
+4. Deploy the merged revision to both production targets.
+5. Verify HTTP responses, runtime references, PostHog events, and deployed file hashes before calling the release synchronized.
 
-Have fun 👾
+`wrangler.jsonc` configures the overseas static deployment. `h5-static/.assetsignore` is default-deny so review notes, repository metadata, and non-manifest files are not uploaded.
+
+Vercel and GitHub Pages are not production targets for this release topology.
+
+</details>
