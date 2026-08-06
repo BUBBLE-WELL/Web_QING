@@ -1,0 +1,9 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "tiny-waterfall-0f0a",
+  "compatibility_date": "2026-08-06",
+  "assets": {
+    "directory": "./h5-static",
+    "not_found_handling": "404-page"
+  }
+}
