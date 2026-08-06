@@ -4,7 +4,7 @@ https://github.com/BUBBLE-WELL/Web_QING.git
 # h5-static
 Static H5 portfolio MVP for Cui Wanqing. The live direction is a v5 conversation-driven evidence browser: landing creates atmosphere, the story view provides a single continuous reading stream, and project cards carry source-backed portfolio evidence.
 
-`index.html` is the Vercel entrypoint. It loads `kg-app.css` and `kg-app.js` and should stay synchronized with the public build.
+`index.html` is the static-site entrypoint. It loads `kg-app.css` and `kg-app.js` and should stay synchronized with the public build.
 
 ## Current Product Model
 
@@ -137,11 +137,12 @@ python -m http.server 5173
 
 Open `http://localhost:5173`.
 
-## Deploy on Vercel
+## Production Release
 
-1. Import the `Web_QING` repository.
-2. Set Root Directory to the repository root that contains `index.html`.
-3. Use Framework Preset `Other`.
-4. Leave Build Command empty.
-5. Set Output Directory to `.`.
+Promote reviewed files from the local development workspace into this release repository, merge the release pull request, and deploy that immutable revision to both production targets:
+
+- China: `https://jiyiji.cn/webqing/`
+- Overseas: `https://tiny-waterfall-0f0a.jellycwq.workers.dev/`
+
+Vercel and GitHub Pages are not active production targets.
 
