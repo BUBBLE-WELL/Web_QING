@@ -63,6 +63,7 @@
       <p id="hero-sub" class="hero-sub" data-i18n="hero-sub">起点：地图漏了什么？为什么？</p>
       <div id="hi-area" class="hi-area">
         <button id="hi-bubble" class="hi-bubble" type="button"><span class="hi-dot"></span><span data-i18n="say-hi">打招呼</span></button>
+        <button id="qb-landing-btn" class="qb-landing-btn" type="button" aria-label="问问 Qing"><span class="qb-fab-dot"></span><span data-i18n="ask-qing">问问 Qing</span></button>
       </div>
       <p id="landing-alt" class="landing-alt"><button type="button" id="workshop-skip" class="landing-skip" data-i18n="workshop-skip">or, jump to the AI workshop →</button></p>
     </div>
@@ -146,5 +147,33 @@
       <figcaption class="lightbox-caption"></figcaption>
     </figure>
   </div>
+
+  <!-- Qing Bot panel; its only entry point is the left-rail Navigator. -->
+  <div id="qb-widget" class="qb-widget">
+    <div id="qb-panel" class="qb-panel" hidden aria-hidden="true" role="dialog" aria-label="Qing Bot">
+      <header class="qb-header">
+        <span class="qb-title">
+          <span class="qb-status-dot"></span>
+          Qing Bot
+        </span>
+        <button id="qb-zoom"  class="qb-btn-icon" type="button" title="放大 / dock" aria-label="放大">↗</button>
+        <button id="qb-clear" class="qb-btn-icon" type="button" title="清空对话 / clear chat" aria-label="清空对话">↺</button>
+        <button id="qb-close" class="qb-btn-icon" type="button" aria-label="关闭">×</button>
+      </header>
+      <div id="qb-thread" class="qb-thread" aria-live="polite" aria-atomic="false"></div>
+      <form id="qb-form" class="qb-form" autocomplete="off">
+        <textarea
+          id="qb-input"
+          class="qb-input"
+          rows="1"
+          placeholder="问我任何问题… / ask me anything"
+          maxlength="2000"
+          aria-label="输入消息"
+        ></textarea>
+        <button id="qb-send" class="qb-send" type="submit" aria-label="发送">→</button>
+      </form>
+    </div>
+  </div>
+  <script src="./bot.js"></script>
 </body>
 </html>

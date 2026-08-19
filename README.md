@@ -4,7 +4,7 @@ Cui Wanqing's bilingual portfolio and project archive.
 
 ## Visit the website
 
-- [中国访问 / Visit from China](http://47.84.16.168/webqing/)
+- [中国访问 / Visit from China](https://jiyiji.cn/webqing/)
 - [海外访问 / Visit from overseas](https://tiny-waterfall-0f0a.jellycwq.workers.dev/)
 
 <details>
