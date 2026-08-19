@@ -2639,3 +2639,662 @@ body[data-workshop="active"] .workshop-panel {
     align-self: start;
   }
 }
+
+/* ============================================================
+   Qing Bot Widget  (bot.js)
+   ============================================================ */
+
+/* ── Widget shell ──────────────────────────────────────────── */
+.qb-widget {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  /* Keep the docked assistant below workshop and role popouts. */
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+  pointer-events: none;
+}
+
+.qb-widget > * {
+  pointer-events: auto;
+}
+
+/* ── FAB (floating action button) ─────────────────────────── */
+.qb-fab {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.48rem 0.85rem;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.qb-fab:hover {
+  border-color: var(--green);
+  background: var(--green-soft);
+}
+
+.qb-fab-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+}
+
+/* FAB hidden globally — entry points are the landing button and the
+   left-rail tab in story view. Only shown inside the AI Workshop. */
+.qb-fab {
+  display: none !important;
+}
+
+body[data-workshop="active"] .qb-fab {
+  display: flex !important;
+}
+
+/* Keep legacy rule: FAB also hides when panel is explicitly open */
+.qb-widget[data-open] .qb-fab {
+  display: none !important;
+}
+
+/* ── Landing page "ask qing" button ───────────────────────── */
+.qb-landing-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.48rem 0.85rem;
+  background: var(--paper);
+  border: 1px solid rgba(43, 182, 115, 0.55);
+  color: var(--green, #2bb673);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.qb-landing-btn:hover {
+  background: var(--green-soft);
+  border-color: var(--green);
+  color: var(--ink);
+}
+
+/* ── Chat panel ────────────────────────────────────────────── */
+/* hidden attribute must override display:flex — keep specificity at 0-2-0 */
+.qb-panel[hidden] {
+  display: none;
+}
+
+.qb-panel {
+  display: flex;
+  flex-direction: column;
+  width: 340px;
+  max-height: min(500px, calc(100dvh - 5rem));
+  background: var(--paper);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Panel header ──────────────────────────────────────────── */
+.qb-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--soft);
+  flex-shrink: 0;
+  cursor: move; /* draggable */
+}
+
+.qb-header button {
+  cursor: pointer; /* buttons stay pointer inside drag-area */
+}
+
+.qb-title {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.qb-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+}
+
+.qb-btn-icon {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0.15rem 0.3rem;
+  line-height: 1;
+  transition: color 0.12s;
+}
+
+.qb-btn-icon:hover {
+  color: var(--ink);
+}
+
+/* ── Message thread ────────────────────────────────────────── */
+.qb-thread {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.85rem 0.7rem;
+  scroll-behavior: smooth;
+}
+
+/* ── Message rows ──────────────────────────────────────────── */
+.qb-msg {
+  display: flex;
+  width: 100%;
+}
+
+.qb-msg--user {
+  justify-content: flex-end;
+}
+
+.qb-msg--assistant {
+  justify-content: flex-start;
+}
+
+/* ── Bubbles ───────────────────────────────────────────────── */
+.qb-bubble {
+  max-width: 88%;
+  padding: 0.62rem 0.78rem;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--body);
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  line-height: 1.65;
+  word-break: break-word;
+}
+
+.qb-msg--user .qb-bubble {
+  border-color: rgba(43, 182, 115, 0.36);
+  background: var(--green-soft);
+  color: var(--ink);
+  text-align: right;
+}
+
+/* Typing indicator */
+.qb-bubble--typing {
+  display: flex;
+  min-width: 52px;
+  align-items: center;
+}
+
+/* ── Rendered markdown ─────────────────────────────────────── */
+.qb-bubble p {
+  margin: 0 0 0.45em 0;
+}
+
+.qb-bubble p:last-child {
+  margin-bottom: 0;
+}
+
+.qb-bubble strong {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.qb-bubble em {
+  font-style: italic;
+}
+
+.qb-h {
+  margin: 0.5em 0 0.25em 0;
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.qb-list {
+  margin: 0.3em 0 0.45em 1.1em;
+  padding: 0;
+  color: var(--body);
+}
+
+.qb-list li {
+  margin-bottom: 0.2em;
+}
+
+.qb-list li:last-child {
+  margin-bottom: 0;
+}
+
+.qb-code {
+  font-family: var(--mono);
+  font-size: 0.72em;
+  background: var(--soft);
+  border: 1px solid var(--border);
+  padding: 0 0.22em;
+  color: var(--ink);
+}
+
+.qb-bubble a {
+  color: var(--green);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.qb-bubble a:hover {
+  color: var(--ink);
+}
+
+.qb-hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0.4em 0;
+}
+
+/* ── Input area ────────────────────────────────────────────── */
+.qb-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.4rem;
+  padding: 0.55rem 0.6rem;
+  border-top: 1px solid var(--border);
+  background: var(--soft);
+  flex-shrink: 0;
+}
+
+.qb-input {
+  flex: 1;
+  resize: none;
+  border: 1px solid var(--border);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  padding: 0.42rem 0.6rem;
+  min-height: 2.2rem;
+  max-height: 7rem;
+  overflow-y: auto;
+  outline: none;
+  transition: border-color 0.12s;
+}
+
+.qb-input:focus {
+  border-color: rgba(43, 182, 115, 0.55);
+}
+
+.qb-input:disabled {
+  opacity: 0.5;
+}
+
+.qb-input::placeholder {
+  color: var(--muted);
+}
+
+.qb-send {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  background: var(--ink);
+  border: none;
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background 0.12s;
+}
+
+.qb-send:hover:not(:disabled) {
+  background: var(--green);
+}
+
+.qb-send:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ── Typing dots animation ─────────────────────────────────── */
+.typing-dots {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.typing-dots span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--muted);
+  animation: qbDot 1.2s infinite ease-in-out;
+}
+
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes qbDot {
+  0%, 80%, 100% { transform: scale(0.7); opacity: 0.5; }
+  40%            { transform: scale(1);   opacity: 1; }
+}
+
+/* ── Zoomed / docked mode ──────────────────────────────────── */
+/* When zoomed: widget becomes a full-height right-side panel.
+   !important overrides bottom-right anchor and any drag transform. */
+.qb-widget--zoomed {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: auto !important;
+  width: 420px;
+  transform: none !important;
+  align-items: stretch;
+  gap: 0;
+  pointer-events: auto;
+}
+
+.qb-widget--zoomed .qb-panel {
+  width: 100%;
+  height: 100%;
+  max-height: 100vh;
+  max-height: 100dvh;
+  border-radius: 0;
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  border-left: 2px solid var(--green, #2bb673);
+  box-shadow: -6px 0 32px rgba(0, 0, 0, 0.1);
+}
+
+.qb-widget--zoomed .qb-header {
+  cursor: default; /* drag is disabled in docked mode */
+  border-left: none;
+}
+
+/* Mode badge in header title */
+.qb-mode-badge {
+  display: none;
+  font-size: 0.55rem;
+  color: var(--muted);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: rgba(43, 182, 115, 0.1);
+  border: 1px solid rgba(43, 182, 115, 0.3);
+  padding: 0.1rem 0.35rem;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.qb-widget--zoomed .qb-mode-badge {
+  display: inline-block;
+}
+
+/* ── Guided round chips ────────────────────────────────────── */
+/* Hidden in normal float mode; shown only in zoomed mode */
+.qb-round-row {
+  display: none;
+  justify-content: flex-start;
+}
+
+.qb-widget--zoomed .qb-round-row {
+  display: flex;
+}
+
+.qb-round-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.38rem 0.72rem;
+  border: 1px solid rgba(43, 182, 115, 0.5);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--green, #2bb673);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  line-height: 1.3;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.14s, color 0.14s, border-color 0.14s;
+  max-width: 90%;
+}
+
+.qb-round-chip::before {
+  content: "▶";
+  font-size: 0.52rem;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.qb-round-chip:hover:not(:disabled) {
+  background: rgba(43, 182, 115, 0.1);
+  border-color: var(--green, #2bb673);
+}
+
+.qb-round-chip:disabled,
+.qb-round-chip--used {
+  opacity: 0.3;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Zoom hint inside thread when first entering (shown only in zoomed) */
+.qb-zoom-hint {
+  display: none;
+  color: var(--muted);
+  font-size: 0.62rem;
+  font-family: var(--mono);
+  font-style: italic;
+  padding: 0 0.1rem;
+  opacity: 0.8;
+}
+
+.qb-widget--zoomed .qb-zoom-hint {
+  display: block;
+}
+
+@media (max-width: 480px) {
+  .qb-widget--zoomed {
+    width: 100%;
+  }
+}
+
+/* ── Bot zoom: inline/main-area mode (body[data-qb-zoom]) ─────
+   When bot is zoomed INTO the main-area, it takes the place of
+   #chat-thread. The widget is reparented into .main-area via JS,
+   so position:fixed must be overridden to position:relative.     */
+
+/* Main-area chat-thread hides; bot panel takes its spot */
+body[data-qb-zoom] #chat-thread {
+  display: none !important;
+}
+
+/* Widget becomes a normal flow element inside .main-area */
+body[data-qb-zoom] .qb-widget--zoomed {
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  width: 100% !important;
+  transform: none !important;
+  align-items: stretch;
+  gap: 0;
+  pointer-events: auto;
+}
+
+/* Panel fills the same vertical space as the chat-thread */
+body[data-qb-zoom] .qb-widget--zoomed .qb-panel {
+  width: 100%;
+  height: min(62vh, 560px);
+  max-height: min(62vh, 560px);
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--green, #2bb673);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+body[data-qb-zoom] .qb-widget--zoomed .qb-header {
+  cursor: default;
+}
+
+/* ── Left-rail index: topic nav hint in zoom mode ───────────── */
+/* No pseudo-element needed — the rail tabs above already signal "bot mode" */
+
+body[data-qb-zoom] .conversation-index-item {
+  border-left-color: rgba(43, 182, 115, 0.3) !important;
+  cursor: pointer !important;
+  transition: border-left-color 0.12s, background 0.12s, color 0.12s;
+}
+
+body[data-qb-zoom] .conversation-index-item:hover {
+  border-left-color: var(--green, #2bb673) !important;
+  background: rgba(43, 182, 115, 0.07);
+  color: var(--ink);
+}
+
+/* ── Rail view-switcher: two side-by-side tab cards ──────────
+   Injected into .left-rail by bot.js when entering zoom mode.
+   Left card = "← Portfolio" (click to exit bot zoom)
+   Right card = "● Qing Bot"  (active/current; no action)         */
+
+/* Rail tabs — always visible once injected into the left-rail.
+   Two states controlled by body[data-qb-zoom]:
+   Normal: Portfolio=active(ink border), Qing Bot=passive(clickable→zoom)
+   Zoom:   Qing Bot=active(green border), Portfolio=passive(clickable→back) */
+.qb-rail-tabs {
+  display: grid;   /* always shown (once injected by bot.js) */
+  grid-template-columns: 1fr 1fr;
+  gap: 0.3rem;
+  padding-bottom: 0.55rem;
+  flex-shrink: 0;
+}
+
+.qb-rail-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  padding: 0.42rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: transparent;
+  font-family: var(--mono);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+/* ── Normal mode (portfolio active, Qing Bot passive) ───── */
+.qb-rail-tab--portfolio {
+  border-color: rgba(0, 0, 0, 0.22);
+  background: rgba(0, 0, 0, 0.025);
+  cursor: default;
+  pointer-events: none;
+}
+
+.qb-rail-tab--bot {
+  cursor: pointer;
+}
+
+.qb-rail-tab--bot:hover {
+  border-color: rgba(43, 182, 115, 0.55);
+  background: rgba(43, 182, 115, 0.07);
+}
+
+.qb-rail-tab--bot:hover .qb-rail-tab-label,
+.qb-rail-tab--bot:hover .qb-rail-tab-icon {
+  color: var(--green, #2bb673);
+}
+
+/* ── Zoom mode (Qing Bot active, Portfolio passive) ─────── */
+body[data-qb-zoom] .qb-rail-tab--portfolio {
+  border-color: var(--border);
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+body[data-qb-zoom] .qb-rail-tab--portfolio:hover {
+  border-color: rgba(0, 0, 0, 0.22);
+  background: rgba(0, 0, 0, 0.025);
+}
+
+body[data-qb-zoom] .qb-rail-tab--bot {
+  border-color: rgba(43, 182, 115, 0.55);
+  background: rgba(43, 182, 115, 0.07);
+  cursor: default;
+  pointer-events: none;
+}
+
+body[data-qb-zoom] .qb-rail-tab--bot .qb-rail-tab-icon,
+body[data-qb-zoom] .qb-rail-tab--bot .qb-rail-tab-label {
+  color: var(--green, #2bb673);
+}
+
+/* ── Tab text layers ────────────────────────────────────── */
+.qb-rail-tab-icon {
+  font-size: 0.6rem;
+  line-height: 1;
+  color: var(--muted);
+}
+
+.qb-rail-tab-label {
+  font-size: 0.62rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.qb-rail-tab-sub {
+  font-size: 0.52rem;
+  color: var(--muted);
+  line-height: 1.2;
+}
+
+@media (max-width: 760px) {
+  /* Mobile: fall back to right-side full-height panel */
+  body[data-qb-zoom] .qb-widget--zoomed {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: auto !important;
+    width: 100% !important;
+  }
+
+  body[data-qb-zoom] .qb-widget--zoomed .qb-panel {
+    height: 100%;
+    max-height: 100dvh;
+    border-radius: 0;
+    border: none;
+    border-top: 2px solid var(--green, #2bb673);
+  }
+
+  .qb-rail-tabs {
+    display: none !important;
+  }
+}
