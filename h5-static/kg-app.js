@@ -13,6 +13,7 @@
     "sys-line": { en: "spatial data / platform governance / design", zh: "空间数据 / 平台治理 / 设计" },
     "hero-sub": { en: "Where I started: What does a map miss? Why?", zh: "起点：地图平台忽略了什么？为什么？" },
     "say-hi": { en: "say Hi", zh: "打招呼" },
+    "ask-qing": { en: "ask Qing", zh: "问问 Qing" },
     "workshop-skip": { en: "or, jump to the AI workshop →", zh: "直接进入 AI Agent 工作坊 →" }
   };
 
@@ -966,6 +967,46 @@
     btn.textContent = appState.workshop.active ? t("exit", "退出") : t("back", "返回");
   }
 
+  function syncWorkshopAlertLanguage() {
+    var modal = qs("workshop-alert");
+    if (!modal) return;
+
+    var isZh = appState.lang.portfolio === "zh";
+    var copyLines = isZh ? [
+      "硕士论文工作坊：",
+      "三个研究 agent 之间发生冲突",
+      "议题：平台可读性是否可以作为 POI 数据中 DIY 场地存在的标准？"
+    ] : [
+      "MSc thesis workshop:",
+      "Three research agents are in conflict",
+      "Topic: Can platform legibility serve as the standard for DIY venue existence in POI data?"
+    ];
+    var copy = qs("workshop-alert-copy");
+    if (copy) {
+      copy.textContent = "";
+      copyLines.forEach(function (line, index) {
+        if (index > 0) copy.appendChild(document.createElement("br"));
+        copy.appendChild(document.createTextNode(line));
+      });
+    }
+
+    var textByKey = {
+      "workshop-alert-title": isZh ? "工作坊提醒" : "Workshop Alert",
+      "workshop-warning": isZh ? "⚠ 工作坊冲突" : "⚠ Workshop Conflict",
+      "workshop-topic": isZh ? "议题：消失的 DIY 场地" : "Topic: The Missing DIY Venue",
+      "workshop-listen": isZh ? "旁听" : "Listen",
+      "workshop-dismiss": isZh ? "关闭" : "Dismiss"
+    };
+    Object.keys(textByKey).forEach(function (key) {
+      var el = modal.querySelector('[data-static-text="' + key + '"]');
+      if (el) el.textContent = textByKey[key];
+    });
+    var heading = qs("workshop-alert-title");
+    if (heading) heading.textContent = isZh ? "工作坊冲突" : "Workshop Conflict";
+    var close = modal.querySelector(".workshop-x");
+    if (close) close.setAttribute("aria-label", isZh ? "关闭工作坊提醒" : "Dismiss workshop alert");
+  }
+
   function syncStoryChrome() {
     var exitRail = qs("workshop-exit-rail");
     if (exitRail) {
@@ -1002,6 +1043,7 @@
     if (caseRes) caseRes.setAttribute("aria-label", t("Project results", "项目结果"));
     var wPanel = qs("workshop-panel");
     if (wPanel) wPanel.setAttribute("aria-label", t("Workshop conflict preview", "工作坊冲突预览"));
+    syncWorkshopAlertLanguage();
     syncLangToggleButton();
   }
 
@@ -2168,6 +2210,7 @@
     appState.workshop.active = true;
     appState.workshop.replayAvailable = true;
     appState.workshop.openCards = new Set();
+    document.dispatchEvent(new CustomEvent("portfolio:workshop-enter"));
     window.clearTimeout(runtime.timers.workshopAutoPlay);
     runtime.timers.workshopAutoPlay = null;
     document.body.dataset.workshop = "active";
@@ -2185,6 +2228,7 @@
   }
 
   function exitWorkshop() {
+    document.dispatchEvent(new CustomEvent("portfolio:workshop-exit"));
     if (appState.workshop.directEntry) {
       appState.workshop.directEntry = false;
       appState.workshop.active = false;
@@ -3257,6 +3301,48 @@
     syncTopbarLabel();
     syncStoryChrome();
   }
+
+  // ── Portfolio context hook — read by bot.js ──────────────────────────────
+  // Returns human-readable state so the bot can reference what the visitor sees.
+  window.getPortfolioContext = function () {
+    var CASE_LABELS = {
+      "maup":      "MAUP / UGCoP (spatial sensitivity analysis)",
+      "poi":       "POI Semantic Audit — thesis (cross-platform venue representation)",
+      "geoai":     "Responsible GeoAI (ethics literature synthesis)",
+      "xiazhuang": "Xiazhuang Village Revitalization Plan",
+      "huijing":   "Huijing Huayuan Residential Landscape Plan",
+    };
+    var TAG_LABELS = {
+      "All":                  "all projects",
+      "#spatial_data":        "spatial data",
+      "#embedding":           "embedding / NLP",
+      "#data_quality":        "data quality",
+      "#platform_governance": "platform governance",
+      "#geoai":               "GeoAI",
+      "#ethics":              "ethics",
+      "#taxonomy":            "taxonomy",
+      "#planning_design":     "planning & design",
+      "#visualization":       "visualization",
+    };
+
+    var view = document.body.dataset.state || "landing";
+    var inWorkshop = !!(appState.workshop && appState.workshop.active);
+    var activeTag = appState.portfolio.activeTag || "All";
+    var expanded = [];
+
+    if (appState.portfolio.expandedCaseIds) {
+      appState.portfolio.expandedCaseIds.forEach(function (id) {
+        expanded.push(CASE_LABELS[id] || id);
+      });
+    }
+
+    return {
+      view: inWorkshop ? "workshop" : view,   // landing | story | workshop
+      activeTag: TAG_LABELS[activeTag] || activeTag,
+      expandedProjects: expanded,             // human-readable titles
+      lang: appState.lang.portfolio,          // "en" | "cn"
+    };
+  };
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", boot);

@@ -226,6 +226,9 @@
 
   // Rail view-switcher tabs element (created lazily, injected into .left-rail)
   var railTabs = null;
+  // Mobile counterpart: one clear action is shown at a time so the fixed
+  // full-screen bot never hides the route back to the portfolio.
+  var mobileNav = null;
 
   // ─── PANEL OPEN / CLOSE ───────────────────────────────────────────────────
   function openPanel() {
@@ -251,6 +254,7 @@
     panel.setAttribute("hidden", "");
     panel.setAttribute("aria-hidden", "true");
     widget.removeAttribute("data-open");
+    syncMobileNav();
   }
 
   function clearChat() {
@@ -316,6 +320,33 @@
     if (railTabs && railTabs.parentNode) railTabs.parentNode.removeChild(railTabs);
   }
 
+  function createMobileNav() {
+    if (mobileNav) return;
+
+    mobileNav = document.createElement("nav");
+    mobileNav.className = "qb-mobile-nav";
+    mobileNav.setAttribute("aria-label", "Portfolio navigation");
+    mobileNav.innerHTML =
+      '<button class="qb-mobile-nav__button qb-mobile-nav__portfolio" type="button">← <span></span></button>' +
+      '<button class="qb-mobile-nav__button qb-mobile-nav__bot" type="button"><span class="qb-fab-dot"></span><span>Qing Bot</span></button>';
+    document.body.appendChild(mobileNav);
+
+    mobileNav.querySelector(".qb-mobile-nav__portfolio").addEventListener("click", closePanel);
+    mobileNav.querySelector(".qb-mobile-nav__bot").addEventListener("click", function () {
+      if (!isZoomed) enterZoom();
+    });
+    syncMobileNav();
+  }
+
+  function syncMobileNav() {
+    if (!mobileNav) return;
+    var cn = detectLang() === "cn";
+    mobileNav.setAttribute("data-mode", isZoomed ? "bot" : "portfolio");
+    mobileNav.setAttribute("aria-hidden", document.body.dataset.state === "story" ? "false" : "true");
+    mobileNav.querySelector(".qb-mobile-nav__portfolio span").textContent = cn ? "作品集" : "Portfolio";
+    mobileNav.querySelector(".qb-mobile-nav__bot span:last-child").textContent = cn ? "问问 Qing" : "Qing Bot";
+  }
+
   // Keep the Navigator labels in the same language as the portfolio without
   // rebuilding the interactive rail or replacing its event listeners.
   function syncRailTabsLanguage() {
@@ -327,6 +358,7 @@
     if (portfolioLabel) portfolioLabel.textContent = cn ? "作品集" : "Portfolio";
     if (portfolioSub) portfolioSub.textContent = cn ? "对话" : "Chat";
     if (botSub) botSub.textContent = cn ? "问她" : "Ask her";
+    syncMobileNav();
     syncGuidedRoundLanguage();
   }
 
@@ -344,7 +376,11 @@
   // This covers: initial load in story view AND navigation from landing.
   (function watchStoryView() {
     function tryInject() {
-      if (document.body.dataset.state === "story") insertRailTabs();
+      if (document.body.dataset.state === "story") {
+        insertRailTabs();
+        createMobileNav();
+      }
+      syncMobileNav();
     }
     tryInject(); // in case already in story view
     var obs = new MutationObserver(function (mutations) {
@@ -376,6 +412,7 @@
       zoomBtn.textContent = "↙";
       zoomBtn.setAttribute("title", "收起 / exit bot view");
     }
+    syncMobileNav();
 
     // Try to dock into .main-area (story view)
     var mainArea = document.querySelector(".main-area");
@@ -412,6 +449,7 @@
       zoomBtn.textContent = "↗";
       zoomBtn.setAttribute("title", "放大 / dock bot");
     }
+    syncMobileNav();
   }
 
   function toggleZoom() {
