@@ -3275,6 +3275,12 @@ body[data-qb-zoom] .qb-rail-tab--bot .qb-rail-tab-label {
   line-height: 1.2;
 }
 
+/* Mobile counterpart to the desktop rail tabs. The active destination is
+   omitted so the control stays compact and does not fight the bot header. */
+.qb-mobile-nav {
+  display: none;
+}
+
 @media (max-width: 760px) {
   /* Mobile: fall back to right-side full-height panel */
   body[data-qb-zoom] .qb-widget--zoomed {
@@ -3296,5 +3302,75 @@ body[data-qb-zoom] .qb-rail-tab--bot .qb-rail-tab-label {
 
   .qb-rail-tabs {
     display: none !important;
+  }
+
+  body[data-state="story"] .qb-mobile-nav {
+    position: fixed;
+    right: max(0.75rem, env(safe-area-inset-right));
+    bottom: max(0.75rem, env(safe-area-inset-bottom));
+    z-index: 30;
+    display: flex;
+    pointer-events: auto;
+  }
+
+  .qb-mobile-nav[aria-hidden="true"] {
+    display: none !important;
+  }
+
+  .qb-mobile-nav__button {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.7rem;
+    border: 1px solid var(--lavender-line);
+    border-radius: 2px;
+    background: rgba(241, 238, 251, 0.9);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    line-height: 1.2;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .qb-mobile-nav__button .qb-fab-dot {
+    background: var(--lavender);
+  }
+
+  /* The floating entry is the primary action, unlike the purple back control. */
+  .qb-mobile-nav__bot {
+    border-color: rgba(43, 182, 115, 0.55);
+    background: var(--paper);
+    color: var(--green, #2bb673);
+  }
+
+  .qb-mobile-nav__bot .qb-fab-dot {
+    background: var(--green, #2bb673);
+  }
+
+  .qb-mobile-nav__portfolio {
+    display: none;
+  }
+
+  body[data-qb-zoom] .qb-mobile-nav {
+    top: max(0.35rem, env(safe-area-inset-top));
+    right: 6.25rem;
+    bottom: auto;
+  }
+
+  body[data-qb-zoom] .qb-mobile-nav__button {
+    min-height: 30px;
+    padding: 0.34rem 0.7rem;
+    font-size: 0.62rem;
+    box-shadow: none;
+  }
+
+  body[data-qb-zoom] .qb-mobile-nav__bot {
+    display: none;
+  }
+
+  body[data-qb-zoom] .qb-mobile-nav__portfolio {
+    display: inline-flex;
   }
 }

@@ -17,7 +17,44 @@
     disable_session_recording: true,
     person_profiles: "identified_only"
   });
-  posthog.register({ app_id: appId, app_version: appVersion });
+
+  var internalDeviceStorageKey = "qing_internal_device_v1";
+  var allowedInternalDevices = {
+    "qing-laptop": true,
+    "qing-phone1": true,
+    "qing-phone2": true,
+    "dad-laptop": true
+  };
+  var internalDevice = "";
+  var internalDeviceParam = new URL(window.location.href).searchParams.get("internal");
+  if (internalDeviceParam) {
+    var normalizedInternalDevice = internalDeviceParam.trim().toLowerCase();
+    if (allowedInternalDevices[normalizedInternalDevice]) {
+      internalDevice = normalizedInternalDevice;
+      window.localStorage.setItem(internalDeviceStorageKey, internalDevice);
+      var cleanUrl = new URL(window.location.href);
+      cleanUrl.searchParams.delete("internal");
+      window.history.replaceState({}, "", cleanUrl.pathname + cleanUrl.search + cleanUrl.hash);
+    }
+  }
+  if (!internalDevice) {
+    var storedInternalDevice = window.localStorage.getItem(internalDeviceStorageKey) || "";
+    if (allowedInternalDevices[storedInternalDevice]) internalDevice = storedInternalDevice;
+  }
+
+  var registeredProperties = { app_id: appId, app_version: appVersion };
+  if (internalDevice) {
+    registeredProperties.is_internal = true;
+    registeredProperties.internal_device = internalDevice;
+  }
+  posthog.register(registeredProperties);
+  if (internalDevice) {
+    posthog.identify("internal:" + internalDevice, {
+      is_internal: true,
+      internal_device: internalDevice
+    });
+    posthog.opt_out_capturing();
+  }
 
   window.QingAnalytics = {
     capture: function (eventName, properties) {
