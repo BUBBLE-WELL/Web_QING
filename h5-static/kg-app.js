@@ -27,7 +27,11 @@
     "#ethics": "accountability and contestability",
     "#taxonomy": "naming systems and labels",
     "#planning_design": "earlier planning and design work",
-    "#visualization": "BIM and Twinmotion visual communication"
+    "#visualization": "turning evidence into readable visual stories",
+    "#UGC": "what people contribute on platforms",
+    "#data_pipeline": "collection, storage, verification, and refresh",
+    "#music_interaction": "listening and responding during music practice",
+    "#agent_systems": "observable state, bounded actions, and feedback"
   };
   var TAG_HINTS_ZH = {
     All: "全部项目",
@@ -39,7 +43,11 @@
     "#ethics": "问责与可争辩性，相关政策与研究",
     "#taxonomy": "命名与标签体系",
     "#planning_design": "从GIS，实地调查，政策分析到规划设计",
-    "#visualization": "BIM 与 Twinmotion，PS，视觉表达 "
+    "#visualization": "将证据转为可读的视觉故事",
+    "#UGC": "平台上的用户生成内容",
+    "#data_pipeline": "采集、存储、核验与刷新",
+    "#music_interaction": "音乐练习中的聆听与回应",
+    "#agent_systems": "可观察状态、有界行动与反馈"
   };
 
   var CASES = [
@@ -123,7 +131,7 @@
         ["sample frame", "67 Shanghai music venues (32 in anchor probing)"],
         ["risk surface", "venue discovery and ranking drift"]
       ],
-      tags: ["#embedding", "#taxonomy", "#platform_governance", "#spatial_data"],
+      tags: ["#embedding", "#taxonomy", "#platform_governance", "#spatial_data", "#UGC"],
       demo: "poi",
       kicker_zh: "能不能被搜到",
       story_zh: "Amap 标成「酒吧」、Xiaohongshu 写成 livehouse，同一个地点在一种搜索里隐身，在另一种语境里爆红。我使用 67 个场馆清单（42 个已审核，25 个候选），汇总 339 条平台观测；其中 32 个进入语义方向探测。",
@@ -272,6 +280,215 @@
         ["方案", "服务、养老与景观细化"],
         ["视觉产出", "海报板 + Twinmotion 静帧"]
       ]
+    },
+    {
+      "id": "wake-me-up",
+      "category": "analytics",
+      "iconKey": "tag",
+      "title": "Wake Me Up: Where September Ends",
+      "kicker": "UGC behavioural traces / ongoing side project",
+      "kicker_zh": "UGC 行为痕迹研究 / 个人项目，进行中",
+      "story": "Why does this comment section become active again each September? I treated public song comments as traces of participation, comparing calendar rhythms, shared expressions, and aggregate geography. The interactive story shows both the observed patterns and what comments cannot reveal about silent listeners or motives.",
+      "story_zh": "每到九月，同一首歌的评论区又热闹起来。我把公开评论当作参与的行为痕迹，从时间节律、共同表达和聚合地理分布观察这种周期性出现；同时说明，评论无法代表沉默听众，也不能直接证明人们为何回来。采集、SQLite 存储与核验刷新支撑这份交互故事。",
+      "evidence": "Manifest V3 browser extension → authenticated Python receiver → private SQLite/WAL store → verified aggregate JSON → interactive web story. Public output contains aggregate patterns; lexical motif matching remains an exploratory baseline.",
+      "evidence_zh": "Manifest V3 浏览器扩展 → 经认证的 Python 接收器 → 私有 SQLite/WAL → 核验后的聚合 JSON → 交互故事。公开输出仅展示聚合规律；词汇主题匹配仍是探索性基线。",
+      "tags": [
+        "#UGC",
+        "#data_quality",
+        "#data_pipeline",
+        "#spatial_data",
+        "#visualization"
+      ],
+      "demo": "wake-me-up",
+      "url": "https://jiyiji.cn/webqing/music/wake-me-up-where-september-ends/",
+      "linkLabel": "open interactive story",
+      "linkLabel_zh": "打开交互故事",
+      "socialUrl": "https://www.xiaohongshu.com/explore/6abd075b0000000014001597",
+      "highlights": [
+        "Song-scoped HMAC identities and transactions distinguish inserted, updated, and unchanged observations.",
+        "Refresh rebuilds dependent aggregates in order and rejects mixed snapshots or failed quality gates.",
+        "Local dashboard checks every 30 seconds; the public story updates after a verified rebuild and publication."
+      ],
+      "highlights_zh": [
+        "按歌曲作用域生成 HMAC 标识，用事务区分新增、更新与未变化的观测。",
+        "按依赖顺序重建聚合，快照不一致或质量门未通过时停止输出。",
+        "本地仪表盘每 30 秒检查快照；公开故事在核验重建并发布后更新。"
+      ],
+      "analyticsMeta": [
+        [
+          "collection",
+          "JavaScript · Manifest V3 extension"
+        ],
+        [
+          "storage",
+          "Python · SQLite/WAL · HMAC identity · pandas aggregates"
+        ],
+        [
+          "refresh",
+          "Dependency-ordered builders · snapshot and quality checks"
+        ],
+        [
+          "presentation",
+          "HTML/CSS/JavaScript · aggregate JSON · interactive maps"
+        ]
+      ],
+      "analyticsMeta_zh": [
+        [
+          "采集",
+          "JavaScript · Manifest V3 扩展"
+        ],
+        [
+          "存储",
+          "Python · SQLite/WAL · HMAC 标识 · pandas 聚合"
+        ],
+        [
+          "刷新",
+          "按依赖顺序重建 · 快照一致性与质量检查"
+        ],
+        [
+          "呈现",
+          "HTML/CSS/JavaScript · 聚合 JSON · 交互地图"
+        ]
+      ],
+      "proof": [
+        [
+          "question",
+          "Recurring participation around one song"
+        ],
+        [
+          "time",
+          "Calendar statistics normalized to Asia/Shanghai"
+        ],
+        [
+          "privacy",
+          "Aggregate output; private records stay separate"
+        ],
+        [
+          "method boundary",
+          "Lexical baseline; no validated emotion-model claim"
+        ]
+      ],
+      "proof_zh": [
+        [
+          "研究问题",
+          "同一首歌周围周期性出现的参与"
+        ],
+        [
+          "时间口径",
+          "日历统计统一为 Asia/Shanghai"
+        ],
+        [
+          "隐私边界",
+          "公开聚合结果，逐条记录单独保存"
+        ],
+        [
+          "方法边界",
+          "词汇基线；不宣称已验证的情绪模型"
+        ]
+      ]
+    },
+    {
+      "id": "band-with",
+      "category": "systems",
+      "iconKey": "render",
+      "title": "Band-with",
+      "kicker": "a practice companion that leaves space / prototype",
+      "kicker_zh": "会等待的练琴伙伴 / 原型",
+      "story": "What would a practice partner do when you play softly, leave a gap, or ask it to stop? Band-with turns audio observations into LISTEN, FOLLOW, and REST states and responsive drum patterns. A shared musical state drives the sound, face, and controls, so the player can see and change the response.",
+      "story_zh": "练琴时，当你轻轻弹奏、留出空隙，或想让伙伴停下来，它应该如何回应？Band-with 将音频观测转为 LISTEN、FOLLOW、REST 状态与鼓声响应。声音、表情和控制界面共享音乐状态，让演奏者看得懂，也能随时调整回应。",
+      "evidence": "Python audio-feature and performance modules feed a browser console over HTTP/WebSocket. Web Mode uses consented microphone observations and browser drum synthesis; Windows Local Mode has separate WinMM audio adapters. The published console is a prototype with recorded replay and a live-input path.",
+      "evidence_zh": "Python 音频特征与演奏模块通过 HTTP/WebSocket 驱动浏览器控制台。Web 模式使用经同意的麦克风观测和浏览器鼓声合成；Windows 本地模式有独立的 WinMM 音频适配器。已发布控制台是带录制回放与实时输入入口的原型。",
+      "tags": [
+        "#music_interaction",
+        "#agent_systems",
+        "#data_quality"
+      ],
+      "demo": "band-with",
+      "url": "https://jiyiji.cn/webqing/music/band-with/",
+      "linkLabel": "open companion console",
+      "linkLabel_zh": "打开音乐伙伴控制台",
+      "highlights": [
+        "RMS, peak, onset, and silence observations drive an inspectable state machine.",
+        "Server-side drum decisions are streamed to browser synthesis; player controls include REST and PANIC.",
+        "Optional OpenCV/MediaPipe vision is a separate channel; audio freshness is tracked independently."
+      ],
+      "highlights_zh": [
+        "RMS、峰值、起音与静音观测驱动可检查的状态机。",
+        "服务端决定鼓声响应，浏览器合成；演奏者可通过 REST 与 PANIC 停止介入。",
+        "可选 OpenCV/MediaPipe 视觉是独立通道，音频的新鲜度单独跟踪。"
+      ],
+      "analyticsMeta": [
+        [
+          "core",
+          "Python · NumPy · audio features · state machine"
+        ],
+        [
+          "web",
+          "JavaScript · browser audio · HTTP/WebSocket"
+        ],
+        [
+          "local audio",
+          "Windows WinMM input/output adapters"
+        ],
+        [
+          "optional vision",
+          "OpenCV · MediaPipe · body/hand observations"
+        ]
+      ],
+      "analyticsMeta_zh": [
+        [
+          "核心",
+          "Python · NumPy · 音频特征 · 状态机"
+        ],
+        [
+          "Web 模式",
+          "JavaScript · 浏览器音频 · HTTP/WebSocket"
+        ],
+        [
+          "本地音频",
+          "Windows WinMM 输入/输出适配器"
+        ],
+        [
+          "可选视觉",
+          "OpenCV · MediaPipe · 身体/手部观测"
+        ]
+      ],
+      "proof": [
+        [
+          "interaction",
+          "Observe → musical state → response → listen again"
+        ],
+        [
+          "player agency",
+          "Bounded controls, REST, and PANIC"
+        ],
+        [
+          "runtime boundary",
+          "Audio timing does not wait for an LLM"
+        ],
+        [
+          "status",
+          "Prototype; user-device live acceptance remains ongoing"
+        ]
+      ],
+      "proof_zh": [
+        [
+          "交互闭环",
+          "观测 → 音乐状态 → 回应 → 再次聆听"
+        ],
+        [
+          "演奏者控制",
+          "有界控制、REST 与 PANIC"
+        ],
+        [
+          "运行边界",
+          "音频时序不等待 LLM"
+        ],
+        [
+          "当前阶段",
+          "原型；用户设备上的实时验收仍在进行"
+        ]
+      ]
     }
   ];
 
@@ -302,8 +519,26 @@
     }
   };
 
-  var TAGS = ["All", "#spatial_data", "#embedding", "#data_quality", "#platform_governance", "#geoai", "#ethics", "#taxonomy", "#planning_design", "#visualization"];
+  var TAGS = ["All", "#spatial_data", "#embedding", "#data_quality", "#platform_governance", "#geoai", "#ethics", "#taxonomy", "#planning_design", "#visualization", "#UGC", "#data_pipeline", "#music_interaction", "#agent_systems"];
   var PROJECT_COUNT = CASES.length;
+
+  /* Portal index: every project the bot may mention. Keep in sync with docs/project-registry.md.
+     `url` only after a live fetch; `caseId` jumps to an existing card; neither = "no public link yet". */
+  var PORTAL_INDEX = [
+    { group: "research", caseId: "poi", title: "MSc thesis: cross-platform venue representation", title_zh: "硕士论文：跨平台场地表征", status: "in progress", status_zh: "进行中" },
+    { group: "research", caseId: "maup", title: "MAUP / UGCoP", title_zh: "MAUP / UGCoP", status: "complete", status_zh: "已完成" },
+    { group: "research", caseId: "geoai", title: "Responsible GeoAI", title_zh: "负责任的 GeoAI", status: "complete", status_zh: "已完成" },
+    { group: "coursework", title: "NYC fire risk: official vs public-reported", title_zh: "纽约火灾风险：官方数据 vs 公众反映", status: "coursework, group project", status_zh: "课程小组项目" },
+    { group: "coursework", title: "Singapore accessibility: 20-minute towns", title_zh: "新加坡可达性：20 分钟生活圈", status: "coursework, group project", status_zh: "课程小组项目" },
+    { group: "side", caseId: "wake-me-up", url: "https://jiyiji.cn/webqing/music/wake-me-up-where-september-ends/", title: "Wake Me Up: Where September Ends", title_zh: "九月末，在网易云评论区醒来", status: "side project, in progress", status_zh: "个人项目，进行中" },
+    { group: "systems", caseId: "band-with", url: "https://jiyiji.cn/webqing/music/band-with/", title: "Band-with", title_zh: "Band-with 音乐伙伴", status: "interactive prototype", status_zh: "交互原型" },
+    { group: "systems", title: "Mailbot + CCbot (BotSpace)", title_zh: "Mailbot + CCbot（BotSpace）", status: "local system", status_zh: "本地系统" },
+    { group: "systems", title: "CyberGaze", title_zh: "CyberGaze", status: "prototype", status_zh: "原型" },
+    { group: "systems", title: "Epistemic knowledge graph", title_zh: "认识论知识图谱", status: "prototype", status_zh: "原型" },
+    { group: "systems", title: "Liminal: six-agent simulation", title_zh: "Liminal：六智能体模拟", status: "local prototype", status_zh: "本地原型" },
+    { group: "design", caseId: "xiazhuang", title: "Xiazhuang Village plan", title_zh: "夏庄村振兴规划", status: "undergraduate", status_zh: "本科" },
+    { group: "design", caseId: "huijing", title: "Huijing Huayuan landscape plan", title_zh: "汇景华苑景观方案", status: "undergraduate", status_zh: "本科" }
+  ];
   var STARTERS = [
     { label: "overview", label_zh: "概览", hint: "Structure summary first; no deep reading.", hint_zh: "先看结构，不用深读。", type: "STARTER_PICKED", value: "overview", variant: "primary" },
     { label: "browse by tag", label_zh: "按标签看", hint: "Filter by a hiring angle or story lens.", hint_zh: "按招聘角度或故事镜头筛。", type: "STARTER_PICKED", value: "tag", variant: "primary" },
@@ -843,7 +1078,26 @@
     syncTagButtonsLanguage();
     syncResultLeadBlocks();
     syncVisibleCaseCardsLanguage();
+    syncPortalIndexLanguage();
     syncResultLabel();
+  }
+
+  function syncPortalIndexLanguage() {
+    var current = document.querySelector("#case-results .portal-index");
+    if (!current) return;
+    var template = document.createElement("template");
+    template.innerHTML = portalIndexBlock();
+    var next = template.content.firstElementChild;
+    current.parentNode.replaceChild(next, current);
+    bindPortalIndex(next);
+  }
+
+  function bindPortalIndex(root) {
+    root.querySelectorAll("[data-portal-case]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        openCaseFromIndex(button.getAttribute("data-portal-case"));
+      });
+    });
   }
 
   function syncTagButtonsLanguage() {
@@ -877,7 +1131,7 @@
     document.querySelectorAll(".case-group[data-category]").forEach(function (group) {
       var title = group.querySelector(".case-group-title");
       if (!title) return;
-      title.textContent = group.getAttribute("data-category") === "design" ? t("design work", "设计类项目") : t("research work", "研究类项目");
+      title.textContent = group.getAttribute("data-category") === "design" ? t("design work", "设计类项目") : group.getAttribute("data-category") === "systems" ? t("interactive systems", "交互系统") : t("research & analysis", "研究与分析");
     });
   }
 
@@ -889,6 +1143,11 @@
     card.querySelectorAll("[data-tag-jump]").forEach(function (button) {
       var tag = button.getAttribute("data-tag-jump");
       if (tag) button.setAttribute("aria-label", tagAria(tag));
+    });
+    card.querySelectorAll("[data-project-link]").forEach(function (link) {
+      var label = link.getAttribute("data-project-link") === "social" ? t("Xiaohongshu post (app/login)", "小红书分享（App / 登录）") : t(item.linkLabel, item.linkLabel_zh);
+      link.textContent = label + " ↗";
+      link.setAttribute("aria-label", label + ": " + item.title);
     });
     var details = card.querySelector("[data-case-details]");
     if (!details) return;
@@ -1264,8 +1523,8 @@
         appState.chat.conversationState = "overview";
         setView("chat");
         typeAssistant(t(
-          "Five projects, one question: when does simplifying a place change who can find it, fund it, or govern it? Start here for the structure, then go deeper by tag or card.",
-          "五个项目，一个问题：地点一旦被简化，谁能找到它、谁能给它争取资源、谁有权管它？"
+          PROJECT_COUNT + " projects: from spatial representation to comment-data stories and responsive music systems. Start here, then go deeper by tag or card.",
+          PROJECT_COUNT + " 个项目：从空间表征，到评论数据故事与交互音乐系统。先看结构，再按标签或卡片深入。"
         ), function () {
           loadResultsShell("overview", "All", []);
         });
@@ -2455,7 +2714,7 @@
     } else if (appState.view === "overview") {
       root.innerHTML = overviewBlock() + groupedCaseCards(results, function () {
         return false;
-      }, true) + '<div id="results-followup-bot"></div>';
+      }, true) + portalIndexBlock() + '<div id="results-followup-bot"></div>';
     } else if (appState.view === "split") {
       root.innerHTML = taxonomyBlock() + groupedCaseCards(results, function (item) {
         return appState.portfolio.expandedCaseIds.has(item.id);
@@ -2465,9 +2724,10 @@
     } else {
       root.innerHTML = groupedCaseCards(results, function (item) {
         return appState.portfolio.expandedCaseIds.has(item.id);
-      }, false) + '<div id="results-followup-bot"></div>';
+      }, false) + (appState.portfolio.activeTag === "All" ? portalIndexBlock() : "") + '<div id="results-followup-bot"></div>';
     }
 
+    bindPortalIndex(root);
     root.querySelectorAll("[data-tag-jump]").forEach(function (button) {
       button.addEventListener("click", function () {
         dispatchConversation({ type: "TAG_SELECTED", value: button.getAttribute("data-tag-jump") });
@@ -2494,8 +2754,9 @@
 
   function groupedCaseCards(results, expandedFn, preview) {
     var groups = [
-      { category: "analytics", label: t("research work", "研究类项目") },
-      { category: "design", label: t("design work", "设计类项目") }
+      { category: "analytics", label: t("research & analysis", "研究与分析") },
+      { category: "design", label: t("design work", "设计类项目") },
+      { category: "systems", label: t("interactive systems", "交互系统") }
     ];
     return groups.map(function (group) {
       var items = results.filter(function (item) {
@@ -2525,8 +2786,8 @@
   function overviewBlock() {
     return '<section class="overview-block">' +
       '<div class="overview-copy"><span class="app-kicker">' + escapeHtml(t("overview", "概览")) + '</span><strong>' + PROJECT_COUNT + escapeHtml(t(" projects about the model-world gap.", " 个项目，关于模型与真实世界的偏差。")) + '</strong><p>' + escapeHtml(t(
-        "Maps, labels, and AI systems simplify reality. I use spatial data to test when those simplifications change who is visible, searchable, or accountable.",
-        "地图、标签、AI 都在简化现实。我用空间数据追问：哪些简化会悄悄改变「谁被看见、谁被搜到、谁被问责」？"
+        "Maps, labels, and AI systems simplify reality. I use spatial analysis, comment-data stories, and music prototypes to examine what systems observe, represent, and respond to.",
+        "地图、标签、AI 都在简化现实。我用空间分析、评论数据故事与音乐原型，追问系统观察了什么、如何表征，又如何回应。"
       )) + '</p><p class="overview-hint">' + escapeHtml(t("You can keep browsing by tag or open the full grid.", "你可以继续按标签看，或直接打开全网格。")) + '</p></div>' +
       '<div class="overview-stats">' +
       stat(String(PROJECT_COUNT), t("projects", "个项目")) +
@@ -2551,6 +2812,47 @@
       stat("#embedding", tagHint("#embedding")) +
       stat("#platform_governance", tagHint("#platform_governance")) +
       '</div></section>' + helpBlock();
+  }
+
+  function portalIndexBlock() {
+    var groups = [
+      { id: "research", label: t("research", "研究") },
+      { id: "coursework", label: t("coursework", "课程项目") },
+      { id: "side", label: t("side projects", "个人项目") },
+      { id: "systems", label: t("systems and prototypes", "系统与原型") },
+      { id: "design", label: t("design", "设计") }
+    ];
+    return '<section class="portal-index" aria-label="' + escapeHtml(t("Project index", "项目索引")) + '">' +
+      '<span class="app-kicker">' + escapeHtml(t("project index", "项目索引")) + '</span>' +
+      groups.map(function (group) {
+        var rows = PORTAL_INDEX.filter(function (item) { return item.group === group.id; });
+        if (!rows.length) return "";
+        return '<div class="portal-group"><h3>' + escapeHtml(group.label) + '</h3><ul>' + rows.map(portalIndexRow).join("") + '</ul></div>';
+      }).join("") + '</section>';
+  }
+
+  function portalIndexRow(item) {
+    var title = escapeHtml(t(item.title, item.title_zh));
+    var status = '<span class="portal-status">' + escapeHtml(t(item.status, item.status_zh)) + '</span>';
+    var action;
+    if (item.url) {
+      action = '<a class="portal-link" href="' + escapeHtml(item.url) + '" target="_blank" rel="noopener noreferrer" aria-label="' + escapeHtml(t("Open ", "打开 ") + t(item.title, item.title_zh)) + '">' + escapeHtml(t("open page", "打开页面")) + ' &#8599;</a>';
+    } else if (item.caseId) {
+      action = '<button type="button" class="portal-link" data-portal-case="' + escapeHtml(item.caseId) + '" aria-label="' + escapeHtml(t("Show card: ", "查看卡片：") + t(item.title, item.title_zh)) + '">' + escapeHtml(t("show card", "查看卡片")) + '</button>';
+    } else {
+      action = '<span class="portal-nolink">' + escapeHtml(t("no public link yet", "暂无公开链接")) + '</span>';
+    }
+    return '<li><span class="portal-title">' + title + '</span>' + status + action + '</li>';
+  }
+
+  function openCaseFromIndex(id) {
+    var match = CASES.filter(function (item) { return item.id === id; })[0];
+    if (!match) return;
+    loadResultsShell("grid", "All", [match.id]);
+    window.setTimeout(function () {
+      var details = document.querySelector('[data-case-details="' + cssEscape(id) + '"]');
+      scrollMainToElement(mainScrollRoot(), details || qs("case-results"));
+    }, 40);
   }
 
   function stat(value, label) {
@@ -2627,6 +2929,7 @@
       '<div class="card-tags">' + item.tags.map(function (tag) {
         return '<button type="button" class="tag-chip" aria-label="' + tagAria(tag) + '" data-tag-jump="' + escapeHtml(tag) + '"><span>' + escapeHtml(tag) + '</span></button>';
       }).join("") + '</div>' +
+      projectLinksBlock(item) +
       '<details class="case-details" data-case-details="' + escapeHtml(item.id) + '"' + (open ? " open" : "") + '>' +
       '<summary data-case-summary>' + cardDetailSummary(item) + '</summary>' +
       whyItMattersBlock(item) +
@@ -2637,6 +2940,15 @@
       '<div class="mini-demo">' + demoBlock(item.demo) + '</div>' +
       '</details>' +
       '</article>';
+  }
+
+  function projectLinksBlock(item) {
+    if (!item.url) return "";
+    var links = [{ kind: "demo", url: item.url, label: t(item.linkLabel, item.linkLabel_zh) }];
+    if (item.socialUrl) links.push({ kind: "social", url: item.socialUrl, label: t("Xiaohongshu post (app/login)", "小红书分享（App / 登录）") });
+    return '<div class="card-tags project-links">' + links.map(function (link) {
+      return '<a class="portal-link" data-project-link="' + link.kind + '" href="' + escapeHtml(link.url) + '" target="_blank" rel="noopener noreferrer" aria-label="' + escapeHtml(link.label + ": " + item.title) + '">' + escapeHtml(link.label) + ' &#8599;</a>';
+    }).join('') + '</div>';
   }
 
   function iconSvg(key) {
@@ -2661,6 +2973,7 @@
   }
 
   function cardDetailSummary(item) {
+    if (item.category === "systems") return t("input &middot; state &middot; response", "输入 · 状态 · 回应");
     return item.category === "design"
       ? t("site &middot; plan &middot; render", "场地 · 方案 · 渲染")
       : t("data &middot; workflow &middot; method", "数据 · 流程 · 方法");
@@ -2715,6 +3028,12 @@
   }
 
   function demoBlock(type) {
+    if (type === "wake-me-up" || type === "band-with") {
+      var steps = type === "wake-me-up"
+        ? [t("capture", "采集"), "SQLite/WAL", t("verified aggregates", "核验聚合"), t("interactive story", "交互故事")]
+        : [t("audio observation", "音频观测"), "LISTEN / FOLLOW / REST", t("drum response", "鼓声回应"), t("player feedback", "演奏者反馈")];
+      return '<div class="control-list">' + steps.map(function (step) { return '<span>' + escapeHtml(step) + '</span>'; }).join("") + '</div>';
+    }
     if (type === "maup") {
       return '<div class="maup-demo" data-radius="500">' +
         '<button class="radius-btn" type="button" data-action="maup-toggle">' + escapeHtml(t("What if the buffer radius changes to 1000 m?", "缓冲半径改成 1000 m 会怎样？")) + '</button>' +
