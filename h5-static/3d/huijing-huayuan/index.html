@@ -7,10 +7,10 @@
   <!-- same type stack as the portfolio (h5-static/index.html); falls back to PingFang / YaHei where Google Fonts is blocked -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <!-- vendored: maplibre-gl 4.7.1, three 0.160.0 (unpkg/jsdelivr are unreliable from China) -->
+  <link rel="stylesheet" href="../../page-transition.css?v=64c902704887">
   <link rel="stylesheet" href="vendor/maplibre-gl/maplibre-gl.css">
-  <script src="vendor/maplibre-gl/maplibre-gl.js"></script>
   <script type="importmap">
     {
       "imports": {
@@ -107,9 +107,11 @@
   </style>
 </head>
 <body>
+  <script src="../../page-transition.js?v=7525ee432e8c" data-scene-gate></script>
+  <script src="vendor/maplibre-gl/maplibre-gl.js"></script>
   <div id="map"></div>
   <div class="panel">
-    <p class="crumb"><a href="../../">← 作品集</a> / 3D / 汇景花苑</p>
+    <p class="crumb"><a href="../../" data-portfolio-return>← 作品集</a> / 3D / 汇景花苑</p>
     <h1>汇景花苑 · 场地体量</h1>
     <p class="sub" id="sub">Archicad IFC → GLB，叠加在 WGS-84 底图上</p>
 

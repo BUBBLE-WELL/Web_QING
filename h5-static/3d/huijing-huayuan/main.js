@@ -171,6 +171,10 @@ const modelLayer = {
     this.camera.projectionMatrix = new THREE.Matrix4().fromArray(matrix).multiply(modelMatrix());
     this.renderer.resetState();
     this.renderer.render(this.scene, this.camera);
+    if (this.readyPending) {
+      this.readyPending = false;
+      window.QingTransition?.ready(); // all initial GLBs are loaded and their first frame is drawn
+    }
   },
 };
 
@@ -687,8 +691,11 @@ map.on('load', async () => {
     await loadBuildings(); // before the GLBs, so their meshes can be mapped to buildings as they load
     setSection(null);
     await buildScene(scene);
+    modelLayer.readyPending = true;
+    map.triggerRepaint();
     status('');
   } catch (err) {
+    window.QingTransition?.fail();
     console.error(err);
     status(`加载失败：${err.message}`);
   }

@@ -38,3 +38,5 @@ pics/shouyin_Field Ops.svg
 3d/huijing-huayuan/vendor/three/LICENSE
 3d/huijing-huayuan/assets/buildings.geojson
 3d/huijing-huayuan/assets/floorplates.geojson
+page-transition.js
+page-transition.css

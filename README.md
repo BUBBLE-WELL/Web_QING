@@ -33,3 +33,9 @@ The viewer has shared 2D/3D building selection, horizontal and east–west verti
 `window.huijingViewer` provides select, clear, flyTo, setSection, setVerticalSection, setLayer and queryBuildings, plus selected/section/verticalSection getters. setLayer returns the layer-loading Promise. This is a frontend API.
 
 Run `node tests/huijing-viewer.test.mjs` for the real-asset regression harness. See [verification and tower totals](release/huijing-selection-section-20261018.md). This change is awaiting review and has not been deployed.
+
+### Interaction update
+
+The shared solid-color spider curtain wraps Say Hi and the 3D destination's actual first-render readiness. Project links stay in new tabs; the source portfolio preserves its view, expanded cards and reading position. The launched viewer's return control closes that tab, with a safe switch-tab fallback.
+
+The project index offers both Open page and Show card where available. Singapore Coastal Change has a source-backed bilingual research card without an invented demo URL. Run the interaction, return-position and portfolio-content Node tests alongside the existing viewer test. This change is a separate PR against main after the Huijing PR #10 merge; no deployment is included.
