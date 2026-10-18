@@ -515,7 +515,7 @@
       { lang: "FR", level: 0.28, note: "basic", note_zh: "基础" }
     ],
     profileIntro_en: "NUS MSc Applied GIS, Sep 2026. The design background taught me to read space qualitatively — desire lines, atmosphere, what a place means. The GIS research taught me to verify whether that reading holds at scale. Each one made the other more honest. That's the gap I work in, and this portfolio is a prototype of what happens when you take it seriously.",
-    profileIntro_zh: "新加坡国立大学应用地理信息系统硕士（NUS MSc Applied GIS），预计 2026 年 9 月毕业。设计背景让我从质性角度读空间——动线、氛围、地方意味着什么；GIS 训练让我检验这些读法在更大尺度上是否站得住脚。两者互相校准。这就是我在意的工作缝隙，本作品集则是认真对待它时能做成的雏形。",
+    profileIntro_zh: "新加坡国立大学应用地理信息系统硕士（NUS MSc Applied GIS），2026 年 9 月毕业。设计背景让我从质性角度读空间——动线、氛围、地方意味着什么；GIS 训练让我检验这些读法在更大尺度上是否站得住脚。两者互相校准。这就是我在意的工作缝隙，本作品集则是认真对待它时能做成的雏形。",
     contact: {
       email: "jellycwq@outlook.com",
       linkedin: "linkedin.com/in/wanqing-cui",
