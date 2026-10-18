@@ -25,3 +25,11 @@ This repository is the reviewed public-release mirror. Development happens in th
 Vercel and GitHub Pages are not production targets for this release topology.
 
 </details>
+
+### Huijing viewer
+
+The viewer has shared 2D/3D building selection, horizontal and east–west vertical clipping, and optional translucent section boards. Placement is fixed to the author-approved georef.json; there is no deployment alignment mode. Runtime assets buildings.geojson and floorplates.geojson contain inferred building/platform groups and discrete storey intervals. Slab outline area is computed from geometry rather than an Archicad GFA quantity.
+
+`window.huijingViewer` provides select, clear, flyTo, setSection, setVerticalSection, setLayer and queryBuildings, plus selected/section/verticalSection getters. setLayer returns the layer-loading Promise. This is a frontend API.
+
+Run `node tests/huijing-viewer.test.mjs` for the real-asset regression harness. See [verification and tower totals](release/huijing-selection-section-20261018.md). This change is awaiting review and has not been deployed.

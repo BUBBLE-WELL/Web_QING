@@ -88,6 +88,11 @@
 
     .readout { margin-top: 8px; padding: 7px 8px; border-radius: 0; background: var(--soft); color: var(--body);
       font: 11px/1.5 var(--mono); word-break: break-all; white-space: pre-line; }
+    .hint { margin: 4px 0 0; color: var(--muted); font: 10.5px/1.45 var(--mono); }
+    .kv { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 0; font-size: 12.5px; }
+    .kv dt { color: var(--muted); }
+    .kv dd { margin: 0; color: var(--ink); font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
+    input[type=range]:disabled { opacity: 0.45; }
     #status { margin-top: 10px; color: var(--muted); font: 11px/1.4 var(--mono); }
 
     .maplibregl-ctrl-group { border-radius: 0 !important; border: 1px solid var(--border); box-shadow: 0 12px 28px rgba(17, 17, 17, 0.045) !important; }
@@ -118,26 +123,29 @@
     <div id="layers"></div>
     <div class="inline" style="margin-top:8px"><label for="opacity">透明度</label> <input type="range" id="opacity" min="0.2" max="1" step="0.05" value="0.9"></div>
 
-    <!-- authoring tools for georeferencing; shown only with ?align=1 -->
-    <section id="align-tools" hidden>
-      <h2>对准</h2>
-      <button id="drag" title="开启后在地图上拖动 = 移动模型">拖动模型：关</button>
-      <div class="inline" style="margin-top:8px"><label for="step">步长</label>
-        <select id="step"><option>0.5</option><option selected>2</option><option>10</option><option>50</option></select> m</div>
-      <div class="grid" style="margin-top:8px">
-        <span></span><button data-move="0,1">↑ 北</button><span></span>
-        <button data-move="-1,0">← 西</button><button data-move="0,-1">↓ 南</button><button data-move="1,0">东 →</button>
-      </div>
-      <div class="inline" style="margin-top:10px"><label for="rot-num">旋转</label> <input type="number" id="rot-num" step="0.1"> °</div>
-      <input type="range" id="rot" min="-180" max="180" step="0.1" aria-label="旋转">
-      <div class="grid" style="margin-top:4px; grid-template-columns: repeat(4, 1fr)">
-        <button data-rot="-1">−1°</button><button data-rot="-0.1">−0.1°</button><button data-rot="0.1">+0.1°</button><button data-rot="1">+1°</button>
-      </div>
-      <div class="readout" id="readout"></div>
-      <div class="grid" style="margin-top:8px">
-        <button id="save">保存 json</button><button id="copy">复制</button><button id="reset">重置</button>
+    <h2>水平剖切</h2>
+    <label class="row"><input type="checkbox" id="section-on"> 按高度剖切 <span class="n" id="section-val">关</span></label>
+    <input type="range" id="section" min="0" max="114" step="0.1" value="30" disabled aria-label="剖切高度（米）">
+    <p class="hint">3D 切去该高度以上部分；地图显示该高度对应的离散楼层轮廓，非实时求交截面。</p>
+
+    <h2>东西向竖直剖切</h2>
+    <label class="row"><input type="checkbox" id="vertical-on"> 东西向剖面 <span class="n" id="vertical-val">关</span></label>
+    <input type="range" id="vertical-section" step="0.5" value="0" disabled aria-label="东西向剖面南北位置（米）">
+    <p class="hint">沿地理东西方向竖切，移动南北位置；保留南侧。位置以项目原点为零，北为正。</p>
+    <label class="row"><input type="checkbox" id="section-board" checked> 显示半透明剖切板</label>
+    <p class="hint">可同时开启两种剖切；剖切板用于定位，切口未封口。</p>
+
+    <!-- filled by select(); 3D and 2D clicks share one selection -->
+    <section id="info" hidden aria-live="polite">
+      <h2 id="info-title">建筑</h2>
+      <dl id="info-rows" class="kv"></dl>
+      <p class="hint">楼板面积由 IFC 楼板几何计算，非 Archicad 统计值。</p>
+      <div class="grid" style="grid-template-columns: 1fr 1fr; margin-top:6px">
+        <button id="info-fly" type="button">定位</button><button id="info-clear" type="button">取消选择</button>
       </div>
     </section>
+    <p class="hint">点击 3D 体块或地面轮廓选择建筑；Esc 取消。</p>
+
     <div id="status" role="status"></div>
   </div>
   <script type="module" src="main.js"></script>

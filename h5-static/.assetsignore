@@ -51,3 +51,6 @@
 !3d/huijing-huayuan/vendor/three/examples/jsm/loaders/GLTFLoader.js
 !3d/huijing-huayuan/vendor/three/examples/jsm/utils/
 !3d/huijing-huayuan/vendor/three/examples/jsm/utils/BufferGeometryUtils.js
+
+!3d/huijing-huayuan/assets/buildings.geojson
+!3d/huijing-huayuan/assets/floorplates.geojson

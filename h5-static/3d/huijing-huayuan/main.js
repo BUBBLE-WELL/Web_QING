@@ -3,18 +3,14 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-const STORE_KEY = 'huijing-georef';
 const $ = (id) => document.getElementById(id);
 const status = (msg) => { $('status').textContent = msg; };
 
-let defaults;
 let geo; // stored truth, always WGS-84
 // GeoJSON sources by file path: { crs: 'project' | 'wgs84', raw } — re-projected for display on every refresh()
 const vectorSources = {};
 const pointItems = []; // { features, markers, crs, visible }
 const params = new URLSearchParams(location.search);
-// ?align=1 shows the georeferencing tools and uses this browser's stored alignment; visitors always get georef.json
-const ALIGN = params.get('align') === '1';
 // ?basemap=tencent|osm|sat picks the starting basemap (tencent for a mainland-China deployment)
 const startBase = params.get('basemap');
 let basemap = ['osm', 'sat', 'tencent'].includes(startBase) ? startBase : 'osm';
@@ -78,6 +74,7 @@ function displayFC(raw, crs) {
     if (g.type === 'Point') return { type: 'Point', coordinates: f(g.coordinates) };
     if (g.type === 'LineString') return { type: 'LineString', coordinates: g.coordinates.map(f) };
     if (g.type === 'Polygon') return { type: 'Polygon', coordinates: g.coordinates.map((r) => r.map(f)) };
+    if (g.type === 'MultiPolygon') return { type: 'MultiPolygon', coordinates: g.coordinates.map((p) => p.map((r) => r.map(f))) };
     return g;
   };
   return { type: 'FeatureCollection', features: raw.features.map((ft) => ({ ...ft, geometry: map1(ft.geometry) })) };
@@ -167,8 +164,10 @@ const modelLayer = {
     this.scene.add(sun);
     this.renderer = new THREE.WebGLRenderer({ canvas: m.getCanvas(), context: gl, antialias: true });
     this.renderer.autoClear = false;
+    this.renderer.localClippingEnabled = true; // section view
   },
   render(gl, matrix) {
+    // map matrix × model matrix: model space (glTF, metres) -> clip space; picking inverts the same matrix
     this.camera.projectionMatrix = new THREE.Matrix4().fromArray(matrix).multiply(modelMatrix());
     this.renderer.resetState();
     this.renderer.render(this.scene, this.camera);
@@ -181,10 +180,24 @@ const loader = new GLTFLoader();
 function ensureLayer(l) {
   if (!layerGroups[l.id]) {
     layerGroups[l.id] = loader.loadAsync(`assets/${l.file}`).then((gltf) => {
-      gltf.scene.traverse((o) => { if (o.isMesh) o.material = materials[l.id]; });
+      gltf.scene.traverse((o) => {
+        if (!o.isMesh) return;
+        o.material = materials[l.id];
+        o.userData.layer = l.id;
+        // GLB nodes are named by IFC GlobalId; buildings.geojson maps GlobalIds to buildings
+        // Prefer the original glTF name; future loaders may sanitize Object3D.name.
+        // userData.name preserves the original glTF node name.
+        const bid = gidToBuilding.get(o.userData.name ?? o.name);
+        o.userData.buildingId = bid;
+        if (bid) (meshesByBuilding[bid] ||= []).push(o);
+      });
+      paintSelection();
       modelLayer.scene.add(gltf.scene);
       map.triggerRepaint();
       return gltf.scene;
+    }).catch((err) => {
+      delete layerGroups[l.id]; // allow retry after a failed lazy-load request
+      throw err;
     });
   }
   return layerGroups[l.id];
@@ -203,9 +216,10 @@ async function glbItems(def) {
   return layers.map((l) => {
     // flatShading derives face normals in the shader; the GLBs carry no normals
     materials[l.id] = new THREE.MeshLambertMaterial({ color: l.color, transparent: true, flatShading: true,
-      opacity: +$('opacity').value, side: THREE.DoubleSide });
+      opacity: +$('opacity').value, side: THREE.DoubleSide, clippingPlanes: clipPlanes() });
+    layerLabels[l.id] = l.label;
     return {
-      label: l.label, color: l.color, count: l.count, on: !lazy.has(l.id),
+      id: l.id, label: l.label, color: l.color, count: l.count, on: !lazy.has(l.id),
       async setVisible(v) {
         if (!v && !layerGroups[l.id]) return;
         if (v && !layerGroups[l.id]) status(`加载 ${l.label}…`);
@@ -229,12 +243,246 @@ async function vectorSource(path, crs) {
   return vectorSources[path];
 }
 
+// ---------- buildings: one selection shared by 3D and 2D ----------
+const BUILDINGS = 'assets/buildings.geojson';
+const PLATES = 'assets/floorplates.geojson';
+const buildings = new Map(); // building_id -> feature (project metres)
+const gidToBuilding = new Map(); // IFC GlobalId -> building_id
+const meshesByBuilding = {};
+const layerLabels = {};
+let selected = null;
+const highlight = new THREE.MeshLambertMaterial({ color: '#2bb673', flatShading: true, side: THREE.DoubleSide,
+  transparent: true, opacity: 0.95 });
+
+async function loadBuildings() {
+  const [{ raw }] = await Promise.all([vectorSource(BUILDINGS, 'project'), vectorSource(PLATES, 'project')]);
+  for (const ft of raw.features) {
+    buildings.set(ft.properties.building_id, ft);
+    ft.properties.ifc_globalids.forEach((gid) => gidToBuilding.set(gid, ft.properties.building_id));
+  }
+  const none = ['==', ['get', 'building_id'], ''];
+  const add = (l) => map.addLayer(l, 'ifc-model');
+  // transparent hit area: clicks on the ground footprint resolve to the building even where no mesh is drawn
+  add({ id: 'bld-hit', type: 'fill', source: BUILDINGS, paint: { 'fill-color': '#000', 'fill-opacity': 0 } });
+  add({ id: 'plate-fill', type: 'fill', source: PLATES, filter: none, paint: { 'fill-color': '#d08a12', 'fill-opacity': 0.18 } });
+  add({ id: 'plate-line', type: 'line', source: PLATES, filter: none, paint: { 'line-color': '#111111', 'line-width': 1.4 } });
+  add({ id: 'bld-sel-fill', type: 'fill', source: BUILDINGS, filter: none, paint: { 'fill-color': '#2bb673', 'fill-opacity': 0.22 } });
+  add({ id: 'bld-sel-line', type: 'line', source: BUILDINGS, filter: none, paint: { 'line-color': '#2bb673', 'line-width': 2.6 } });
+  const trace = { type: 'FeatureCollection', features: [] };
+  vectorSources['section-trace'] = { crs: 'project', raw: trace };
+  map.addSource('section-trace', { type: 'geojson', data: trace });
+  add({ id: 'section-trace', type: 'line', source: 'section-trace', paint: { 'line-color': '#27728c', 'line-width': 2, 'line-dasharray': [3, 2] } });
+  sectionBounds = new THREE.Box3();
+  for (const f of raw.features) {
+    const polygons = f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates;
+    polygons.flat(2).forEach(([x, y]) => sectionBounds.expandByPoint(new THREE.Vector3(x, 0, -y)));
+  }
+  updateClipping();
+}
+
+function paintSelection() {
+  for (const [bid, meshes] of Object.entries(meshesByBuilding)) {
+    meshes.forEach((o) => { o.material = bid === selected ? highlight : materials[o.userData.layer]; });
+  }
+  if (map.getLayer('bld-sel-fill')) {
+    const f = ['==', ['get', 'building_id'], selected || ''];
+    map.setFilter('bld-sel-fill', f);
+    map.setFilter('bld-sel-line', f);
+  }
+  map.triggerRepaint();
+}
+
+const LAYER_SHORT = { towers: '高层塔楼', midrise: '多层', lowrise: '低层', flat: '单层 / 平台' };
+function showCard() {
+  const card = $('info');
+  if (!selected) { card.hidden = true; return; }
+  const p = buildings.get(selected).properties;
+  $('info-title').textContent = `建筑 ${p.building_id}`;
+  const rows = [
+    ['类型', LAYER_SHORT[p.layer] || p.layer],
+    ['地上层数', `${p.floors}`],
+    ['高度', `${p.height_m.toFixed(1)} m`],
+    ['楼板面积合计', `${p.floor_area_m2.toLocaleString('zh-CN')} m²`],
+    ['IFC 构件', `${p.ifc_count}`],
+  ];
+  const dl = $('info-rows');
+  dl.replaceChildren(...rows.flatMap(([k, v]) => {
+    const dt = document.createElement('dt'); dt.textContent = k;
+    const dd = document.createElement('dd'); dd.textContent = v;
+    return [dt, dd];
+  }));
+  card.hidden = false;
+}
+
+function select(id, { fly = false } = {}) {
+  if (id != null && !buildings.has(id)) throw new Error(`unknown building ${id}`);
+  selected = id ?? null;
+  paintSelection();
+  showCard();
+  if (fly && selected) flyTo(selected);
+  return selected;
+}
+const clear = () => select(null);
+
+function centroidLngLat(id) {
+  const g = buildings.get(id).geometry;
+  const ring = (g.type === 'Polygon' ? g.coordinates : g.coordinates.flatMap((p) => p))[0];
+  const [sx, sy] = ring.reduce(([a, b], [x, y]) => [a + x, b + y], [0, 0]);
+  return toDisplay(projectToLngLat([sx / ring.length, sy / ring.length]));
+}
+
+let framePadding = {};
+function updateFramePadding() {
+  const panel = document.querySelector('.panel').getBoundingClientRect();
+  framePadding = innerWidth <= 600 ? { top: panel.bottom, left: 0, right: 0, bottom: 0 }
+    : { left: panel.right, top: 0, right: 0, bottom: 0 };
+  map.setPadding(framePadding);
+}
+addEventListener('resize', () => { if (geo) updateFramePadding(); });
+function flyTo(target) {
+  const center = typeof target === 'string' ? centroidLngLat(target) : toDisplay(target);
+  map.flyTo({ center, zoom: Math.max(map.getZoom(), 17.3), padding: framePadding, duration: 900 });
+}
+
+// 3D pick: unproject the click through the inverse of (map matrix × model matrix) into model space and raycast
+const raycaster = new THREE.Raycaster();
+function pick3D(point) {
+  if (!modelLayer.camera) return null;
+  const c = map.getCanvas();
+  const x = (point.x / c.clientWidth) * 2 - 1;
+  const y = 1 - (point.y / c.clientHeight) * 2;
+  const inv = modelLayer.camera.projectionMatrix.clone().invert();
+  const near = new THREE.Vector3(x, y, -1).applyMatrix4(inv);
+  const far = new THREE.Vector3(x, y, 1).applyMatrix4(inv);
+  raycaster.set(near, far.sub(near).normalize());
+  const meshes = [];
+  modelLayer.scene.traverseVisible((o) => { if (o.isMesh && o.userData.buildingId) meshes.push(o); });
+  // hits above the section plane are cut away; site slab, terrain and walls are not buildings and are seen through
+  const hit = raycaster.intersectObjects(meshes, false)
+    .find((h) => clipPlanes().every((p) => p.distanceToPoint(h.point) >= -1e-6) && h.object.userData.buildingId);
+  return hit ? hit.object.userData.buildingId : null;
+}
+
+function pickAt(point) {
+  const b3 = pick3D(point);
+  if (b3) return { id: b3, from: '3d' };
+  const f = map.getLayer('bld-hit') && map.queryRenderedFeatures(point, { layers: ['bld-hit'] })[0];
+  return f ? { id: f.properties.building_id, from: '2d' } : null;
+}
+
+// ---------- section ----------
+let section = null; // metres above ±0.00, or null
+const clip = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0); // keeps y <= constant (glTF Y-up = project z)
+let verticalSection = null; // geographic north offset from project origin, metres
+const verticalClip = new THREE.Plane();
+const clipPlanes = () => [...(section == null ? [] : [clip]), ...(verticalSection == null ? [] : [verticalClip])];
+let sectionBoards;
+let sectionBounds;
+
+function updateSectionGeometry() {
+  if (!geo || !sectionBounds || !modelLayer.scene) return;
+  const t = THREE.MathUtils.degToRad(geo.rotation_deg);
+  const east = new THREE.Vector3(Math.cos(t), 0, Math.sin(t));
+  const north = new THREE.Vector3(Math.sin(t), 0, -Math.cos(t));
+  const corners = [];
+  for (const x of [sectionBounds.min.x, sectionBounds.max.x]) {
+    for (const z of [sectionBounds.min.z, sectionBounds.max.z]) corners.push(new THREE.Vector3(x, 0, z));
+  }
+  const es = corners.map((p) => p.dot(east));
+  const ns = corners.map((p) => p.dot(north));
+  const e0 = Math.min(...es) - 10, e1 = Math.max(...es) + 10;
+  const n0 = Math.floor(Math.min(...ns)) - 10, n1 = Math.ceil(Math.max(...ns)) + 10;
+  $('vertical-section').min = n0;
+  $('vertical-section').max = n1;
+  if (verticalSection != null) verticalSection = THREE.MathUtils.clamp(verticalSection, n0, n1);
+  $('vertical-section').value = verticalSection ?? (n0 + n1) / 2;
+  $('vertical-val').textContent = verticalSection == null ? '关' : `${verticalSection.toFixed(1)} m`;
+  verticalClip.normal.copy(north).negate();
+  verticalClip.constant = verticalSection ?? 0;
+  if (!sectionBoards) {
+    sectionBoards = new THREE.Group();
+    const mat = new THREE.MeshBasicMaterial({ color: '#3a96b8', transparent: true, opacity: 0.18,
+      side: THREE.DoubleSide, depthWrite: false });
+    for (let i = 0; i < 2; i++) {
+      const board = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat);
+      const edge = new THREE.LineSegments(new THREE.EdgesGeometry(board.geometry),
+        new THREE.LineBasicMaterial({ color: '#27728c', transparent: true, opacity: 0.7 }));
+      board.add(edge);
+      sectionBoards.add(board);
+    }
+    modelLayer.scene.add(sectionBoards);
+  }
+  const [horizontal, vertical] = sectionBoards.children;
+  horizontal.visible = section != null;
+  horizontal.rotation.x = -Math.PI / 2;
+  horizontal.scale.set(sectionBounds.max.x - sectionBounds.min.x + 20, sectionBounds.max.z - sectionBounds.min.z + 20, 1);
+  horizontal.position.set((sectionBounds.min.x + sectionBounds.max.x) / 2, section ?? 0,
+    (sectionBounds.min.z + sectionBounds.max.z) / 2);
+  vertical.visible = verticalSection != null;
+  vertical.rotation.y = -t;
+  vertical.scale.set(e1 - e0, SECTION_MAX + 10, 1);
+  vertical.position.copy(east.clone().multiplyScalar((e0 + e1) / 2)
+    .addScaledVector(north, verticalSection ?? 0));
+  vertical.position.y = (SECTION_MAX - 10) / 2;
+  sectionBoards.visible = $('section-board').checked;
+  const projectPoint = (e) => [e * Math.cos(t) + verticalSection * Math.sin(t),
+    -e * Math.sin(t) + verticalSection * Math.cos(t)];
+  const trace = { type: 'FeatureCollection', features: verticalSection == null ? [] : [{ type: 'Feature',
+    properties: {}, geometry: { type: 'LineString', coordinates: [projectPoint(e0), projectPoint(e1)] } }] };
+  if (vectorSources['section-trace']) {
+    vectorSources['section-trace'].raw = trace;
+    map.getSource('section-trace').setData(displayFC(trace, 'project'));
+  }
+}
+
+function updateClipping() {
+  updateSectionGeometry();
+  for (const m of [...Object.values(materials), highlight]) {
+    m.clippingPlanes = clipPlanes();
+    m.needsUpdate = true;
+  }
+  map.triggerRepaint();
+}
+
+function setVerticalSection(n) {
+  if (n != null && !Number.isFinite(+n)) throw new TypeError('section position must be finite');
+  verticalSection = n == null ? null : +n;
+  $('vertical-on').checked = verticalSection != null;
+  $('vertical-section').disabled = verticalSection == null;
+  updateClipping();
+  return verticalSection;
+}
+
+function setSection(h) {
+  if (h != null && !Number.isFinite(+h)) throw new TypeError('section height must be finite');
+  section = h == null ? null : Math.max(0, Math.min(SECTION_MAX, +h));
+  clip.constant = section ?? 0;
+  updateClipping();
+  // 2D: the storey each building is cut through (z0 <= h < z1)
+  const f = section == null ? ['==', ['get', 'building_id'], '']
+    : ['all', ['<=', ['get', 'z0'], section], ['>', ['get', 'z1'], section]];
+  if (map.getLayer('plate-fill')) { map.setFilter('plate-fill', f); map.setFilter('plate-line', f); }
+  $('section-on').checked = section != null;
+  $('section').disabled = section == null;
+  if (section != null) $('section').value = section;
+  $('section-val').textContent = section == null ? '关' : `${section.toFixed(1)} m`;
+  map.triggerRepaint();
+  return section;
+}
+const SECTION_MAX = 114;
+
+function queryBuildings({ minHeight = -Infinity, maxHeight = Infinity, minFloors = 0, layer } = {}) {
+  return [...buildings.values()].map((f) => f.properties)
+    .filter((p) => p.height_m >= minHeight && p.height_m <= maxHeight && p.floors >= minFloors && (!layer || p.layer === layer))
+    .map(({ building_id, layer: l, floors, height_m, floor_area_m2 }) => ({ building_id, layer: l, floors, height_m, floor_area_m2 }));
+}
+
 async function lineItem(def) {
   await vectorSource(def.source, def.crs);
   map.addLayer({ id: def.id, type: 'line', source: def.source, ...(def.filter ? { filter: def.filter } : {}),
     layout: { visibility: 'none', 'line-cap': 'round', 'line-join': 'round' },
     paint: { 'line-color': def.color, 'line-width': def.width || 1.5 } }, 'ifc-model');
-  return { label: def.label, color: def.color, on: def.on !== false,
+  return { id: def.id, label: def.label, color: def.color, on: def.on !== false,
     setVisible(v) { map.setLayoutProperty(def.id, 'visibility', v ? 'visible' : 'none'); } };
 }
 
@@ -253,7 +501,7 @@ async function pointItem(def) {
     return new maplibregl.Marker({ element: el, anchor: 'left', offset: [-5, 0] });
   });
   pointItems.push(item);
-  return { label: def.label, color: def.color, count: raw.features.length, on: def.on !== false,
+  return { id: def.id, label: def.label, color: def.color, count: raw.features.length, on: def.on !== false,
     setVisible(v) {
       item.visible = v;
       item.markers.forEach((mk, i) => {
@@ -273,6 +521,8 @@ function itemRow(it, onChange) {
   box.addEventListener('change', () => onChange(box.checked));
   return { row, box };
 }
+
+const itemsById = {}; // scene item / massing layer id -> setter(bool)
 
 async function buildScene(scene) {
   const host = $('layers');
@@ -315,14 +565,16 @@ async function buildScene(scene) {
       all.indeterminate = n > 0 && n < rows.length;
     };
     for (const it of resolved) {
-      const r = itemRow(it, (v) => { it.setVisible(v); syncGroup(); });
+      const r = itemRow(it, (v) => { Promise.resolve(it.setVisible(v)).catch((err) => status(`图层加载失败：${err.message}`)); syncGroup(); });
       r.box.checked = g.on !== false && it.on;
       rows.push(r);
+      // setLayer() goes through the same checkbox state as a click
+      if (it.id) itemsById[it.id] = (v) => { r.box.checked = v; const pending = it.setVisible(v); syncGroup(); return pending; };
       body.appendChild(r.row);
       if (r.box.checked) pending.push(it.setVisible(true));
     }
     all.addEventListener('change', () => {
-      rows.forEach((r, i) => { if (r.box.checked !== all.checked) { r.box.checked = all.checked; resolved[i].setVisible(all.checked); } });
+      rows.forEach((r, i) => { if (r.box.checked !== all.checked) { r.box.checked = all.checked; Promise.resolve(resolved[i].setVisible(all.checked)).catch((err) => status(`图层加载失败：${err.message}`)); } });
       syncGroup();
     });
     const setOpen = (open) => { body.hidden = !open; caret.setAttribute('aria-expanded', String(open)); caret.textContent = open ? '▾' : '▸'; };
@@ -333,57 +585,18 @@ async function buildScene(scene) {
   await Promise.all(pending);
 }
 
-// ---------- georef UI ----------
-function readStored() {
-  try { return JSON.parse(localStorage.getItem(STORE_KEY)); } catch { return null; }
-}
-function store() {
-  if (!ALIGN) return;
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(geo)); } catch { /* storage unavailable */ }
-}
-
+// ---------- refresh display datum; georeference is fixed by georef.json ----------
 function refresh() {
-  $('rot').value = geo.rotation_deg;
-  $('rot-num').value = geo.rotation_deg.toFixed(2);
-  let txt = `origin ${geo.origin_lat.toFixed(7)}, ${geo.origin_lng.toFixed(7)}\nrotation ${geo.rotation_deg.toFixed(2)}°`;
-  if (isGcj()) {
-    const [lng, lat] = toDisplay([geo.origin_lng, geo.origin_lat]);
-    txt += `\nGCJ 显示 ${lat.toFixed(7)}, ${lng.toFixed(7)}（保存仍为 WGS-84）`;
-  }
-  $('readout').textContent = txt;
   for (const [path, s] of Object.entries(vectorSources)) {
     if (s.raw && map.getSource(path)) map.getSource(path).setData(displayFC(s.raw, s.crs));
   }
   for (const it of pointItems) {
     if (it.visible) it.markers.forEach((mk, i) => mk.setLngLat(toDisplayCoord(it.crs)(it.features[i].geometry.coordinates)));
   }
-  store();
+  updateSectionGeometry();
   map.triggerRepaint();
 }
 
-function moveMeters(de, dn) {
-  if (!geo) return;
-  const kx = 111320 * Math.cos(THREE.MathUtils.degToRad(geo.origin_lat));
-  geo.origin_lng += de / kx;
-  geo.origin_lat += dn / 110540;
-  refresh();
-}
-
-function setRotation(deg) {
-  // rotates about the project origin (0,0), which sits inside the design site
-  if (!geo) return;
-  geo.rotation_deg = Math.max(-180, Math.min(180, Math.round(deg * 100) / 100));
-  refresh();
-}
-
-document.querySelectorAll('[data-move]').forEach((b) => b.addEventListener('click', () => {
-  const [dx, dy] = b.dataset.move.split(',').map(Number);
-  const s = +$('step').value;
-  moveMeters(dx * s, dy * s);
-}));
-document.querySelectorAll('[data-rot]').forEach((b) => b.addEventListener('click', () => setRotation(geo.rotation_deg + +b.dataset.rot)));
-$('rot').addEventListener('input', (e) => setRotation(+e.target.value));
-$('rot-num').addEventListener('change', (e) => setRotation(+e.target.value));
 $('opacity').addEventListener('input', (e) => {
   Object.values(materials).forEach((m) => { m.opacity = +e.target.value; });
   map.triggerRepaint();
@@ -416,60 +629,65 @@ document.querySelectorAll('input[name=base]').forEach((r) => r.addEventListener(
   if (r.checked) setBasemap(r.value);
 }));
 
-// drag-to-move
-let dragOn = false;
-let dragFrom = null;
-$('drag').addEventListener('click', () => {
-  dragOn = !dragOn;
-  $('drag').classList.toggle('on', dragOn);
-  $('drag').textContent = `拖动模型：${dragOn ? '开' : '关'}`;
-  if (dragOn) map.dragPan.disable(); else map.dragPan.enable();
-  map.getCanvas().style.cursor = dragOn ? 'move' : '';
+// selection: a click picks in 3D first, then falls back to the 2D footprint; a 2D pick also flies there
+map.on('click', (e) => {
+  const hit = pickAt(e.point);
+  if (!hit) { clear(); return; }
+  select(hit.id === selected && hit.from === '3d' ? null : hit.id, { fly: hit.from === '2d' });
 });
-map.on('mousedown', (e) => { if (dragOn) dragFrom = e.lngLat; });
+let hoverQueued = false;
 map.on('mousemove', (e) => {
-  if (!dragOn || !dragFrom || !geo) return;
-  // deltas are taken in the display datum; GCJ-02 is near-rigid locally, so they apply to WGS-84 as-is
-  geo.origin_lng += e.lngLat.lng - dragFrom.lng;
-  geo.origin_lat += e.lngLat.lat - dragFrom.lat;
-  dragFrom = e.lngLat;
-  refresh();
+  if (hoverQueued) return;
+  hoverQueued = true;
+  requestAnimationFrame(() => {
+    hoverQueued = false;
+    map.getCanvas().style.cursor = pickAt(e.point) ? 'pointer' : '';
+  });
 });
-map.on('mouseup', () => { dragFrom = null; });
+addEventListener('keydown', (e) => { if (e.key === 'Escape' && selected) clear(); });
+$('info-fly').addEventListener('click', () => selected && flyTo(selected));
+$('info-clear').addEventListener('click', clear);
+$('section-on').addEventListener('change', (e) => setSection(e.target.checked ? +$('section').value : null));
+$('section').addEventListener('input', (e) => setSection(+e.target.value));
+$('vertical-on').addEventListener('change', (e) => setVerticalSection(e.target.checked ? +$('vertical-section').value : null));
+$('vertical-section').addEventListener('input', (e) => setVerticalSection(+e.target.value));
+$('section-board').addEventListener('change', () => { updateSectionGeometry(); map.triggerRepaint(); });
 
-$('save').addEventListener('click', () => {
-  const out = { ...geo, note: `Aligned by hand in the viewer, ${new Date().toISOString().slice(0, 10)}.` };
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' }));
-  a.download = 'georef.json';
-  a.click();
-  URL.revokeObjectURL(a.href);
-});
-$('copy').addEventListener('click', async () => {
-  try { await navigator.clipboard.writeText(JSON.stringify(geo)); status('已复制到剪贴板'); } catch { status('复制失败，请手动抄写上面的读数'); }
-});
-$('reset').addEventListener('click', () => { geo = { ...defaults }; refresh(); });
+// ---------- viewer API (roadmap #3: NL tool use calls these, not the DOM) ----------
+window.huijingViewer = {
+  select: (id) => select(id, { fly: true }),
+  clear,
+  setSection,
+  setVerticalSection,
+  setLayer(id, on) {
+    if (!itemsById[id]) throw new Error(`unknown layer ${id}; known: ${Object.keys(itemsById).join(', ')}`);
+    return itemsById[id](!!on);
+  },
+  flyTo,
+  queryBuildings,
+  get selected() { return selected; },
+  get section() { return section; },
+  get verticalSection() { return verticalSection; },
+};
 
 // ---------- boot ----------
 map.on('load', async () => {
   try {
     const [g, scene] = await Promise.all([fetchJSON('georef.json'), fetchJSON('scene.json')]);
-    defaults = { origin_lng: g.origin_lng, origin_lat: g.origin_lat, rotation_deg: g.rotation_deg };
-    const stored = ALIGN ? readStored() : null;
-    $('align-tools').hidden = !ALIGN;
-    geo = stored && Number.isFinite(stored.origin_lng) ? stored : { ...defaults };
+    geo = Object.freeze({ origin_lng: g.origin_lng, origin_lat: g.origin_lat, rotation_deg: g.rotation_deg });
 
     map.addLayer(modelLayer); // vector layers are inserted beneath it
     document.querySelector(`input[name=base][value=${basemap}]`).checked = true;
     setBasemap(basemap); // syncs the subtitle; no camera shift since the datum is unchanged
     refresh();
     // frame the site in the part of the map the panel doesn't cover
-    const panel = document.querySelector('.panel').getBoundingClientRect();
-    const padding = innerWidth <= 600 ? { top: panel.bottom } : { left: panel.right };
-    map.jumpTo({ center: toDisplay([geo.origin_lng + 0.0012, geo.origin_lat]), padding });
+    updateFramePadding();
+    map.jumpTo({ center: toDisplay([geo.origin_lng + 0.0012, geo.origin_lat]), padding: framePadding });
     status('加载模型…');
+    await loadBuildings(); // before the GLBs, so their meshes can be mapped to buildings as they load
+    setSection(null);
     await buildScene(scene);
-    status(ALIGN ? (stored ? '对准模式：已恢复本浏览器上次的位置' : '对准模式：使用 georef.json') : '');
+    status('');
   } catch (err) {
     console.error(err);
     status(`加载失败：${err.message}`);
