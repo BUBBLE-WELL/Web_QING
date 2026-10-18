@@ -1,0 +1,46 @@
+{
+  "_doc": "Layer groups for the viewer. Add a group or item here and drop its file under assets/; no code change needed for the types below. crs: 'project' = Archicad metres (placed via georef.json), 'wgs84' = lon/lat. Item types: glb-set (layers.json from build_assets.py), line, point. Groups with no items are not shown.",
+  "groups": [
+    {
+      "id": "massing",
+      "label": "建筑体块白模",
+      "on": true,
+      "open": true,
+      "items": [
+        { "type": "glb-set", "source": "assets/layers.json", "lazy": ["other"] }
+      ]
+    },
+    {
+      "id": "ref2d",
+      "label": "2D 参考",
+      "on": true,
+      "open": true,
+      "items": [
+        { "id": "underlay", "type": "line", "label": "CAD 底图线", "source": "assets/underlay.geojson", "crs": "project",
+          "filter": ["==", ["get", "kind"], "underlay"], "color": "#8f1f1f", "width": 1.6, "on": true },
+        { "id": "footprint", "type": "line", "label": "楼板轮廓（2D）", "source": "assets/underlay.geojson", "crs": "project",
+          "filter": ["==", ["get", "kind"], "footprint"], "color": "#d08a12", "width": 1.2, "on": false }
+      ]
+    },
+    {
+      "id": "site",
+      "label": "场地分析",
+      "on": false,
+      "open": false,
+      "attribution": "场地分析 © OpenStreetMap contributors (ODbL)",
+      "items": [
+        { "id": "metro", "type": "point", "label": "地铁站出入口（小行站）", "source": "assets/site/metro_entrances.geojson", "crs": "wgs84",
+          "color": "#2bb673", "label_field": "label", "short_field": "short", "on": true },
+        { "id": "roads", "type": "line", "label": "道路", "source": "assets/site/roads.geojson", "crs": "wgs84",
+          "color": "#8f7ae5", "width": 2.2, "on": true }
+      ]
+    },
+    {
+      "id": "policy",
+      "label": "政策分析",
+      "on": false,
+      "open": false,
+      "items": []
+    }
+  ]
+}

@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>汇景花苑场地</title>
+  <!-- same type stack as the portfolio (h5-static/index.html); falls back to PingFang / YaHei where Google Fonts is blocked -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- vendored: maplibre-gl 4.7.1, three 0.160.0 (unpkg/jsdelivr are unreliable from China) -->
+  <link rel="stylesheet" href="vendor/maplibre-gl/maplibre-gl.css">
+  <script src="vendor/maplibre-gl/maplibre-gl.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./vendor/three/build/three.module.js",
+        "three/addons/": "./vendor/three/examples/jsm/"
+      }
+    }
+  </script>
+  <style>
+    /* tokens adapted from the portfolio's kg-app.css (light only, like the portfolio) */
+    :root {
+      --bg: #f8f8f4;
+      --paper: #ffffff;
+      --ink: #111111;
+      --body: #44443f;
+      --muted: #89897f;
+      --border: #deded6;
+      --soft: #efefea;
+      --red: #8f1f1f;
+      --green: #2bb673;
+      --green-soft: #edf8f2;
+      --amber: #d08a12;
+      --mono: "IBM Plex Mono", "PingFang SC", "Microsoft YaHei", "Noto Sans Mono CJK SC", Consolas, monospace;
+      --sans: "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", system-ui, sans-serif;
+      --focus: 2px solid rgba(43, 182, 115, 0.45);
+    }
+    html, body { margin: 0; height: 100%; background: var(--bg); color: var(--body);
+      font: 13px/1.5 var(--sans); }
+    #map { position: absolute; inset: 0; }
+
+    /* square corners throughout (Qing's call); native radio dots stay round */
+    .panel { position: absolute; top: 12px; left: 12px; width: 276px; max-height: calc(100% - 24px); overflow: auto;
+      background: rgba(255, 255, 255, 0.96); border: 1px solid var(--border); border-radius: 0;
+      box-shadow: 0 12px 28px rgba(17, 17, 17, 0.045); padding: 14px 16px 12px; box-sizing: border-box; }
+    .crumb { margin: 0 0 8px; font: 11px/1.4 var(--mono); color: var(--muted); }
+    .crumb a { color: var(--body); text-decoration: none; border-bottom: 1px solid var(--border); }
+    .crumb a:hover { color: var(--ink); border-bottom-color: var(--ink); }
+    h1 { margin: 0 0 3px; font: 500 17px/1.3 var(--sans); color: var(--ink); letter-spacing: 0.01em; }
+    .sub { margin: 0; color: var(--muted); font-size: 12px; }
+    h2 { margin: 12px 0 6px; padding-top: 10px; border-top: 1px solid var(--soft);
+      font: 500 10.5px/1.3 var(--mono); color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+
+    label.row { display: flex; align-items: center; gap: 7px; margin: 2px 0; min-height: 24px; cursor: pointer; font-size: 12.5px; }
+    input[type=checkbox], input[type=radio], input[type=range] { accent-color: var(--green); }
+    .sw { width: 10px; height: 10px; border: 1px solid var(--border); flex: none; }
+
+    .grp + .grp { margin-top: 4px; }
+    .grp-head { display: flex; align-items: center; }
+    .grp-head label.row { flex: 1; }
+    .grp-name { color: var(--ink); font-weight: 500; }
+    .grp-toggle { min-height: 24px; width: 28px; padding: 0; border: 0; background: transparent; color: var(--muted); font-size: 12px; }
+    .grp-toggle:hover { color: var(--ink); }
+    .grp-body { padding-left: 20px; border-left: 1px solid var(--soft); margin-left: 6px; }
+    .grp-note { margin: 2px 0 4px 26px; color: var(--muted); font: 10.5px/1.4 var(--mono); }
+
+    .poi { display: flex; align-items: center; gap: 5px; cursor: default; }
+    .poi i { width: 8px; height: 8px; border: 1.5px solid #fff; box-shadow: 0 0 0 1px rgba(17, 17, 17, 0.35); }
+    .poi span { padding: 1px 5px; background: rgba(248, 248, 244, 0.92); border: 1px solid var(--border);
+      color: var(--ink); font: 11px/1.4 var(--mono); white-space: nowrap; }
+    .n { margin-left: auto; color: var(--muted); font: 11px var(--mono); font-variant-numeric: tabular-nums; }
+    input[type=range] { width: 100%; }
+    .inline { display: flex; gap: 8px; align-items: center; font-size: 12.5px; }
+    .inline > label { white-space: nowrap; }
+
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+    button { min-height: 30px; padding: 4px 10px; box-sizing: border-box; border: 1px solid var(--border); border-radius: 0;
+      background: var(--paper); color: var(--ink); font: 11.5px/1.2 var(--mono); cursor: pointer;
+      transition: border-color 0.16s ease, background 0.16s ease; }
+    button:hover { border-color: #bdbdb4; }
+    button.on { border-color: var(--green); background: var(--green-soft); }
+    .inline input[type=number], select { font: 12px var(--mono); color: var(--ink); background: var(--paper);
+      border: 1px solid var(--border); border-radius: 0; padding: 3px 6px; }
+    .inline input[type=number] { width: 76px; }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: var(--focus); outline-offset: 2px; }
+
+    .readout { margin-top: 8px; padding: 7px 8px; border-radius: 0; background: var(--soft); color: var(--body);
+      font: 11px/1.5 var(--mono); word-break: break-all; white-space: pre-line; }
+    #status { margin-top: 10px; color: var(--muted); font: 11px/1.4 var(--mono); }
+
+    .maplibregl-ctrl-group { border-radius: 0 !important; border: 1px solid var(--border); box-shadow: 0 12px 28px rgba(17, 17, 17, 0.045) !important; }
+    .maplibregl-ctrl-group button { border-radius: 0 !important; }
+    .maplibregl-ctrl-attrib, .maplibregl-ctrl-attrib.maplibregl-compact,
+    .maplibregl-ctrl-attrib-button { border-radius: 0 !important; }
+    .maplibregl-ctrl-attrib { font: 10.5px var(--sans); background: rgba(248, 248, 244, 0.85) !important; }
+    .maplibregl-ctrl-scale { font: 10.5px var(--mono); color: var(--body); border-color: var(--muted); background: rgba(248, 248, 244, 0.85); }
+
+    /* narrow: full-width card that stops short of the zoom/compass controls (top-right, ~30px wide) */
+    @media (max-width: 600px) { .panel { width: auto; right: 54px; max-height: 45%; padding: 12px 14px 10px; } }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div class="panel">
+    <p class="crumb"><a href="../../">← 作品集</a> / 3D / 汇景花苑</p>
+    <h1>汇景花苑 · 场地体量</h1>
+    <p class="sub" id="sub">Archicad IFC → GLB，叠加在 WGS-84 底图上</p>
+
+    <h2>底图</h2>
+    <label class="row"><input type="radio" name="base" value="osm" checked> OSM 街道（OpenFreeMap）</label>
+    <label class="row"><input type="radio" name="base" value="sat"> 卫星影像（Esri）</label>
+    <label class="row"><input type="radio" name="base" value="tencent"> 腾讯地图（GCJ-02）</label>
+
+    <h2>图层</h2>
+    <!-- groups and items are built from scene.json -->
+    <div id="layers"></div>
+    <div class="inline" style="margin-top:8px"><label for="opacity">透明度</label> <input type="range" id="opacity" min="0.2" max="1" step="0.05" value="0.9"></div>
+
+    <!-- authoring tools for georeferencing; shown only with ?align=1 -->
+    <section id="align-tools" hidden>
+      <h2>对准</h2>
+      <button id="drag" title="开启后在地图上拖动 = 移动模型">拖动模型：关</button>
+      <div class="inline" style="margin-top:8px"><label for="step">步长</label>
+        <select id="step"><option>0.5</option><option selected>2</option><option>10</option><option>50</option></select> m</div>
+      <div class="grid" style="margin-top:8px">
+        <span></span><button data-move="0,1">↑ 北</button><span></span>
+        <button data-move="-1,0">← 西</button><button data-move="0,-1">↓ 南</button><button data-move="1,0">东 →</button>
+      </div>
+      <div class="inline" style="margin-top:10px"><label for="rot-num">旋转</label> <input type="number" id="rot-num" step="0.1"> °</div>
+      <input type="range" id="rot" min="-180" max="180" step="0.1" aria-label="旋转">
+      <div class="grid" style="margin-top:4px; grid-template-columns: repeat(4, 1fr)">
+        <button data-rot="-1">−1°</button><button data-rot="-0.1">−0.1°</button><button data-rot="0.1">+0.1°</button><button data-rot="1">+1°</button>
+      </div>
+      <div class="readout" id="readout"></div>
+      <div class="grid" style="margin-top:8px">
+        <button id="save">保存 json</button><button id="copy">复制</button><button id="reset">重置</button>
+      </div>
+    </section>
+    <div id="status" role="status"></div>
+  </div>
+  <script type="module" src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+# Reviewed public runtime files, relative to h5-static.
+index.html
+kg-app.css
+kg-app.js
+bot.js
+posthog-analytics.js
+assets/maup-ugcop-subzone-panel.png
+assets/xiazhuang-layout.png
+assets/xiazhuang-atmosphere.png
+assets/huijing-poster-1.web.jpg
+assets/huijing-poster-2.web.jpg
+assets/huijing-entrance.png
+assets/huijing-riverside.web.jpg
+pics/zhijian_QA Lead.svg
+pics/guijujie_Ethics Compliance.svg
+pics/shouyin_Field Ops.svg
+3d/huijing-huayuan/index.html
+3d/huijing-huayuan/main.js
+3d/huijing-huayuan/georef.json
+3d/huijing-huayuan/scene.json
+3d/huijing-huayuan/assets/site/metro_entrances.geojson
+3d/huijing-huayuan/assets/site/roads.geojson
+3d/huijing-huayuan/assets/layers.json
+3d/huijing-huayuan/assets/underlay.geojson
+3d/huijing-huayuan/assets/towers.glb
+3d/huijing-huayuan/assets/midrise.glb
+3d/huijing-huayuan/assets/lowrise.glb
+3d/huijing-huayuan/assets/flat.glb
+3d/huijing-huayuan/assets/site.glb
+3d/huijing-huayuan/assets/terrain.glb
+3d/huijing-huayuan/assets/other.glb
+3d/huijing-huayuan/vendor/maplibre-gl/maplibre-gl.js
+3d/huijing-huayuan/vendor/maplibre-gl/maplibre-gl.css
+3d/huijing-huayuan/vendor/maplibre-gl/LICENSE.txt
+3d/huijing-huayuan/vendor/three/build/three.module.js
+3d/huijing-huayuan/vendor/three/examples/jsm/loaders/GLTFLoader.js
+3d/huijing-huayuan/vendor/three/examples/jsm/utils/BufferGeometryUtils.js
+3d/huijing-huayuan/vendor/three/LICENSE
