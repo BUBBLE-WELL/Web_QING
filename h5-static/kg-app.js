@@ -265,9 +265,13 @@
       ],
       tags: ["#planning_design", "#visualization"],
       demo: "huijing",
+      // China mirror, Tencent basemap first: OpenFreeMap may be unreachable for mainland visitors
+      url: "https://jiyiji.cn/webqing/3d/huijing-huayuan/?basemap=tencent",
+      linkLabel: "open 3D site viewer",
+      linkLabel_zh: "打开三维场地查看器",
       kicker_zh: "居住区规划 / BIM + Twinmotion",
       story_zh: "在地势高差较大、超过 6 米的场地，通过实地考察、GIS 分析、CAD+BIM 建模和立体规划，实现动线流畅、空间布局规范合理的规划设计，以及直观的视觉呈现。",
-      evidence_zh: "个人陈述里的汇景华苑段落 + 本科资产地图；H5 并排 xiaoqu_1 / xiaoqu_2 海报导出，再加三张 Twinmotion 缩略图。",
+      evidence_zh: "个人陈述里的汇景花苑段落 + 本科资产地图；H5 并排 xiaoqu_1 / xiaoqu_2 海报导出，再加三张 Twinmotion 缩略图。",
       highlights_zh: ["海报：分析 + 设计（xiaoqu_2 / xiaoqu_1）", "住房、养老、服务、景观的 细化", "Twinmotion：鸟瞰、入口雨景、河岸"],
       proof_zh: [
         ["场地驱动因素", "显著高差"],
@@ -537,7 +541,7 @@
     { group: "systems", title: "Epistemic knowledge graph", title_zh: "认识论知识图谱", status: "prototype", status_zh: "原型" },
     { group: "systems", title: "Liminal: six-agent simulation", title_zh: "Liminal：六智能体模拟", status: "local prototype", status_zh: "本地原型" },
     { group: "design", caseId: "xiazhuang", title: "Xiazhuang Village plan", title_zh: "夏庄村振兴规划", status: "undergraduate", status_zh: "本科" },
-    { group: "design", caseId: "huijing", title: "Huijing Huayuan landscape plan", title_zh: "汇景华苑景观方案", status: "undergraduate", status_zh: "本科" }
+    { group: "design", caseId: "huijing", title: "Huijing Huayuan landscape plan", title_zh: "汇景花苑景观方案", status: "undergraduate", status_zh: "本科" }
   ];
   var STARTERS = [
     { label: "overview", label_zh: "概览", hint: "Structure summary first; no deep reading.", hint_zh: "先看结构，不用深读。", type: "STARTER_PICKED", value: "overview", variant: "primary" },

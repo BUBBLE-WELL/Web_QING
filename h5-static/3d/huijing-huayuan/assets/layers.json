@@ -1,0 +1,72 @@
+[
+  {
+    "id": "towers",
+    "label": "高层塔楼（≥60 m）",
+    "color": "#f2f2f2",
+    "file": "towers.glb",
+    "count": 210,
+    "triangles": 10288,
+    "zmin": -3.8,
+    "zmax": 114.0
+  },
+  {
+    "id": "midrise",
+    "label": "多层（20–60 m）",
+    "color": "#dcdcdc",
+    "file": "midrise.glb",
+    "count": 116,
+    "triangles": 3052,
+    "zmin": -3.8,
+    "zmax": 34.2
+  },
+  {
+    "id": "lowrise",
+    "label": "低层（6–20 m）",
+    "color": "#cfcfcf",
+    "file": "lowrise.glb",
+    "count": 96,
+    "triangles": 7140,
+    "zmin": 0.0,
+    "zmax": 9.0
+  },
+  {
+    "id": "flat",
+    "label": "单层 / 平台（<6 m）",
+    "color": "#bdbdbd",
+    "file": "flat.glb",
+    "count": 39,
+    "triangles": 1688,
+    "zmin": 0.0,
+    "zmax": 3.0
+  },
+  {
+    "id": "site",
+    "label": "场地底板",
+    "color": "#e8dcc4",
+    "file": "site.glb",
+    "count": 2,
+    "triangles": 1544,
+    "zmin": -3.0,
+    "zmax": 0.0
+  },
+  {
+    "id": "terrain",
+    "label": "地形",
+    "color": "#a9c79a",
+    "file": "terrain.glb",
+    "count": 1,
+    "triangles": 444,
+    "zmin": -1.2,
+    "zmax": -0.17
+  },
+  {
+    "id": "other",
+    "label": "墙 / 栏杆",
+    "color": "#9e9e9e",
+    "file": "other.glb",
+    "count": 5,
+    "triangles": 123072,
+    "zmin": 0.0,
+    "zmax": 3.8
+  }
+]
