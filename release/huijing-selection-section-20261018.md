@@ -23,7 +23,7 @@ Building-level selection now joins IFC-derived meshes and 2D candidate footprint
 
 The 39-entry public manifest matches the default-deny asset allowlist; text leak scanning includes GeoJSON. Five viewer runtime files change (HTML, JS, fixed georeference and two new GeoJSONs). Seven GLBs and existing scene/vector data are unchanged relative to main. Existing release line endings in scene/vendor files are preserved; content matches the development viewer. The preceding staged release retains all 39 recorded file hashes.
 
-Wrangler 4.124.0 produced the dry-run worker output and printed `--dry-run: exiting now`; no deployment command without dry-run was used. Wrangler logs 58 discovered directory entries before applying its ignore function; this is not the reviewed public file count. The release regression harness and git diff whitespace check pass.
+Wrangler 4.124.0 produced the dry-run worker output and printed `--dry-run: exiting now`; no deployment command without dry-run was used. The CLI remained alive after that completion message and was stopped; a clean CLI process exit is not claimed. Wrangler logs 58 discovered directory entries before applying its ignore function; this is not the reviewed public file count. The release regression harness and git diff whitespace check pass.
 
 ## Evidence limits
 
