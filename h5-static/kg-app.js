@@ -52,6 +52,83 @@
 
   var CASES = [
     {
+  "id": "coastal-change",
+  "category": "analytics",
+  "iconKey": "map",
+  "title": "Singapore Coastal Change",
+  "kicker": "coastal change / course research, group project",
+  "kicker_zh": "新加坡海岸变化 / 课程研究，小组项目",
+  "story": "How should coastal-change scenarios be read against planning intentions? I contributed throughout a Singapore group project: acquiring spatial data, harmonising coordinate systems, masking, clipping and raster calculations; helping design spatial constraints, analysing policy, and writing the final Discussion on model outputs and their limits.",
+  "story_zh": "海岸变化的情景结果，应该如何与规划意图一起解读？在新加坡海岸变化小组项目中，我全程参与多源空间数据获取、坐标系统一、掩膜、裁剪与栅格计算；参与空间约束设计、政策分析，并完成最终 Discussion，讨论模型输出、规划意图和方法局限。",
+  "evidence": "Coursework project documentation and confirmed personal contributions across GIS data processing, analytical design and interpretation. Team simulation outputs are discussed without claiming sole ownership of model training or validation.",
+  "evidence_zh": "课程项目文档及本人确认的贡献覆盖 GIS 数据处理、分析设计与结果解读。讨论小组情景输出，不将模型训练或结果验证全部归为个人工作。",
+  "highlights": [
+    "Multi-source acquisition, CRS handling, masking, clipping and raster calculations.",
+    "Contribution to spatial-constraint design and planning-policy interpretation.",
+    "Final Discussion separates scenario outputs, planning intentions and methodological limits."
+  ],
+  "highlights_zh": [
+    "多源数据获取、坐标系统处理、掩膜、裁剪与栅格计算。",
+    "参与空间约束设计，结合规划政策解读情景结果。",
+    "最终 Discussion 区分模型输出、规划意图与方法局限。"
+  ],
+  "proof": [
+    [
+      "project",
+      "Singapore coastal-change group coursework"
+    ],
+    [
+      "contribution",
+      "data preparation, constraint design, policy analysis and Discussion"
+    ],
+    [
+      "boundary",
+      "group simulation; no sole model-ownership claim"
+    ]
+  ],
+  "proof_zh": [
+    [
+      "项目",
+      "新加坡海岸变化课程小组研究"
+    ],
+    [
+      "个人贡献",
+      "数据处理、约束设计、政策分析与 Discussion"
+    ],
+    [
+      "边界",
+      "小组情景研究，不宣称个人独立完成模型"
+    ]
+  ],
+  "analyticsMeta": [
+    [
+      "spatial preparation",
+      "multi-source data · CRS · masks · clipping · raster calculations"
+    ],
+    [
+      "interpretation",
+      "spatial constraints · planning policy · Discussion"
+    ]
+  ],
+  "analyticsMeta_zh": [
+    [
+      "空间数据准备",
+      "多源数据 · CRS · 掩膜 · 裁剪 · 栅格计算"
+    ],
+    [
+      "分析与解读",
+      "空间约束 · 规划政策 · Discussion"
+    ]
+  ],
+  "demo": "coastal-change",
+  "tags": [
+    "#spatial_data",
+    "#data_quality",
+    "#planning_design",
+    "#visualization"
+  ]
+},
+    {
       id: "maup",
       category: "analytics",
       iconKey: "map",
@@ -266,7 +343,7 @@
       tags: ["#planning_design", "#visualization"],
       demo: "huijing",
       // China mirror, Tencent basemap first: OpenFreeMap may be unreachable for mainland visitors
-      url: "https://jiyiji.cn/webqing/3d/huijing-huayuan/?basemap=tencent",
+      url: "./3d/huijing-huayuan/?basemap=tencent&from=portfolio",
       linkLabel: "open 3D site viewer",
       linkLabel_zh: "打开三维场地查看器",
       kicker_zh: "居住区规划 / BIM + Twinmotion",
@@ -532,6 +609,7 @@
     { group: "research", caseId: "poi", title: "MSc thesis: cross-platform venue representation", title_zh: "硕士论文：跨平台场地表征", status: "in progress", status_zh: "进行中" },
     { group: "research", caseId: "maup", title: "MAUP / UGCoP", title_zh: "MAUP / UGCoP", status: "complete", status_zh: "已完成" },
     { group: "research", caseId: "geoai", title: "Responsible GeoAI", title_zh: "负责任的 GeoAI", status: "complete", status_zh: "已完成" },
+    { group: "research", caseId: "coastal-change", title: "Singapore Coastal Change", title_zh: "新加坡海岸变化", status: "course research, group project", status_zh: "课程研究，小组项目" },
     { group: "coursework", title: "NYC fire risk: official vs public-reported", title_zh: "纽约火灾风险：官方数据 vs 公众反映", status: "coursework, group project", status_zh: "课程小组项目" },
     { group: "coursework", title: "Singapore accessibility: 20-minute towns", title_zh: "新加坡可达性：20 分钟生活圈", status: "coursework, group project", status_zh: "课程小组项目" },
     { group: "side", caseId: "wake-me-up", url: "https://jiyiji.cn/webqing/music/wake-me-up-where-september-ends/", title: "Wake Me Up: Where September Ends", title_zh: "九月末，在网易云评论区醒来", status: "side project, in progress", status_zh: "个人项目，进行中" },
@@ -2619,7 +2697,9 @@
   }
 
   function mainScrollRoot() {
-    return document.querySelector(".main-area");
+    var area = document.querySelector(".main-area");
+    return area && /auto|scroll/.test(window.getComputedStyle(area).overflowY)
+      ? area : document.scrollingElement || document.documentElement;
   }
 
   function mainScrollBehavior() {
@@ -2628,7 +2708,10 @@
 
   function scrollMainToElement(scrollRoot, target) {
     if (!scrollRoot || !target) return;
-    var top = target.offsetTop - scrollRoot.offsetTop - 8;
+    var header = document.querySelector(".story-topbar");
+    var viewportTop = scrollRoot === document.scrollingElement
+      ? (header ? header.getBoundingClientRect().height : 0) : scrollRoot.getBoundingClientRect().top;
+    var top = scrollRoot.scrollTop + target.getBoundingClientRect().top - viewportTop - 8;
     scrollRoot.scrollTo({ top: Math.max(0, top), behavior: mainScrollBehavior() });
     scrollRoot.querySelectorAll(".message.index-target").forEach(function (messageEl) {
       messageEl.classList.remove("index-target");
@@ -2838,14 +2921,15 @@
   function portalIndexRow(item) {
     var title = escapeHtml(t(item.title, item.title_zh));
     var status = '<span class="portal-status">' + escapeHtml(t(item.status, item.status_zh)) + '</span>';
-    var action;
+    var actions = [];
     if (item.url) {
-      action = '<a class="portal-link" href="' + escapeHtml(item.url) + '" target="_blank" rel="noopener noreferrer" aria-label="' + escapeHtml(t("Open ", "打开 ") + t(item.title, item.title_zh)) + '">' + escapeHtml(t("open page", "打开页面")) + ' &#8599;</a>';
-    } else if (item.caseId) {
-      action = '<button type="button" class="portal-link" data-portal-case="' + escapeHtml(item.caseId) + '" aria-label="' + escapeHtml(t("Show card: ", "查看卡片：") + t(item.title, item.title_zh)) + '">' + escapeHtml(t("show card", "查看卡片")) + '</button>';
-    } else {
-      action = '<span class="portal-nolink">' + escapeHtml(t("no public link yet", "暂无公开链接")) + '</span>';
+      actions.push('<a class="portal-link" data-page-transition target="_blank" rel="noopener noreferrer" href="' + escapeHtml(item.url) + '" aria-label="' + escapeHtml(t("Open ", "打开 ") + t(item.title, item.title_zh)) + '">' + escapeHtml(t("open page", "打开页面")) + ' &#8599;</a>');
     }
+    if (item.caseId) {
+      actions.push('<button type="button" class="portal-link" data-portal-case="' + escapeHtml(item.caseId) + '" aria-label="' + escapeHtml(t("Show card: ", "查看卡片：") + t(item.title, item.title_zh)) + '">' + escapeHtml(t("show card", "查看卡片")) + '</button>');
+    }
+    var action = actions.length ? '<span class="portal-actions">' + actions.join('') + '</span>'
+      : '<span class="portal-nolink">' + escapeHtml(t("no public link yet", "暂无公开链接")) + '</span>';
     return '<li><span class="portal-title">' + title + '</span>' + status + action + '</li>';
   }
 
@@ -2855,7 +2939,8 @@
     loadResultsShell("grid", "All", [match.id]);
     window.setTimeout(function () {
       var details = document.querySelector('[data-case-details="' + cssEscape(id) + '"]');
-      scrollMainToElement(mainScrollRoot(), details || qs("case-results"));
+      var card = document.querySelector('[data-case-card="' + cssEscape(id) + '"]');
+      scrollMainToElement(mainScrollRoot(), card || details || qs("case-results"));
     }, 40);
   }
 
@@ -2951,7 +3036,7 @@
     var links = [{ kind: "demo", url: item.url, label: t(item.linkLabel, item.linkLabel_zh) }];
     if (item.socialUrl) links.push({ kind: "social", url: item.socialUrl, label: t("Xiaohongshu post (app/login)", "小红书分享（App / 登录）") });
     return '<div class="card-tags project-links">' + links.map(function (link) {
-      return '<a class="portal-link" data-project-link="' + link.kind + '" href="' + escapeHtml(link.url) + '" target="_blank" rel="noopener noreferrer" aria-label="' + escapeHtml(link.label + ": " + item.title) + '">' + escapeHtml(link.label) + ' &#8599;</a>';
+      return '<a class="portal-link" data-page-transition data-project-link="' + link.kind + '" href="' + escapeHtml(link.url) + '" target="_blank" rel="noopener noreferrer" aria-label="' + escapeHtml(link.label + ": " + item.title) + '">' + escapeHtml(link.label) + ' &#8599;</a>';
     }).join('') + '</div>';
   }
 
@@ -3032,6 +3117,9 @@
   }
 
   function demoBlock(type) {
+    if (type === "coastal-change") {
+      return '<div class="control-list">' + [t("multi-source data", "多源数据"), t("GIS raster preparation", "GIS 栅格处理"), t("spatial constraints", "空间约束"), t("policy & Discussion", "政策与 Discussion")].map(function (step) { return '<span>' + escapeHtml(step) + '</span>'; }).join('') + '</div>';
+    }
     if (type === "wake-me-up" || type === "band-with") {
       var steps = type === "wake-me-up"
         ? [t("capture", "采集"), "SQLite/WAL", t("verified aggregates", "核验聚合"), t("interactive story", "交互故事")]
@@ -3494,12 +3582,53 @@
     }, true);
   }
 
+  // Keep the source reading position when a new project tab returns at a different width.
+  function bindProjectReturnPosition() {
+    var bookmark = null;
+    var restoreTimer = null;
+    function save(event) {
+      var link = event.target.closest && event.target.closest('a[data-page-transition][target="_blank"]');
+      if (!link || (event.type === "auxclick" && event.button !== 1)) return;
+      var root = mainScrollRoot();
+      var top = root === document.scrollingElement ? 0 : root.getBoundingClientRect().top;
+      bookmark = { link: link, offset: link.getBoundingClientRect().top - top };
+    }
+    function restore() {
+      if (!bookmark || !bookmark.link.isConnected || document.body.dataset.state !== "story") return;
+      var root = mainScrollRoot();
+      var top = root === document.scrollingElement ? 0 : root.getBoundingClientRect().top;
+      var height = root === document.scrollingElement ? window.innerHeight : root.clientHeight;
+      var offset = Math.max(80, Math.min(bookmark.offset, height * 0.7));
+      var y = root.scrollTop + bookmark.link.getBoundingClientRect().top - top - offset;
+      root.scrollTo({ top: Math.max(0, y), behavior: "instant" });
+    }
+    function scheduleRestore() {
+      if (!bookmark) return;
+      requestAnimationFrame(function () { requestAnimationFrame(restore); });
+      window.clearTimeout(restoreTimer);
+      restoreTimer = window.setTimeout(restore, 180); // settle browser chrome / responsive reflow
+    }
+    document.addEventListener("click", save, true);
+    document.addEventListener("auxclick", save, true);
+    document.addEventListener("pointerdown", function () { bookmark = null; }, true);
+    document.addEventListener("wheel", function () { bookmark = null; }, { passive: true });
+    document.addEventListener("keydown", function () { bookmark = null; }, true);
+    window.addEventListener("focus", scheduleRestore);
+    window.addEventListener("resize", scheduleRestore);
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) scheduleRestore(); });
+  }
+
   function bindChrome() {
     var hiBubble = qs("hi-bubble");
     var backLanding = qs("back-landing");
     if (hiBubble) {
       hiBubble.addEventListener("click", function () {
-        dispatchConversation({ type: "USER_HI" });
+        var enter = function () {
+          dispatchConversation({ type: "USER_HI" });
+          return new Promise(function (resolve) { window.setTimeout(resolve, 540); });
+        };
+        if (window.QingTransition) window.QingTransition.run(enter);
+        else enter();
       });
     }
     var langToggle = qs("lang-toggle");
@@ -3597,6 +3726,7 @@
     initPortfolioLanguageFromDom();
     syncLandingText();
     bindChrome();
+    bindProjectReturnPosition();
     injectContactLinks();
     bindImageLightboxDelegation();
     bindWorkshopAlert();
@@ -3629,6 +3759,7 @@
   // Returns human-readable state so the bot can reference what the visitor sees.
   window.getPortfolioContext = function () {
     var CASE_LABELS = {
+      "coastal-change": "Singapore Coastal Change",
       "maup":      "MAUP / UGCoP (spatial sensitivity analysis)",
       "poi":       "POI Semantic Audit — thesis (cross-platform venue representation)",
       "geoai":     "Responsible GeoAI (ethics literature synthesis)",

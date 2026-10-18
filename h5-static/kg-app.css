@@ -3437,3 +3437,6 @@ body[data-qb-zoom] .qb-rail-tab--bot .qb-rail-tab-label {
 .portal-link:focus-visible {
   border-color: var(--ink);
 }
+
+/* Project rows can offer both a destination and a local card. */
+.portal-actions { display: inline-flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; }
