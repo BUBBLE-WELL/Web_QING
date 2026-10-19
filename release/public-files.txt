@@ -42,5 +42,6 @@ pics/shouyin_Field Ops.svg
 3d/huijing-huayuan/assets/render/buildings.glb
 3d/huijing-huayuan/assets/render/furniture.glb
 3d/huijing-huayuan/assets/render/planters.glb
+3d/huijing-huayuan/assets/render/terrain.glb
 page-transition.js
 page-transition.css

@@ -22,7 +22,9 @@
         { "id": "render-furniture", "type": "gltf", "label": "景观设施", "source": "assets/render/furniture.glb",
           "color": "#a7a296", "size": "1.6 MB", "on": true },
         { "id": "render-planters", "type": "gltf", "label": "花池与植物", "source": "assets/render/planters.glb",
-          "color": "#62893f", "size": "0.5 MB", "on": true }
+          "color": "#62893f", "size": "0.5 MB", "on": true },
+        { "id": "render-terrain", "type": "gltf", "label": "周边地形", "source": "assets/render/terrain.glb",
+          "color": "#8a6a4a", "size": "84 KB", "on": true }
       ]
     },
     {
