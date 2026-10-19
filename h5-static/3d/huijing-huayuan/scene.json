@@ -1,5 +1,5 @@
 {
-  "_doc": "Layer groups for the viewer. Add a group or item here and drop its file under assets/; no code change needed for the types below. crs: 'project' = Archicad metres (placed via georef.json), 'wgs84' = lon/lat. Item types: glb-set (layers.json from build_assets.py), line, point. Groups with no items are not shown.",
+  "_doc": "Layer groups for the viewer. Add a group or item here and drop its file under assets/; no code change needed for the types below. crs: 'project' = Archicad metres (placed via georef.json), 'wgs84' = lon/lat. Item types: glb-set (layers.json from build_assets.py), gltf (one GLB with its own materials, loaded on first show; the Twinmotion render export, see projects/UE/tools/README.md), line, point. Groups with no items are not shown.",
   "groups": [
     {
       "id": "massing",
@@ -8,6 +8,21 @@
       "open": true,
       "items": [
         { "type": "glb-set", "source": "assets/layers.json", "lazy": ["other"] }
+      ]
+    },
+    {
+      "id": "render",
+      "label": "规划 + 渲染（Twinmotion）",
+      "on": false,
+      "open": true,
+      "attribution": "Twinmotion 场景导出，贴图为简化版；配景树木与人物未导出",
+      "items": [
+        { "id": "render-buildings", "type": "gltf", "label": "建筑、场地与水景（贴图）", "source": "assets/render/buildings.glb",
+          "color": "#d9cba4", "size": "13 MB", "on": true },
+        { "id": "render-furniture", "type": "gltf", "label": "景观设施", "source": "assets/render/furniture.glb",
+          "color": "#a7a296", "size": "1.6 MB", "on": true },
+        { "id": "render-planters", "type": "gltf", "label": "花池与植物", "source": "assets/render/planters.glb",
+          "color": "#62893f", "size": "0.5 MB", "on": true }
       ]
     },
     {

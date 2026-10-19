@@ -54,6 +54,12 @@
 
 !3d/huijing-huayuan/assets/buildings.geojson
 !3d/huijing-huayuan/assets/floorplates.geojson
+!3d/huijing-huayuan/vendor/three/examples/jsm/libs/
+!3d/huijing-huayuan/vendor/three/examples/jsm/libs/meshopt_decoder.module.js
+!3d/huijing-huayuan/assets/render/
+!3d/huijing-huayuan/assets/render/buildings.glb
+!3d/huijing-huayuan/assets/render/furniture.glb
+!3d/huijing-huayuan/assets/render/planters.glb
 
 !page-transition.js
 !page-transition.css
