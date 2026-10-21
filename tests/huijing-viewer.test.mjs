@@ -13,6 +13,18 @@ const utils = (await fs.readFile(path.join(web, 'vendor/three/examples/jsm/utils
 const loaderCode = (await fs.readFile(path.join(web, 'vendor/three/examples/jsm/loaders/GLTFLoader.js'), 'utf8'))
   .replace("from 'three'", `from '${threeURL}'`).replace("'../utils/BufferGeometryUtils.js'", JSON.stringify(asModule(utils)));
 const { GLTFLoader } = await import(asModule(loaderCode));
+// GLTFLoader runs in Node's own global scope: its WebP probe uses new Image() and textures load through an <img>.
+// These stubs only fire 'load'; pixels are not decoded (the test checks structure, not appearance).
+class StubImage {
+  constructor() { this.width = 1; this.height = 1; this._l = {}; }
+  addEventListener(t, f) { this._l[t] = f; } removeEventListener() {}
+  set src(v) { this._src = v; setTimeout(() => { this.onload?.(); this._l.load?.({ target: this }); }); }
+  get src() { return this._src; }
+}
+globalThis.Image ??= StubImage;
+globalThis.document ??= { createElementNS: () => new StubImage() };
+globalThis.self ??= globalThis; // meshopt_decoder.module.js probes self (browser/worker global)
+const { MeshoptDecoder } = await import(pathToFileURL(path.join(web, 'vendor/three/examples/jsm/libs/meshopt_decoder.module.js')).href);
 class LocalLoader extends GLTFLoader {
   async loadAsync(url) {
     const b = await fs.readFile(path.join(web, url));
@@ -35,7 +47,7 @@ class MapStub {
   setFilter(id, filter) { this.filters[id] = filter; }
   getCanvas() { return { clientWidth: 1000, clientHeight: 1000 }; }
 }
-const context = vm.createContext({ THREE, GLTFLoader: LocalLoader, console, URLSearchParams,
+const context = vm.createContext({ THREE, GLTFLoader: LocalLoader, MeshoptDecoder, console, URLSearchParams,
   location: { search: '' }, window: {}, innerWidth: 1440, addEventListener() {}, requestAnimationFrame() {},
   document: { getElementById: get, querySelectorAll: () => [], querySelector: () => get('panel'), createElement: (tag) => new Element(tag) },
   maplibregl: { Map: MapStub, NavigationControl: class {}, ScaleControl: class {} },
@@ -105,6 +117,21 @@ assert.equal(run('pick3D({x:500,y:500})'), 'B01');
 run('setSection(1)'); assert.equal(run('pick3D({x:500,y:500})'), null, 'clipped tower cannot intercept ray');
 run('setSection(null)');
 assert.equal(run('queryBuildings({minHeight:60}).length'), 6);
+// Twinmotion render layer: every scene.json gltf item decodes (meshopt), is re-lit as Lambert and follows the cuts.
+const sceneDef = JSON.parse(await fs.readFile(path.join(web, 'scene.json'), 'utf8'));
+const gltfDefs = sceneDef.groups.flatMap((g) => g.items).filter((i) => i.type === 'gltf');
+assert.ok(gltfDefs.length >= 1, 'render group present');
+for (const def of gltfDefs) {
+  context.gltfDef = def;
+  run('var renderItem = gltfItem(gltfDef)');
+  assert.equal(run('renderItem.on'), def.on === true);
+  await run('renderItem.setVisible(true)');
+}
+assert.ok(run('extraMaterials.size') > 0);
+assert.ok(run('[...extraMaterials].every(m => m.isMeshLambertMaterial && m.side === THREE.DoubleSide)'));
+run('setSection(30)'); assert.ok(run('[...extraMaterials].every(m => m.clippingPlanes.includes(clip))'));
+run('setSection(null)'); assert.ok(run('[...extraMaterials].every(m => m.clippingPlanes.length === 0)'));
+assert.equal(run('pick3D({x:500,y:500})'), 'B01', 'render meshes do not take over building picking');
 const transformed = run('wgs84ToGcj02([118.742,31.982])');
 assert.ok(transformed[0] > 118.742 && transformed[0] < 118.75 && transformed[1] < 31.982);
 assert.equal(JSON.stringify(run('wgs84ToGcj02([0,0])')), '[0,0]');

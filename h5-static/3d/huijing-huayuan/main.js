@@ -2,6 +2,7 @@
 // Georeference = project origin (0,0) at origin_lng/lat, project X axis rotated rotation_deg CCW from east.
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 
 const $ = (id) => document.getElementById(id);
 const status = (msg) => { $('status').textContent = msg; };
@@ -178,7 +179,9 @@ const modelLayer = {
   },
 };
 
-const loader = new GLTFLoader();
+// the Twinmotion render models are meshopt-compressed (EXT_meshopt_compression); the IFC massing GLBs are not
+const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+const extraMaterials = new Set(); // materials of 'gltf' items, so the section planes reach them too
 
 // fetches a layer's GLB once; later calls reuse the same promise
 function ensureLayer(l) {
@@ -234,6 +237,41 @@ async function glbItems(def) {
       },
     };
   });
+}
+
+// a whole GLB with its own materials (the textured Twinmotion export), in the same project frame as the massing;
+// loaded on first show. Not pickable: building selection stays on the IFC massing and the 2D footprints.
+function gltfItem(def) {
+  let loading = null;
+  return {
+    id: def.id, label: def.label, color: def.color, count: def.size, on: def.on === true,
+    async setVisible(v) {
+      if (!v && !loading) return;
+      if (!loading) {
+        status(`加载 ${def.label}${def.size ? `（${def.size}）` : ''}…`);
+        loading = loader.loadAsync(def.source).then((gltf) => {
+          gltf.scene.traverse((o) => {
+            if (!o.isMesh) return;
+            // Lit like the massing (Lambert, flat, double-sided). The glTF PBR materials render almost black here:
+            // the model matrix mirrors one axis (scale s, -s, s) inside the projection matrix, which three.js can't
+            // see, so their culling and smooth normals come out inverted. Colour, texture and opacity are kept.
+            const src = o.material;
+            o.material = new THREE.MeshLambertMaterial({ color: src.color, map: src.map, transparent: src.transparent,
+              opacity: src.opacity, depthWrite: !src.transparent, side: THREE.DoubleSide, flatShading: true,
+              clippingPlanes: clipPlanes() });
+            src.dispose();
+            extraMaterials.add(o.material);
+          });
+          modelLayer.scene.add(gltf.scene);
+          return gltf.scene;
+        }).catch((err) => { loading = null; status(`加载失败：${def.label}`); throw err; });
+      }
+      const scene = await loading;
+      scene.visible = v;
+      status('');
+      map.triggerRepaint();
+    },
+  };
 }
 
 async function vectorSource(path, crs) {
@@ -441,7 +479,7 @@ function updateSectionGeometry() {
 
 function updateClipping() {
   updateSectionGeometry();
-  for (const m of [...Object.values(materials), highlight]) {
+  for (const m of [...Object.values(materials), highlight, ...extraMaterials]) {
     m.clippingPlanes = clipPlanes();
     m.needsUpdate = true;
   }
@@ -537,6 +575,7 @@ async function buildScene(scene) {
       if (def.type === 'glb-set') resolved.push(...await glbItems(def));
       else if (def.type === 'line') resolved.push(await lineItem(def));
       else if (def.type === 'point') resolved.push(await pointItem(def));
+      else if (def.type === 'gltf') resolved.push(gltfItem(def));
       else console.warn('unknown scene item type', def.type);
     }
     if (!resolved.length) continue; // empty groups (data still to come) are not shown
