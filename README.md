@@ -39,3 +39,7 @@ Run `node tests/huijing-viewer.test.mjs` for the real-asset regression harness. 
 The shared solid-color spider curtain wraps Say Hi and the 3D destination's actual first-render readiness. Project links stay in new tabs; the source portfolio preserves its view, expanded cards and reading position. The launched viewer's return control closes that tab, with a safe switch-tab fallback.
 
 The project index offers both Open page and Show card where available. Singapore Coastal Change has a source-backed bilingual research card without an invented demo URL. Run the interaction, return-position and portfolio-content Node tests alongside the existing viewer test. This change is a separate PR against main after the Huijing PR #10 merge; no deployment is included.
+
+### Final master plan
+
+The 0704 final plan is available as an opt-in, on-demand design/context/detail linework group. Its registered CAD context is separate from the IFC model. The building-query panel uses static data in production; PostGIS/GeoServer hosting is not part of this release. See [release verification](release/huijing-final-plan-20261022.md).

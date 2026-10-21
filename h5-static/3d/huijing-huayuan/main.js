@@ -14,6 +14,7 @@ const pointItems = []; // { features, markers, crs, visible }
 const params = new URLSearchParams(location.search);
 // ?basemap=tencent|osm|sat picks the starting basemap (tencent for a mainland-China deployment)
 const startBase = params.get('basemap');
+const useServices = params.get('data') === 'services';
 let basemap = ['osm', 'sat', 'tencent'].includes(startBase) ? startBase : 'osm';
 
 // ---------- WGS-84 -> GCJ-02 (Tencent tiles) ----------
@@ -211,7 +212,41 @@ function ensureLayer(l) {
 }
 
 // ---------- scene: grouped, toggleable layers from scene.json ----------
-const fetchJSON = (url) => fetch(url).then((r) => {
+const SERVICE_DATASETS = { 'assets/buildings.geojson': 'buildings',
+  'assets/floorplates.geojson': 'floorplates', 'assets/site/metro_entrances.geojson': 'metro_entrances' };
+function lngLatToProject([lng, lat]) {
+  const e = (lng - geo.origin_lng) * 111320 * Math.cos(geo.origin_lat * Math.PI / 180);
+  const n = (lat - geo.origin_lat) * 110540;
+  const t = geo.rotation_deg * Math.PI / 180;
+  return [e * Math.cos(t) + n * Math.sin(t), -e * Math.sin(t) + n * Math.cos(t)];
+}
+function serviceToProject(fc) {
+  const walk = (a) => typeof a[0] === 'number' ? lngLatToProject(a) : a.map(walk);
+  return { ...fc, features: fc.features.map((ft) => ({ ...ft,
+    properties: { ...ft.properties, ...(typeof ft.properties.ifc_globalids === 'string'
+      ? { ifc_globalids: JSON.parse(ft.properties.ifc_globalids) } : {}) },
+    geometry: { ...ft.geometry, coordinates: walk(ft.geometry.coordinates) } })) };
+}
+async function fetchFeatureJSON(url) {
+  const table = useServices && SERVICE_DATASETS[url];
+  if (!table) return fetch(url);
+  const response = await fetch('/api/' + table);
+  if (!response.ok) return response;
+  const fc = await response.json();
+  if (fc.type !== 'FeatureCollection' || !Array.isArray(fc.features)) throw new Error('Invalid GIS response');
+  if (fc.numberMatched != null && Number(fc.numberMatched) > fc.features.length) throw new Error('GIS response truncated');
+  return { ok: true, json: async () => table === 'metro_entrances' ? fc : serviceToProject(fc) };
+}
+async function queryBuildingsRemote(filters = {}) {
+  const query = new URLSearchParams(Object.entries(filters).filter(([,v]) => v != null));
+  const response = await fetch('/api/buildings?' + query);
+  if (!response.ok) throw new Error('GIS query failed: ' + response.status);
+  const fc = await response.json();
+  return fc.features.map(({ properties: p }) => ({ building_id:p.building_id, layer:p.layer,
+    floors:p.floors, height_m:p.height_m, floor_area_m2:p.floor_area_m2 }));
+}
+
+const fetchJSON = (url) => fetchFeatureJSON(url).then((r) => {
   if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
   return r.json();
 });
@@ -520,12 +555,23 @@ function queryBuildings({ minHeight = -Infinity, maxHeight = Infinity, minFloors
 }
 
 async function lineItem(def) {
-  await vectorSource(def.source, def.crs);
-  map.addLayer({ id: def.id, type: 'line', source: def.source, ...(def.filter ? { filter: def.filter } : {}),
-    layout: { visibility: 'none', 'line-cap': 'round', 'line-join': 'round' },
-    paint: { 'line-color': def.color, 'line-width': def.width || 1.5 } }, 'ifc-model');
+  let ready = null, visible = false;
+  const ensure = () => ready ||= vectorSource(def.source, def.crs).then(() => {
+    map.addLayer({ id: def.id, type: 'line', source: def.source, ...(def.filter ? { filter: def.filter } : {}),
+      layout: { visibility: 'none', 'line-cap': 'round', 'line-join': 'round' },
+      paint: { 'line-color': def.color, 'line-width': def.width || 1.5 } }, 'ifc-model');
+  }).catch((err) => {
+    ready = null;
+    if (!vectorSources[def.source]?.raw) delete vectorSources[def.source];
+    throw err;
+  });
+  if (!def.lazy) await ensure();
   return { id: def.id, label: def.label, color: def.color, on: def.on !== false,
-    setVisible(v) { map.setLayoutProperty(def.id, 'visibility', v ? 'visible' : 'none'); } };
+    setVisible(v) {
+      visible = v;
+      if (!v && !ready) return;
+      return ensure().then(() => map.setLayoutProperty(def.id, 'visibility', visible ? 'visible' : 'none'));
+    } };
 }
 
 // points are HTML markers (dot + label), so they need no glyph server, which may be blocked in China
@@ -688,6 +734,22 @@ map.on('mousemove', (e) => {
   });
 });
 addEventListener('keydown', (e) => { if (e.key === 'Escape' && selected) clear(); });
+$('gis-query')?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const button = $('gis-query-button'); if (button.disabled) return; button.disabled = true;
+  const output = $('gis-query-results'); output.textContent = '查询中…';
+  try {
+    const height = Number($('gis-min-height').value);
+    if (!Number.isFinite(height) || height < 0) throw new Error('请输入有效高度');
+    const rows = useServices ? await queryBuildingsRemote({ minHeight: height }) : queryBuildings({ minHeight: height });
+    output.replaceChildren();
+    const label = document.createElement('span'); label.textContent = `${rows.length} 个几何分组：`; output.appendChild(label);
+    rows.forEach((row) => { const b = document.createElement('button'); b.type = 'button';
+      b.textContent = `${row.building_id} · ${row.height_m} m`; b.addEventListener('click', () => { select(row.building_id); flyTo(row.building_id); });
+      output.appendChild(b); });
+  } catch (error) { output.textContent = `查询失败：${error.message}`; }
+  finally { button.disabled = false; }
+});
 $('info-fly').addEventListener('click', () => selected && flyTo(selected));
 $('info-clear').addEventListener('click', clear);
 $('section-on').addEventListener('change', (e) => setSection(e.target.checked ? +$('section').value : null));
@@ -707,7 +769,8 @@ window.huijingViewer = {
     return itemsById[id](!!on);
   },
   flyTo,
-  queryBuildings,
+  queryBuildings, queryBuildingsRemote,
+  get dataSource() { return useServices ? 'geoserver-wfs' : 'static'; },
   get selected() { return selected; },
   get section() { return section; },
   get verticalSection() { return verticalSection; },
@@ -727,9 +790,11 @@ map.on('load', async () => {
     updateFramePadding();
     map.jumpTo({ center: toDisplay([geo.origin_lng + 0.0012, geo.origin_lat]), padding: framePadding });
     status('加载模型…');
+    if ($('gis-source')) $('gis-source').textContent = useServices ? '数据：GeoServer WFS · PostGIS' : '数据：静态文件';
     await loadBuildings(); // before the GLBs, so their meshes can be mapped to buildings as they load
     setSection(null);
     await buildScene(scene);
+    if ($('gis-query-button')) $('gis-query-button').disabled = false;
     modelLayer.readyPending = true;
     map.triggerRepaint();
     status('');

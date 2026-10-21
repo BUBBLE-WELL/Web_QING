@@ -45,3 +45,4 @@ pics/shouyin_Field Ops.svg
 3d/huijing-huayuan/assets/render/terrain.glb
 page-transition.js
 page-transition.css
+3d/huijing-huayuan/assets/final-floorplan-0704.geojson
