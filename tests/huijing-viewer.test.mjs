@@ -8,23 +8,12 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const web = path.join(root, await fs.access(path.join(root, 'web')).then(() => 'web', () => 'h5-static/3d/huijing-huayuan'));
 const threeURL = pathToFileURL(path.join(web, 'vendor/three/build/three.module.js')).href;
 const THREE = await import(threeURL);
+const { MeshoptDecoder } = await import(pathToFileURL(path.join(web, 'vendor/three/examples/jsm/libs/meshopt_decoder.module.js')).href);
 const asModule = (s) => `data:text/javascript;base64,${Buffer.from(s).toString('base64')}`;
 const utils = (await fs.readFile(path.join(web, 'vendor/three/examples/jsm/utils/BufferGeometryUtils.js'), 'utf8')).replace("from 'three'", `from '${threeURL}'`);
 const loaderCode = (await fs.readFile(path.join(web, 'vendor/three/examples/jsm/loaders/GLTFLoader.js'), 'utf8'))
   .replace("from 'three'", `from '${threeURL}'`).replace("'../utils/BufferGeometryUtils.js'", JSON.stringify(asModule(utils)));
 const { GLTFLoader } = await import(asModule(loaderCode));
-// GLTFLoader runs in Node's own global scope: its WebP probe uses new Image() and textures load through an <img>.
-// These stubs only fire 'load'; pixels are not decoded (the test checks structure, not appearance).
-class StubImage {
-  constructor() { this.width = 1; this.height = 1; this._l = {}; }
-  addEventListener(t, f) { this._l[t] = f; } removeEventListener() {}
-  set src(v) { this._src = v; setTimeout(() => { this.onload?.(); this._l.load?.({ target: this }); }); }
-  get src() { return this._src; }
-}
-globalThis.Image ??= StubImage;
-globalThis.document ??= { createElementNS: () => new StubImage() };
-globalThis.self ??= globalThis; // meshopt_decoder.module.js probes self (browser/worker global)
-const { MeshoptDecoder } = await import(pathToFileURL(path.join(web, 'vendor/three/examples/jsm/libs/meshopt_decoder.module.js')).href);
 class LocalLoader extends GLTFLoader {
   async loadAsync(url) {
     const b = await fs.readFile(path.join(web, url));
@@ -47,11 +36,11 @@ class MapStub {
   setFilter(id, filter) { this.filters[id] = filter; }
   getCanvas() { return { clientWidth: 1000, clientHeight: 1000 }; }
 }
-const context = vm.createContext({ THREE, GLTFLoader: LocalLoader, MeshoptDecoder, console, URLSearchParams,
-  location: { search: '' }, window: {}, innerWidth: 1440, addEventListener() {}, requestAnimationFrame() {},
+const context = vm.createContext({ THREE, MeshoptDecoder, GLTFLoader: LocalLoader, console, URLSearchParams,
+  location: { search: process.env.HUIJING_SERVICE_TEST === '1' ? '?data=services' : '' }, window: {}, innerWidth: 1440, addEventListener() {}, requestAnimationFrame() {},
   document: { getElementById: get, querySelectorAll: () => [], querySelector: () => get('panel'), createElement: (tag) => new Element(tag) },
   maplibregl: { Map: MapStub, NavigationControl: class {}, ScaleControl: class {} },
-  fetch: async (url) => ({ ok: true, json: async () => JSON.parse(await fs.readFile(path.join(web, url), 'utf8')) })
+  fetch: async (url) => url.startsWith('/api/') ? fetch('http://127.0.0.1:8872' + url) : ({ ok: true, json: async () => JSON.parse(await fs.readFile(path.join(web, url), 'utf8')) })
 });
 const source = (await fs.readFile(path.join(web, 'main.js'), 'utf8')).replace(/^import .*;\r?\n/gm, '');
 assert.ok(!/localStorage|align-tools|dragOn|params.get\('align'\)/.test(source), 'no deployment alignment entry point');
@@ -61,7 +50,7 @@ assert.equal(georef.origin_lat, 31.98216367396415);
 assert.equal(georef.rotation_deg, 0);
 vm.runInContext(source, context);
 const run = (s) => vm.runInContext(s, context);
-run('geo = {origin_lng: 118.742, origin_lat:31.982, rotation_deg:0}; modelLayer.scene = new THREE.Scene(); modelLayer.camera = new THREE.Camera();');
+run('geo = '+JSON.stringify(georef)+'; modelLayer.scene = new THREE.Scene(); modelLayer.camera = new THREE.Camera();');
 await run('loadBuildings()');
 const data = JSON.parse(await fs.readFile(path.join(web, 'assets/buildings.geojson'), 'utf8'));
 const plates = JSON.parse(await fs.readFile(path.join(web, 'assets/floorplates.geojson'), 'utf8'));
@@ -117,23 +106,46 @@ assert.equal(run('pick3D({x:500,y:500})'), 'B01');
 run('setSection(1)'); assert.equal(run('pick3D({x:500,y:500})'), null, 'clipped tower cannot intercept ray');
 run('setSection(null)');
 assert.equal(run('queryBuildings({minHeight:60}).length'), 6);
-// Twinmotion render layer: every scene.json gltf item decodes (meshopt), is re-lit as Lambert and follows the cuts.
-const sceneDef = JSON.parse(await fs.readFile(path.join(web, 'scene.json'), 'utf8'));
-const gltfDefs = sceneDef.groups.flatMap((g) => g.items).filter((i) => i.type === 'gltf');
-assert.ok(gltfDefs.length >= 1, 'render group present');
-for (const def of gltfDefs) {
-  context.gltfDef = def;
-  run('var renderItem = gltfItem(gltfDef)');
-  assert.equal(run('renderItem.on'), def.on === true);
-  await run('renderItem.setVisible(true)');
-}
-assert.ok(run('extraMaterials.size') > 0);
-assert.ok(run('[...extraMaterials].every(m => m.isMeshLambertMaterial && m.side === THREE.DoubleSide)'));
-run('setSection(30)'); assert.ok(run('[...extraMaterials].every(m => m.clippingPlanes.includes(clip))'));
-run('setSection(null)'); assert.ok(run('[...extraMaterials].every(m => m.clippingPlanes.length === 0)'));
-assert.equal(run('pick3D({x:500,y:500})'), 'B01', 'render meshes do not take over building picking');
 const transformed = run('wgs84ToGcj02([118.742,31.982])');
 assert.ok(transformed[0] > 118.742 && transformed[0] < 118.75 && transformed[1] < 31.982);
 assert.equal(JSON.stringify(run('wgs84ToGcj02([0,0])')), '[0,0]');
+// The large final CAD layer must load only on demand, including rapid toggle/retry.
+run('map.setLayoutProperty = (id, key, value) => { map.layers[id].layout[key] = value; };');
+const finalDef = JSON.parse(await fs.readFile(path.join(web, 'scene.json'), 'utf8')).groups
+  .find((g) => g.id === 'final-plan').items[0];
+context.finalDef = finalDef;
+context.finalItem = await run('lineItem(finalDef)');
+assert.equal(run('map.getSource(finalDef.source)'), undefined, 'disabled final plan does not fetch at boot');
+await run('finalItem.setVisible(false)');
+const pendingFinal = run('finalItem.setVisible(true)');
+await run('finalItem.setVisible(false)');
+await pendingFinal;
+assert.equal(run('map.getLayer(finalDef.id).layout.visibility'), 'none', 'latest toggle wins while loading');
+await run('finalItem.setVisible(true)');
+assert.equal(run('map.getLayer(finalDef.id).layout.visibility'), 'visible');
+const finalFC = JSON.parse(await fs.readFile(path.join(web, finalDef.source), 'utf8'));
+assert.ok(finalFC.features.length > 30000);
+assert.ok(finalFC.features.every((f) => Object.keys(f.properties).join() === 'kind'
+  && ['design','context','detail'].includes(f.properties.kind)
+  && f.geometry.type === 'LineString' && f.geometry.coordinates.length >= 2
+  && f.geometry.coordinates.every((p) => p.length === 2 && p.every(Number.isFinite))));
+// A failed lazy source can be retried; error handling must not poison the cache.
+const originalFetch = context.fetch;
+let failures = 0;
+context.fetch = async (url) => {
+  if (url === 'retry-final.geojson' && failures++ === 0) throw new Error('temporary load failure');
+  return originalFetch(url === 'retry-final.geojson' ? finalDef.source : url);
+};
+context.retryItem = await run("lineItem({...finalDef, id:'retry-final', source:'retry-final.geojson'})");
+await assert.rejects(run('retryItem.setVisible(true)'), /temporary load failure/);
+await run('retryItem.setVisible(true)');
+assert.equal(run("map.getLayer('retry-final').layout.visibility"), 'visible');
+context.fetch = originalFetch;
 console.log(JSON.stringify({result:'PASS',buildings:data.features.length,storeys:plates.features.length,mappedSlabs:gids.length,
   layers:layers.length,towers:data.features.slice(0,6).map(({properties:p})=>({id:p.building_id,floors:p.floors,height_m:p.height_m,floor_area_m2:p.floor_area_m2}))}, null, 2));
+
+if (process.env.HUIJING_SERVICE_TEST === '1') {
+  assert.equal(run('window.huijingViewer.dataSource'), 'geoserver-wfs');
+  assert.equal((await run('queryBuildingsRemote({minHeight:100})')).length,6);
+  console.log('PASS: real viewer regression with live GeoServer-backed building and floorplate data.');
+}

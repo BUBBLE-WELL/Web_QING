@@ -148,8 +148,16 @@
     </section>
     <p class="hint">点击 3D 体块或地面轮廓选择建筑；Esc 取消。</p>
 
+    <section aria-label="建筑属性查询">
+      <h2>建筑属性查询</h2><p class="hint" id="gis-source">数据：初始化…</p>
+      <form id="gis-query" class="grid" style="grid-template-columns:1fr auto;align-items:end">
+        <label>最低高度（米）<input id="gis-min-height" type="number" min="0" step="0.1" value="100" required style="width:100%;box-sizing:border-box"></label>
+        <button id="gis-query-button" type="submit" disabled>查询</button>
+      </form>
+      <div id="gis-query-results" role="status" aria-live="polite" class="hint"></div>
+    </section>
     <div id="status" role="status"></div>
   </div>
-  <script type="module" src="main.js"></script>
+  <script type="module" src="main.js?v=6fd0fc2c1d73"></script>
 </body>
 </html>

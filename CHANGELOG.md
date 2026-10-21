@@ -14,3 +14,7 @@
 - Fixed approved georeference and removed deployment alignment controls.
 - Added buildings.geojson and floorplates.geojson to both runtime allowlists.
 - Browser and real-asset checks documented; no production deployment.
+
+## 2026-10-22
+
+Add registered final master-plan linework with separate design/context/detail switches and on-demand loading; expose static building queries. Preserve PR #12 terrain and average-colour material fixes, fixed model placement and portfolio return position.
