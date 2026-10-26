@@ -502,7 +502,7 @@
 
     var chip = document.createElement("button");
     chip.type = "button";
-    chip.className = "qb-round-chip";
+    chip.className = "qb-round-chip suggestion-chip";
     chip.textContent = label;
 
     chip.addEventListener("click", function () {

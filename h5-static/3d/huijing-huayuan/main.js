@@ -3,11 +3,17 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { createToolBridge, mountToolPanel } from './tool-actions.js?v=a445520da8a6';
+import { mountPoiPanel } from './poi-panel.js?v=0ed5a68eac93';
+import { mountGisChat } from './qing-gis.js?v=af6bdbda9da7';
+import './workspace-ui.js?v=a2657035015c';
+import { mountSpatialAgent } from './spatial-agent.js?v=1dd06f37a21a';
 
 const $ = (id) => document.getElementById(id);
 const status = (msg) => { $('status').textContent = msg; };
 
 let geo; // stored truth, always WGS-84
+let viewerReady = false, viewerCatalogHash = null, toolPanel = null, gisChat = null, spatialPanel = null;
 // GeoJSON sources by file path: { crs: 'project' | 'wgs84', raw } — re-projected for display on every refresh()
 const vectorSources = {};
 const pointItems = []; // { features, markers, crs, visible }
@@ -46,6 +52,28 @@ function wgs84ToGcj02([lng, lat]) {
 const isGcj = () => basemap === 'tencent';
 // WGS-84 lng/lat -> the datum of the active basemap
 const toDisplay = (ll) => (isGcj() ? wgs84ToGcj02(ll) : ll);
+
+let poiFocus = null;
+function refreshPoiFocus() {
+  if (map.getSource('poi-proximity')) map.getSource('poi-proximity').setData(displayFC(poiFocus || {type:'FeatureCollection',features:[]}, 'wgs84'));
+}
+function focusPoi(origin, row) {
+  const point = (coordinates, role) => ({type:'Feature',properties:{role},geometry:{type:'Point',coordinates}});
+  poiFocus = {type:'FeatureCollection',features:[point(origin,'origin'),point(row.coordinates,'entrance'),
+    {type:'Feature',properties:{role:'distance'},geometry:{type:'LineString',coordinates:[origin,row.coordinates]}}]};
+  if (!map.getSource('poi-proximity')) {
+    map.addSource('poi-proximity',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
+    map.addLayer({id:'poi-distance-guide',type:'line',source:'poi-proximity',filter:['==',['geometry-type'],'LineString'],
+      paint:{'line-color':'#8054b0','line-width':2,'line-dasharray':[3,3]}});
+    map.addLayer({id:'poi-query-points',type:'circle',source:'poi-proximity',filter:['==',['geometry-type'],'Point'],
+      paint:{'circle-radius':7,'circle-color':['match',['get','role'],'origin','#8054b0','#d08a12'],'circle-stroke-color':'#fff','circle-stroke-width':2}});
+  }
+  refreshPoiFocus();
+  const bounds = new maplibregl.LngLatBounds(); [origin,row.coordinates].forEach(ll=>bounds.extend(toDisplay(ll)));
+  map.stop();
+  map.jumpTo({pitch:0,bearing:0,padding:{top:0,bottom:0,left:0,right:0}});
+  map.fitBounds(bounds,{padding:{top:(framePadding.top||0)+30,bottom:(framePadding.bottom||0)+35,left:(framePadding.left||0)+25,right:(framePadding.right||0)+35},pitch:0,bearing:0,maxZoom:17.5,duration:700});
+}
 
 // ---------- georeference helpers ----------
 function projectToLngLat([x, y]) {
@@ -144,6 +172,9 @@ const map = new maplibregl.Map({
   bearing: -15,
   maxPitch: 80,
   antialias: true,
+  // Fractional browser zoom can collapse the shared WebGL drawing buffer during resize.
+  // Keep the map/Three.js canvas on a bounded integer pixel grid.
+  pixelRatio: Math.min(2, Math.max(1, Math.round(window.devicePixelRatio || 1))),
 });
 window.huijingMap = map; // console handle for debugging
 map.on('error', (e) => console.warn('map error:', e.error?.message || e));
@@ -175,6 +206,10 @@ const modelLayer = {
     this.renderer.render(this.scene, this.camera);
     if (this.readyPending) {
       this.readyPending = false;
+      viewerReady = true;
+      toolPanel?.ready();
+      gisChat?.ready();
+      spatialPanel?.ready();
       window.QingTransition?.ready(); // all initial GLBs are loaded and their first frame is drawn
     }
   },
@@ -410,12 +445,23 @@ function centroidLngLat(id) {
 
 let framePadding = {};
 function updateFramePadding() {
-  const panel = document.querySelector('.panel').getBoundingClientRect();
-  framePadding = innerWidth <= 600 ? { top: panel.bottom, left: 0, right: 0, bottom: 0 }
-    : { left: panel.right, top: 0, right: 0, bottom: 0 };
+  const rect = (selector) => {
+    const node = document.querySelector(selector);
+    if (!node || node.hidden) return null;
+    const box = node.getBoundingClientRect();
+    return box.width && box.height ? box : null;
+  };
+  const tools = rect('#map-tools'), chat = rect('#spatial-agent'), header = rect('.workspace-header');
+  const top = header ? header.bottom + 12 : 12;
+  framePadding = innerWidth <= 600
+    ? { top: tools ? Math.max(top, tools.bottom + 12) : top, left: 0, right: 0,
+        bottom: chat ? Math.max(0, innerHeight - chat.top + 10) : 10 }
+    : { top, bottom: 16, left: tools ? tools.right + 16 : 16,
+        right: chat ? Math.max(16, innerWidth - chat.left + 16) : 16 };
   map.setPadding(framePadding);
 }
-addEventListener('resize', () => { if (geo) updateFramePadding(); });
+addEventListener('resize', () => { if (geo) { map.stop(); updateFramePadding(); } });
+addEventListener('huijing-layout-change', () => { if (geo) { map.stop(); updateFramePadding(); } });
 function flyTo(target) {
   const center = typeof target === 'string' ? centroidLngLat(target) : toDisplay(target);
   map.flyTo({ center, zoom: Math.max(map.getZoom(), 17.3), padding: framePadding, duration: 900 });
@@ -676,6 +722,7 @@ async function buildScene(scene) {
 
 // ---------- refresh display datum; georeference is fixed by georef.json ----------
 function refresh() {
+  refreshPoiFocus();
   for (const [path, s] of Object.entries(vectorSources)) {
     if (s.raw && map.getSource(path)) map.getSource(path).setData(displayFC(s.raw, s.crs));
   }
@@ -771,6 +818,8 @@ window.huijingViewer = {
   flyTo,
   queryBuildings, queryBuildingsRemote,
   get dataSource() { return useServices ? 'geoserver-wfs' : 'static'; },
+  get ready() { return viewerReady; },
+  get catalogHash() { return viewerCatalogHash; },
   get selected() { return selected; },
   get section() { return section; },
   get verticalSection() { return verticalSection; },
@@ -792,8 +841,19 @@ map.on('load', async () => {
     status('加载模型…');
     if ($('gis-source')) $('gis-source').textContent = useServices ? '数据：GeoServer WFS · PostGIS' : '数据：静态文件';
     await loadBuildings(); // before the GLBs, so their meshes can be mapped to buildings as they load
+    const catalogBytes = await (await fetch(BUILDINGS)).arrayBuffer();
+    viewerCatalogHash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', catalogBytes))]
+      .map((byte) => byte.toString(16).padStart(2, '0')).join('');
     setSection(null);
     await buildScene(scene);
+    window.huijingTools = createToolBridge(window.huijingViewer);
+    if (['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) && $('tool-demo')) {
+      document.querySelectorAll('[data-local-tools]').forEach(node => { node.hidden = false; });
+      toolPanel = mountToolPanel(window.huijingViewer, window.huijingTools, $('tool-demo'));
+      window.huijingPois = mountPoiPanel(window.huijingViewer, $('poi-query'), focusPoi, () => { poiFocus = null; refreshPoiFocus(); });
+      gisChat = window.huijingGisChat = mountGisChat(window.huijingViewer, window.huijingTools, $('qing-gis'));
+      if ($('spatial-agent')) spatialPanel = mountSpatialAgent(window.huijingViewer, window.huijingTools, $('spatial-agent'));
+    }
     if ($('gis-query-button')) $('gis-query-button').disabled = false;
     modelLayer.readyPending = true;
     map.triggerRepaint();

@@ -1,0 +1,12 @@
+/* Shared suggestion widget: story choices, Qing Bot guided rounds and spatial chat.
+   The hover/focus prefix is decorative and absolutely positioned: no label/layout jump. */
+.choice-chip,.suggestion-chip{position:relative;display:inline-flex;align-items:center;justify-content:center;max-width:220px;min-height:34px;padding:7px 20px;border:1px solid var(--lavender-line,rgba(143,122,229,.36));border-radius:999px;background:rgba(241,238,251,.9);color:var(--ink,#111);font:12px/1.45 var(--mono,monospace);text-align:center;white-space:normal;overflow-wrap:anywhere;cursor:pointer;transition:border-color .16s,color .16s,background .16s,transform .16s}
+.choice-chip::before,.suggestion-chip::before{content:"→" / "";position:absolute;left:7px;top:50%;transform:translate(-3px,-50%);opacity:0;line-height:1;pointer-events:none;transition:opacity .16s,transform .16s}
+.choice-chip:hover:not(:disabled),.suggestion-chip:hover:not(:disabled){border-color:var(--green,#2bb673);color:var(--ink,#111);background:rgba(241,238,251,.9)}
+.choice-chip:hover:not(:disabled)::before,.suggestion-chip:hover:not(:disabled)::before,.choice-chip:focus-visible::before,.suggestion-chip:focus-visible::before{opacity:1;transform:translate(0,-50%)}
+.choice-chip:focus-visible,.suggestion-chip:focus-visible,.choice-chip.keyboard-focus{outline:2px solid var(--green,#2bb673);outline-offset:3px;border-color:var(--green,#2bb673)}
+.choice-chip:active:not(:disabled),.suggestion-chip:active:not(:disabled){transform:translateY(1px)}
+.choice-chip.secondary{background:rgba(255,255,255,.82);color:var(--body,#44443f)}
+.choice-chip:disabled,.suggestion-chip:disabled,.suggestion-chip.qb-round-chip--used{opacity:.4;cursor:default}
+.choice-chip:disabled::before,.suggestion-chip:disabled::before{opacity:0}
+@media(prefers-reduced-motion:reduce){.choice-chip,.suggestion-chip,.choice-chip::before,.suggestion-chip::before{transition:none;transform:none}.choice-chip::before,.suggestion-chip::before{transform:translateY(-50%)}}
