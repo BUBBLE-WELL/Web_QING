@@ -20,3 +20,14 @@ This PR contains public frontend files only. It does not publish a spatial backe
 - Runtime allowlist contains 54 files. Existing geometry, georeference and vendor content have no semantic changes.
 
 Real provider testing is pending explicit approval. The local default remains deterministic; no live model quality or production chatbot integration is claimed.
+
+## jiyiji sandbox deployment — 2026-10-27
+
+User-authorized frontend sandbox, kept separate from the production document root:
+
+- [Portfolio sandbox](https://jiyiji.cn/webqing/sandbox/pr-14/)
+- [Huijing sandbox](https://jiyiji.cn/webqing/sandbox/pr-14/3d/huijing-huayuan/?basemap=tencent)
+
+Runtime revision `89652f63b3cc95bbd17c4ca1d4e8a5843af9b68f`; all54allowlisted runtime files passed public HTTP200 and SHA256 checks. No merge or production release. Existing portfolio Qing Bot retains its existing API; no separate chat backend or spatial backend was deployed. Spatial Assistant remains unavailable on the hosted static viewer. Cloudflare is unchanged.
+
+The in-app browser loaded the portfolio title but page inspection timed out twice, so deployed visual/interaction acceptance is still pending. Local screenshots are not presented as deployed screenshots.
