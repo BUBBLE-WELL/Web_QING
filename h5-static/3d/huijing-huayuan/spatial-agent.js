@@ -1,13 +1,14 @@
 const PROFILE='huijing-spatial-workflow-v1';
+export const isSpatialSandbox=()=>typeof location!=='undefined' && location.origin==='https://jiyiji.cn' && location.pathname==='/webqing/sandbox/pr-14/3d/huijing-huayuan/';
 const contextOf=v=>({selected:v.selected,section:v.section,catalog_sha256:v.catalogHash,source:v.dataSource,ready:v.ready});
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 const error=code=>Object.assign(new Error(code),{code});
-const errorCopy=code=>({expired_session:'会话已过期，请清空后重新开始',expired_handoff:'这次交接已过期，可以直接开始新任务',handoff_consumed:'这次交接已由另一个窗口接收，可以直接开始新任务',stale_catalog:'数据版本不一致，请刷新页面',unsupported_source:'此助手当前支持静态数据，请使用静态模式',session_limit:'本轮请求次数已用完，请清空后重新开始',invalid_origin:'当前页面无法连接此服务'}[code]||'连接暂不可用，请稍后重试');
+const errorCopy=code=>({expired_session:'会话已过期，请清空后重新开始',expired_handoff:'这次交接已过期，可以直接开始新任务',handoff_consumed:'这次交接已由另一个窗口接收，可以直接开始新任务',stale_catalog:'数据版本不一致，请刷新页面',unsupported_source:'此助手当前支持静态数据，请使用静态模式',session_limit:'本轮请求次数已用完，请清空后重新开始',sandbox_budget:'测试环境今日请求额度已用完',invalid_session_owner:'测试会话已失效，请清空后重新开始',model_unavailable:'真实模型连接失败，未使用预设答复替代',invalid_proposal:'模型操作提议未通过校验，场景未改变',invalid_origin:'当前页面无法连接此服务'}[code]||'连接暂不可用，请稍后重试');
 
 export function createSpatialController(viewer,bridge,{fetchImpl=fetch,pause=ms=>new Promise(r=>setTimeout(r,ms)),notify=()=>{}}={}) {
   let session=null,active=null,restoreState=null,last=null;
   async function api(route,body,signal){
-    const response=await fetchImpl('/api/spatial/'+route,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal});
+    const response=await fetchImpl((isSpatialSandbox()?'/webqing/api/spatial-sandbox-pr14/':'/api/spatial/')+route,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal});
     const raw=await response.text();
     if(raw.length>32768)throw error('response_limit');
     let data;try{data=JSON.parse(raw);}catch{throw error('invalid_response');}

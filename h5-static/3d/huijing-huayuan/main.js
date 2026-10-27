@@ -7,7 +7,7 @@ import { createToolBridge, mountToolPanel } from './tool-actions.js?v=a445520da8
 import { mountPoiPanel } from './poi-panel.js?v=0ed5a68eac93';
 import { mountGisChat } from './qing-gis.js?v=af6bdbda9da7';
 import './workspace-ui.js?v=a2657035015c';
-import { mountSpatialAgent } from './spatial-agent.js?v=1dd06f37a21a';
+import { mountSpatialAgent, isSpatialSandbox } from './spatial-agent.js?v=0de48ce58b9a';
 
 const $ = (id) => document.getElementById(id);
 const status = (msg) => { $('status').textContent = msg; };
@@ -852,7 +852,9 @@ map.on('load', async () => {
       toolPanel = mountToolPanel(window.huijingViewer, window.huijingTools, $('tool-demo'));
       window.huijingPois = mountPoiPanel(window.huijingViewer, $('poi-query'), focusPoi, () => { poiFocus = null; refreshPoiFocus(); });
       gisChat = window.huijingGisChat = mountGisChat(window.huijingViewer, window.huijingTools, $('qing-gis'));
-      if ($('spatial-agent')) spatialPanel = mountSpatialAgent(window.huijingViewer, window.huijingTools, $('spatial-agent'));
+    }
+    if ((['localhost','127.0.0.1','[::1]'].includes(location.hostname) || isSpatialSandbox()) && $('spatial-agent')) {
+      spatialPanel = mountSpatialAgent(window.huijingViewer, window.huijingTools, $('spatial-agent'));
     }
     if ($('gis-query-button')) $('gis-query-button').disabled = false;
     modelLayer.readyPending = true;
