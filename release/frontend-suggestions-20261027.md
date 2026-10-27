@@ -30,4 +30,4 @@ User-authorized frontend sandbox, kept separate from the production document roo
 
 Runtime revision `89652f63b3cc95bbd17c4ca1d4e8a5843af9b68f`; all54allowlisted runtime files passed public HTTP200 and SHA256 checks. No merge or production release. Existing portfolio Qing Bot retains its existing API; no separate chat backend or spatial backend was deployed. Spatial Assistant remains unavailable on the hosted static viewer. Cloudflare is unchanged.
 
-The in-app browser loaded the portfolio title but page inspection timed out twice, so deployed visual/interaction acceptance is still pending. Local screenshots are not presented as deployed screenshots.
+The in-app browser inspection timed out; Edge fallback passed the deployed smoke test: guided suggestion pill, Tencent map, six towers from the inclusive100m query, B02 selection/card (30floors,114m,22500m²), and visible30m clipping. The hosted Spatial Assistant toggle is disabled as intended. No model message was submitted. Broader responsive, terrain and navigation acceptance remains separate.
