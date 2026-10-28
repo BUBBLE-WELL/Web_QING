@@ -21,6 +21,13 @@ export function createToolBridge(viewer) {
     const ids = new Set(catalog.keys());
     const normalize = (action) => {
       if (!action || typeof action !== 'object') fail('invalid_action');
+      if (action.type === 'show_metro_entrances') {
+        if (!sameKeys(action,['type','poi_catalog_sha256','poi_ids']) || !/^[a-f0-9]{64}$/.test(action.poi_catalog_sha256)
+          || action.poi_catalog_sha256 !== viewer.metroCatalogHash || !Array.isArray(action.poi_ids)
+          || action.poi_ids.length>20 || new Set(action.poi_ids).size!==action.poi_ids.length
+          || JSON.stringify([...action.poi_ids].sort())!==JSON.stringify((viewer.metroPois||[]).map(p=>p.poi_id).sort())) fail('stale_poi_catalog');
+        return {type:action.type,poi_catalog_sha256:action.poi_catalog_sha256,poi_ids:[...action.poi_ids]};
+      }
       if (['select_building','fly_to'].includes(action.type)) {
         if (!sameKeys(action, ['type','building_id']) || !ids.has(action.building_id)) fail('invalid_action');
         return { type: action.type, building_id: action.building_id };
@@ -36,7 +43,17 @@ export function createToolBridge(viewer) {
     envelope.results.forEach((entry, index) => {
       if (!entry || entry.index !== index || !Array.isArray(entry.building_ids)
           || entry.building_ids.some((id) => !ids.has(id)) || !Array.isArray(entry.viewer_actions)) fail('invalid_result');
-      if (entry.tool === 'query_buildings') {
+      if (entry.tool === 'show_metro_entrances') {
+        if (entry.status!=='action_requested' || entry.data_source!=='local-osm-snapshot' || entry.viewer_actions.length!==1
+          || !Array.isArray(entry.pois) || entry.pois.length>20 || entry.poi_catalog_sha256!==viewer.metroCatalogHash
+          || entry.building_ids.length || entry.pois.length!==(viewer.metroPois||[]).length) fail('invalid_result');
+        const own=new Map(viewer.metroPois.map(p=>[p.poi_id,p]));
+        if (new Set(entry.pois.map(p=>p.poi_id)).size!==entry.pois.length || entry.pois.some(p=>!own.has(p.poi_id)
+          || p.label!==own.get(p.poi_id).label || JSON.stringify(p.coordinates)!==JSON.stringify(own.get(p.poi_id).coordinates))) fail('invalid_result');
+        const action=normalize(entry.viewer_actions[0]);
+        if (action.type!==entry.tool) fail('invalid_result');
+        fromResults.push(action);
+      } else if (entry.tool === 'query_buildings') {
         if (entry.status !== 'query_completed' || entry.data_source !== viewer.dataSource
             || entry.viewer_actions.length || !Array.isArray(entry.buildings)
             || entry.buildings.length > 100 || entry.returned !== entry.buildings.length
@@ -71,7 +88,11 @@ export function createToolBridge(viewer) {
         seen.add(rid); running = true; ownsRun = true;
         for (const action of actions) {
           if (signal?.aborted) fail('cancelled');
-          if (action.type === 'select_building') {
+          if (action.type === 'show_metro_entrances') {
+            await viewer.showMetroEntrances();
+            if (JSON.stringify([...(viewer.metroShownIds||[])].sort())!==JSON.stringify([...action.poi_ids].sort())) fail('state_mismatch');
+            acknowledgements.push({...action,status:'points_confirmed',navigation:'requested'});
+          } else if (action.type === 'select_building') {
             await viewer.select(action.building_id);
             if (viewer.selected !== action.building_id) fail('state_mismatch');
             acknowledgements.push({ ...action, status: 'state_confirmed' });

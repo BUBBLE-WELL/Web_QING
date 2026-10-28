@@ -1,9 +1,9 @@
 const PROFILE='huijing-spatial-workflow-v1';
 export const isSpatialSandbox=()=>typeof location!=='undefined' && location.origin==='https://jiyiji.cn' && location.pathname==='/webqing/sandbox/pr-14/3d/huijing-huayuan/';
-const contextOf=v=>({selected:v.selected,section:v.section,catalog_sha256:v.catalogHash,source:v.dataSource,ready:v.ready});
+const contextOf=v=>({selected:v.selected,section:v.section,catalog_sha256:v.catalogHash,source:v.dataSource,ready:v.ready,...(v.metroCatalogHash?{poi_catalog_sha256:v.metroCatalogHash,poi_visible_ids:[...v.metroShownIds]}:{})});
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 const error=code=>Object.assign(new Error(code),{code});
-const errorCopy=code=>({expired_session:'会话已过期，请清空后重新开始',expired_handoff:'这次交接已过期，可以直接开始新任务',handoff_consumed:'这次交接已由另一个窗口接收，可以直接开始新任务',stale_catalog:'数据版本不一致，请刷新页面',unsupported_source:'此助手当前支持静态数据，请使用静态模式',session_limit:'本轮请求次数已用完，请清空后重新开始',sandbox_budget:'测试环境今日请求额度已用完',invalid_session_owner:'测试会话已失效，请清空后重新开始',model_unavailable:'真实模型连接失败，未使用预设答复替代',invalid_proposal:'模型操作提议未通过校验，场景未改变',invalid_origin:'当前页面无法连接此服务'}[code]||'连接暂不可用，请稍后重试');
+const errorCopy=code=>({expired_session:'会话已过期，请清空后重新开始',expired_handoff:'这次交接已过期，可以直接开始新任务',handoff_consumed:'这次交接已由另一个窗口接收，可以直接开始新任务',stale_catalog:'数据版本不一致，请刷新页面',unsupported_source:'此助手当前支持静态数据，请使用静态模式',session_limit:'本轮请求次数已用完，请清空后重新开始',sandbox_budget:'测试环境今日请求额度已用完',invalid_session_owner:'测试会话已失效，请清空后重新开始',model_unavailable:'真实模型连接失败，未使用预设答复替代',stale_poi_catalog:'地铁数据版本不一致，请刷新页面',poi_unavailable:'地铁快照暂不可读取，请稍后重试',unsupported_capability:'当前入口尚未接通这项操作',invalid_proposal:'模型回答格式或操作提议未通过校验',invalid_origin:'当前页面无法连接此服务'}[code]||'连接暂不可用，请稍后重试');
 
 export function createSpatialController(viewer,bridge,{fetchImpl=fetch,pause=ms=>new Promise(r=>setTimeout(r,ms)),notify=()=>{}}={}) {
   let session=null,active=null,restoreState=null,last=null;
@@ -69,6 +69,10 @@ export function createSpatialController(viewer,bridge,{fetchImpl=fetch,pause=ms=
           const query=batches[i].results.find(r=>r.tool==='query_buildings');
           if(query)notify(`当前${query.data_source==='static'?'静态数据':'GIS 服务'}返回 ${query.total} 个几何分组`+(query.total===0?'；这不表示现实场地没有建筑。':'：'+query.building_ids.join('、')));
           for(const applied of ack.acknowledgements){
+            if(applied.type==='show_metro_entrances') {
+              const rows=batches[i].results.find(r=>r.tool==='show_metro_entrances').pois;
+              notify(rows.length?`已在地图显示 ${rows.length} 个已记录出入口：${rows.map(p=>p.label).join('、')}。这些是 OSM 快照标签，站点归属、开放状态和步行路径未核验。`:'当前快照没有可显示的出入口记录；不代表周边没有地铁。');
+            }
             if(applied.type==='select_building')notify('已确认选择 '+applied.building_id+'。');
             if(applied.type==='set_section')notify(applied.height_m===null?'已确认关闭水平剖切。':`已确认水平剖切 ${applied.height_m} 米；切面作用于整个场景。`);
             if(applied.type==='fly_to')notify('已请求定位；不代表相机已到达。');
@@ -120,7 +124,7 @@ export function mountSpatialAgent(viewer,bridge,host){
       let instance;try{instance=sessionStorage.getItem('huijing-receiver-instance')||crypto.randomUUID();sessionStorage.setItem('huijing-receiver-instance',instance);}catch{instance=crypto.randomUUID();}
       const data=await control.start(instance,handoff);started=true;host.hidden=host.dataset.collapsed==='true';say(data.message);ready();
       window.dispatchEvent(new Event('huijing-spatial-available'));
-      const back=document.querySelector('[data-portfolio-return]');if(back)back.href='/portfolio/';
+      const back=document.querySelector('[data-portfolio-return]');if(back&&!isSpatialSandbox())back.href='/portfolio/';
       // This is a bounded reviewed workflow, separate from the legacy model workbench.
       document.querySelector('#qing-gis')?.setAttribute('hidden','');
     }catch(e){

@@ -3,11 +3,11 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
-import { createToolBridge, mountToolPanel } from './tool-actions.js?v=a445520da8a6';
+import { createToolBridge, mountToolPanel } from './tool-actions.js?v=a4621ac9dbba';
 import { mountPoiPanel } from './poi-panel.js?v=0ed5a68eac93';
 import { mountGisChat } from './qing-gis.js?v=af6bdbda9da7';
 import './workspace-ui.js?v=a2657035015c';
-import { mountSpatialAgent, isSpatialSandbox } from './spatial-agent.js?v=0de48ce58b9a';
+import { mountSpatialAgent, isSpatialSandbox } from './spatial-agent.js?v=1235b739ab80';
 
 const $ = (id) => document.getElementById(id);
 const status = (msg) => { $('status').textContent = msg; };
@@ -16,6 +16,7 @@ let geo; // stored truth, always WGS-84
 let viewerReady = false, viewerCatalogHash = null, toolPanel = null, gisChat = null, spatialPanel = null;
 // GeoJSON sources by file path: { crs: 'project' | 'wgs84', raw } — re-projected for display on every refresh()
 const vectorSources = {};
+let metroCatalogHash = null;
 const pointItems = []; // { features, markers, crs, visible }
 const params = new URLSearchParams(location.search);
 // ?basemap=tencent|osm|sat picks the starting basemap (tencent for a mainland-China deployment)
@@ -622,8 +623,12 @@ async function lineItem(def) {
 
 // points are HTML markers (dot + label), so they need no glyph server, which may be blocked in China
 async function pointItem(def) {
-  const raw = await fetchJSON(def.source);
-  const item = { crs: def.crs, features: raw.features, markers: [] };
+  const response = await fetch(def.source);
+  if (!response.ok) throw new Error('Point catalog unavailable');
+  const bytes = await response.arrayBuffer();
+  const raw = JSON.parse(new TextDecoder().decode(bytes));
+  if (def.id === 'metro') metroCatalogHash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(b=>b.toString(16).padStart(2,'0')).join('');
+  const item = { id: def.id, crs: def.crs, features: raw.features, markers: [] };
   item.markers = raw.features.map((ft) => {
     const el = document.createElement('div');
     el.className = 'poi';
@@ -806,7 +811,29 @@ $('vertical-section').addEventListener('input', (e) => setVerticalSection(+e.tar
 $('section-board').addEventListener('change', () => { updateSectionGeometry(); map.triggerRepaint(); });
 
 // ---------- viewer API (roadmap #3: NL tool use calls these, not the DOM) ----------
+function metroPois() {
+  return (pointItems.find(it=>it.id==='metro')?.features || []).map(ft=>({poi_id:'osm:'+ft.properties.osm_id,label:ft.properties.label,coordinates:[...ft.geometry.coordinates]}));
+}
+function metroShownIds() {
+  const item=pointItems.find(it=>it.id==='metro');
+  if (!item?.visible) return [];
+  return item.features.filter((ft,i)=>item.markers[i].getElement().isConnected).map(ft=>'osm:'+ft.properties.osm_id);
+}
+async function showMetroEntrances() {
+  if (!itemsById.metro) throw new Error('Metro layer unavailable');
+  await itemsById.metro(true);
+  const pois=metroPois();
+  if (pois.length) {
+    const bounds=new maplibregl.LngLatBounds();pois.forEach(p=>bounds.extend(toDisplay(p.coordinates)));
+    map.stop();map.fitBounds(bounds,{padding:{top:(framePadding.top||0)+35,bottom:(framePadding.bottom||0)+35,left:(framePadding.left||0)+35,right:(framePadding.right||0)+85},pitch:0,bearing:0,maxZoom:17.5,duration:0});
+  }
+  return metroShownIds();
+}
 window.huijingViewer = {
+  showMetroEntrances,
+  get metroCatalogHash() { return metroCatalogHash; },
+  get metroPois() { return metroPois(); },
+  get metroShownIds() { return metroShownIds(); },
   select: (id) => select(id, { fly: true }),
   clear,
   setSection,
