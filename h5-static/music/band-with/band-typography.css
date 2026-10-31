@@ -1,0 +1,15 @@
+@font-face{font-family:'Band CJK';src:url('fonts/band-cjk.woff2') format('woff2');font-weight:100 900;font-display:swap;unicode-range:U+2014,U+2018-2019,U+201C-201D,U+2026,U+00B7,U+3000-303F,U+3400-4DBF,U+4E00-9FFF,U+FF00-FFEF}
+/* Shared glyph choice: one Chinese sans face, with distinct title/body roles; retain Latin faces. */
+:root{--cjk:'Band CJK','Microsoft YaHei','PingFang SC','Noto Sans SC',sans-serif;--pixel:'VT323','Courier New',var(--cjk);--data:'Space Mono','Courier New',var(--cjk)}
+html:lang(zh) body{font-family:var(--data);font-size:14px}
+.entry-title.has-cjk,html:lang(zh) .entry-title{font-size:clamp(24px,2.4vw,32px)!important;line-height:1.45!important;font-weight:600!important;letter-spacing:.06em}
+html:lang(zh) .entry-window .entry-slogan{font-size:14px;line-height:1.6}
+html:lang(zh) .window-bar{font-size:16px;line-height:1.4}
+html:lang(zh) .console-topbar,html:lang(zh) .console-footer{font:12px/1.4 var(--data)}
+html:lang(zh) .tool-body h2{font-size:20px;line-height:1.4;letter-spacing:.02em}
+html:lang(zh) .hero-row p{font-size:14px;line-height:1.6}
+html:lang(zh) .pixel-stamp{font-size:16px;line-height:1.4}
+html:lang(zh) .pixel-clock{font-size:12px;line-height:1.4}
+html:lang(zh) .tool-block,html:lang(zh) .desktop-icon{font-size:14px;line-height:1.4}
+html:lang(zh) .vision-tool .human-state-copy strong{font-size:20px;line-height:1.4}
+html:lang(zh) .guitar-space-state b{font-size:16px;line-height:1.4}
