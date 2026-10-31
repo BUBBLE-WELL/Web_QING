@@ -1,0 +1,5 @@
+const entry=$('[data-entry]'),app=$('[data-window]'),field=$('.desktop-field');
+function syncEntryMode(){const welcoming=!entry.hidden;field.classList.toggle('is-welcome',welcoming);document.querySelectorAll('.tool-block,.desktop-icon,.desk-dock,[data-tool-window],.settings-panel').forEach(node=>{if(node.matches('[data-tool-window]'))node.hidden=true;else if(node.matches('.settings-panel')){if(welcoming)node.hidden=true}else node.hidden=welcoming});if(!welcoming&&!app.hidden)requestAnimationFrame(()=>constrainWindow(app,undefined,undefined,{avoidDock:true}))}
+syncEntryMode();new MutationObserver(syncEntryMode).observe(entry,{attributes:true,attributeFilter:['hidden']});
+const settingsButton=$('[data-settings]');if(settingsButton)settingsButton.addEventListener('click',event=>{if(!entry.hidden){event.preventDefault();event.stopImmediatePropagation()}},{capture:true});
+const enterButton=$('[data-enter]');if(enterButton)enterButton.addEventListener('click',()=>{$('[data-settings-panel]').hidden=true},{capture:true});

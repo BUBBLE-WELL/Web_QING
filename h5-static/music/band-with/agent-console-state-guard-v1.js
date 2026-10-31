@@ -1,0 +1,1 @@
+(()=>{const settings=()=>document.querySelector('[data-settings-panel]');const close=()=>{const panel=settings();if(panel)panel.hidden=true};close();document.addEventListener('click',event=>{if(event.target.closest('[data-enter]'))close()},{capture:true});})();

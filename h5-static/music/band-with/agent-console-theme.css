@@ -1,0 +1,3 @@
+:root{--apple-accent:#58c72c;--apple-accent-dark:#3f9f22;--accent-soft:#58c72c;--muted:#405447}
+.window-body .chatbox-panel code,.window-body .settings-reserved,.floating-tool .tool-body code{color:var(--apple-accent)!important}
+.desk-dock{background:var(--paper);color:var(--ink)}

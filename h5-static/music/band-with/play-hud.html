@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex, nofollow">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PLAY HUD / Agent Companion</title>
+  <link rel="stylesheet" href="play-hud.css?v=cjk-font-1">
+</head>
+<body>
+  <!-- Far-view PLAY surface. Rules: docs/design_systems/PERFORMANCE_MODE_RULES.md; faces/words: FACE_VOCABULARY.md; frame: visual_styles.md "PLAY HUD program frame" -->
+  <div class="hud-field">
+    <main class="hud" data-hud data-state="OFFLINE" aria-live="polite">
+      <header class="hud-bar"><span class="hud-bar-left"><span class="hud-output is-muted" data-output title="Agent sound" aria-label="Agent sound"></span><span>PLAY.EXE</span></span><span class="hud-bar-right"><span class="hud-demo" data-demo hidden>DEMO</span><button type="button" class="hud-close" data-exit-fullscreen hidden title="Exit fullscreen (Esc)" aria-label="Exit fullscreen (Esc)">×</button></span></header>
+      <section class="hud-body">
+        <span class="hud-perception" data-perception-ack hidden role="status"></span>
+        <canvas class="hud-face" data-face aria-hidden="true"></canvas>
+        <div class="hud-foot"><canvas class="hud-instrument" data-instrument aria-hidden="true"></canvas><p class="hud-word" data-word></p></div>
+      </section>
+    </main>
+    <p class="hud-hint" data-hint></p>
+  </div>
+  <script type="application/json" id="band-deploy">{"apiBase":"https://jiyiji.cn/webqing/music/band-with","accessKeySha256":"6f9f32de56196d55ad67d5cdf1777d3afcffcab666cf89d5cea1ef8455121698","fixture":"demo/session.jsonl","live":true,"reviewKeySha256s":["a891838ae842d8a1aac8488d8257cc289870160c3c71753bc08fb73157ba96a8"]}</script>
+    <script src="band-runtime.js?v=review-access-1"></script>
+  <script src="agent-face-states.js?v=1"></script>
+  <script src="perception-clock.js"></script>
+  <script src="perception-feedback-state.js"></script>
+  <script src="play-hud.js?v=hosted-api-9"></script>
+</body>
+</html>
