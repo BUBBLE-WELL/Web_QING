@@ -43,3 +43,9 @@ The project index offers both Open page and Show card where available. Singapore
 ### Final master plan
 
 The 0704 final plan is available as an opt-in, on-demand design/context/detail linework group. Its registered CAD context is separate from the IFC model. The building-query panel uses static data in production; PostGIS/GeoServer hosting is not part of this release. See [release verification](release/huijing-final-plan-20261022.md).
+
+### Shared suggestions and viewer workspace
+
+Story choices, Qing Bot guided rounds and local Spatial Assistant suggestions share `widgets/suggestions.css`, including stable hover and keyboard-focus states. The viewer separates tools from chat; public hosting retains static capabilities without publishing a spatial backend. See [scope and verification](release/frontend-suggestions-20261027.md). This frontend candidate is not deployed.
+
+The unmerged frontend candidate has a [jiyiji sandbox](https://jiyiji.cn/webqing/sandbox/pr-14/). This is a static review deployment; production remains unchanged.

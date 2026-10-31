@@ -19,102 +19,29 @@
       }
     }
   </script>
-  <style>
-    /* tokens adapted from the portfolio's kg-app.css (light only, like the portfolio) */
-    :root {
-      --bg: #f8f8f4;
-      --paper: #ffffff;
-      --ink: #111111;
-      --body: #44443f;
-      --muted: #89897f;
-      --border: #deded6;
-      --soft: #efefea;
-      --red: #8f1f1f;
-      --green: #2bb673;
-      --green-soft: #edf8f2;
-      --amber: #d08a12;
-      --mono: "IBM Plex Mono", "PingFang SC", "Microsoft YaHei", "Noto Sans Mono CJK SC", Consolas, monospace;
-      --sans: "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", system-ui, sans-serif;
-      --focus: 2px solid rgba(43, 182, 115, 0.45);
-    }
-    html, body { margin: 0; height: 100%; background: var(--bg); color: var(--body);
-      font: 13px/1.5 var(--sans); }
-    #map { position: absolute; inset: 0; }
-
-    /* square corners throughout (Qing's call); native radio dots stay round */
-    .panel { position: absolute; top: 12px; left: 12px; width: 276px; max-height: calc(100% - 24px); overflow: auto;
-      background: rgba(255, 255, 255, 0.96); border: 1px solid var(--border); border-radius: 0;
-      box-shadow: 0 12px 28px rgba(17, 17, 17, 0.045); padding: 14px 16px 12px; box-sizing: border-box; }
-    .crumb { margin: 0 0 8px; font: 11px/1.4 var(--mono); color: var(--muted); }
-    .crumb a { color: var(--body); text-decoration: none; border-bottom: 1px solid var(--border); }
-    .crumb a:hover { color: var(--ink); border-bottom-color: var(--ink); }
-    h1 { margin: 0 0 3px; font: 500 17px/1.3 var(--sans); color: var(--ink); letter-spacing: 0.01em; }
-    .sub { margin: 0; color: var(--muted); font-size: 12px; }
-    h2 { margin: 12px 0 6px; padding-top: 10px; border-top: 1px solid var(--soft);
-      font: 500 10.5px/1.3 var(--mono); color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
-
-    label.row { display: flex; align-items: center; gap: 7px; margin: 2px 0; min-height: 24px; cursor: pointer; font-size: 12.5px; }
-    input[type=checkbox], input[type=radio], input[type=range] { accent-color: var(--green); }
-    .sw { width: 10px; height: 10px; border: 1px solid var(--border); flex: none; }
-
-    .grp + .grp { margin-top: 4px; }
-    .grp-head { display: flex; align-items: center; }
-    .grp-head label.row { flex: 1; }
-    .grp-name { color: var(--ink); font-weight: 500; }
-    .grp-toggle { min-height: 24px; width: 28px; padding: 0; border: 0; background: transparent; color: var(--muted); font-size: 12px; }
-    .grp-toggle:hover { color: var(--ink); }
-    .grp-body { padding-left: 20px; border-left: 1px solid var(--soft); margin-left: 6px; }
-    .grp-note { margin: 2px 0 4px 26px; color: var(--muted); font: 10.5px/1.4 var(--mono); }
-
-    .poi { display: flex; align-items: center; gap: 5px; cursor: default; }
-    .poi i { width: 8px; height: 8px; border: 1.5px solid #fff; box-shadow: 0 0 0 1px rgba(17, 17, 17, 0.35); }
-    .poi span { padding: 1px 5px; background: rgba(248, 248, 244, 0.92); border: 1px solid var(--border);
-      color: var(--ink); font: 11px/1.4 var(--mono); white-space: nowrap; }
-    .n { margin-left: auto; color: var(--muted); font: 11px var(--mono); font-variant-numeric: tabular-nums; }
-    input[type=range] { width: 100%; }
-    .inline { display: flex; gap: 8px; align-items: center; font-size: 12.5px; }
-    .inline > label { white-space: nowrap; }
-
-    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
-    button { min-height: 30px; padding: 4px 10px; box-sizing: border-box; border: 1px solid var(--border); border-radius: 0;
-      background: var(--paper); color: var(--ink); font: 11.5px/1.2 var(--mono); cursor: pointer;
-      transition: border-color 0.16s ease, background 0.16s ease; }
-    button:hover { border-color: #bdbdb4; }
-    button.on { border-color: var(--green); background: var(--green-soft); }
-    .inline input[type=number], select { font: 12px var(--mono); color: var(--ink); background: var(--paper);
-      border: 1px solid var(--border); border-radius: 0; padding: 3px 6px; }
-    .inline input[type=number] { width: 76px; }
-    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: var(--focus); outline-offset: 2px; }
-
-    .readout { margin-top: 8px; padding: 7px 8px; border-radius: 0; background: var(--soft); color: var(--body);
-      font: 11px/1.5 var(--mono); word-break: break-all; white-space: pre-line; }
-    .hint { margin: 4px 0 0; color: var(--muted); font: 10.5px/1.45 var(--mono); }
-    .kv { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 0; font-size: 12.5px; }
-    .kv dt { color: var(--muted); }
-    .kv dd { margin: 0; color: var(--ink); font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
-    input[type=range]:disabled { opacity: 0.45; }
-    #status { margin-top: 10px; color: var(--muted); font: 11px/1.4 var(--mono); }
-
-    .maplibregl-ctrl-group { border-radius: 0 !important; border: 1px solid var(--border); box-shadow: 0 12px 28px rgba(17, 17, 17, 0.045) !important; }
-    .maplibregl-ctrl-group button { border-radius: 0 !important; }
-    .maplibregl-ctrl-attrib, .maplibregl-ctrl-attrib.maplibregl-compact,
-    .maplibregl-ctrl-attrib-button { border-radius: 0 !important; }
-    .maplibregl-ctrl-attrib { font: 10.5px var(--sans); background: rgba(248, 248, 244, 0.85) !important; }
-    .maplibregl-ctrl-scale { font: 10.5px var(--mono); color: var(--body); border-color: var(--muted); background: rgba(248, 248, 244, 0.85); }
-
-    /* narrow: full-width card that stops short of the zoom/compass controls (top-right, ~30px wide) */
-    @media (max-width: 600px) { .panel { width: auto; right: 54px; max-height: 45%; padding: 12px 14px 10px; } }
-  </style>
+  <link rel="stylesheet" href="viewer-ui.css?v=caa9d284b74f">
+  <link rel="stylesheet" href="../../widgets/suggestions.css?v=d95650f826fb">
 </head>
 <body>
   <script src="../../page-transition.js?v=7525ee432e8c" data-scene-gate></script>
   <script src="vendor/maplibre-gl/maplibre-gl.js"></script>
   <div id="map"></div>
-  <div class="panel">
-    <p class="crumb"><a href="../../" data-portfolio-return>← 作品集</a> / 3D / 汇景花苑</p>
-    <h1>汇景花苑 · 场地体量</h1>
+  <header class="workspace-header">
+    <div class="workspace-identity"><p class="crumb"><a href="../../" data-portfolio-return>← 作品集</a><span> / 3D</span></p><h1>汇景花苑<span> · 场地体量</span></h1></div>
+    <nav class="workspace-actions" aria-label="查看器面板"><button type="button" data-tools-toggle aria-expanded="true" aria-controls="map-tools">☷ <span class="wide-label">地图工具</span><span class="compact-label">工具</span></button><button type="button" data-chat-toggle aria-expanded="true" aria-controls="spatial-agent">◌ <span class="wide-label">空间助手</span><span class="compact-label">对话</span></button></nav>
+  </header>
+  <aside id="map-tools" class="panel tools-panel" aria-label="地图工具">
+    <header class="tools-header"><h2>地图工具</h2><span>VIEW / LAYERS</span></header>
     <p class="sub" id="sub">Archicad IFC → GLB，叠加在 WGS-84 底图上</p>
-
+    <section id="info" hidden aria-live="polite">
+      <h2 id="info-title">建筑</h2>
+      <dl id="info-rows" class="kv"></dl>
+      <p class="hint">楼板面积由 IFC 楼板几何计算，非 Archicad 统计值。</p>
+      <div class="grid" style="grid-template-columns: 1fr 1fr; margin-top:6px">
+        <button id="info-fly" type="button">定位</button><button id="info-clear" type="button">取消选择</button>
+      </div>
+    </section>
+    <details class="tool-group" open><summary>图层与底图</summary><div class="tool-group-content">
     <h2>底图</h2>
     <label class="row"><input type="radio" name="base" value="osm" checked> OSM 街道（OpenFreeMap）</label>
     <label class="row"><input type="radio" name="base" value="sat"> 卫星影像（Esri）</label>
@@ -125,6 +52,8 @@
     <div id="layers"></div>
     <div class="inline" style="margin-top:8px"><label for="opacity">透明度</label> <input type="range" id="opacity" min="0.2" max="1" step="0.05" value="0.9"></div>
 
+    </div></details>
+    <details class="tool-group"><summary>剖切与透明层板</summary><div class="tool-group-content">
     <h2>水平剖切</h2>
     <label class="row"><input type="checkbox" id="section-on"> 按高度剖切 <span class="n" id="section-val">关</span></label>
     <input type="range" id="section" min="0" max="114" step="0.1" value="30" disabled aria-label="剖切高度（米）">
@@ -137,17 +66,8 @@
     <label class="row"><input type="checkbox" id="section-board" checked> 显示半透明剖切板</label>
     <p class="hint">可同时开启两种剖切；剖切板用于定位，切口未封口。</p>
 
-    <!-- filled by select(); 3D and 2D clicks share one selection -->
-    <section id="info" hidden aria-live="polite">
-      <h2 id="info-title">建筑</h2>
-      <dl id="info-rows" class="kv"></dl>
-      <p class="hint">楼板面积由 IFC 楼板几何计算，非 Archicad 统计值。</p>
-      <div class="grid" style="grid-template-columns: 1fr 1fr; margin-top:6px">
-        <button id="info-fly" type="button">定位</button><button id="info-clear" type="button">取消选择</button>
-      </div>
-    </section>
-    <p class="hint">点击 3D 体块或地面轮廓选择建筑；Esc 取消。</p>
-
+    </div></details>
+    <details class="tool-group"><summary>建筑属性查询</summary><div class="tool-group-content">
     <section aria-label="建筑属性查询">
       <h2>建筑属性查询</h2><p class="hint" id="gis-source">数据：初始化…</p>
       <form id="gis-query" class="grid" style="grid-template-columns:1fr auto;align-items:end">
@@ -156,8 +76,60 @@
       </form>
       <div id="gis-query-results" role="status" aria-live="polite" class="hint"></div>
     </section>
+    </div></details>
+    <details class="tool-group" data-local-tools hidden><summary>附近地铁出入口</summary><div class="tool-group-content">
+    <section id="poi-query" hidden aria-label="附近地铁出入口">
+      <h2>附近地铁出入口</h2>
+      <form>
+        <label class="row">起点 <select name="origin" aria-label="POI 查询起点"><option value="site">固定项目原点</option><option value="selected">当前选中建筑的几何中心</option></select></label>
+        <label class="row">范围（米）<input name="radius" aria-label="POI 查询范围（米）" type="number" min="1" max="1200" step="1" value="1200" required style="width:80px"></label>
+        <div class="grid" style="grid-template-columns:1fr 1fr"><button type="submit">查询出入口</button><button type="button" data-poi-clear>清除 POI</button></div>
+      </form>
+      <p class="hint">建筑几何中心不代表可通行入口。连线仅示意直线距离；步行路线尚未接入。</p>
+      <p data-poi-status class="hint" role="status" aria-live="polite">仅查询已记录的 OSM 地铁出入口，不代表完整或实时数据。</p>
+      <div data-poi-results></div>
+    </section>    </div></details>
+    <details class="tool-group dev-tools" data-local-tools hidden><summary>开发联调</summary><div class="tool-group-content">
+    <section id="qing-gis" hidden aria-label="Qing Bot GIS 指令">
+      <h2>Qing Bot · GIS 指令</h2>
+      <p class="hint">指令会发送至现有 Qing Bot。当前支持建筑查询、选择、定位与水平剖切；结果由 GIS 数据和查看器状态确认。</p>
+      <form>
+        <textarea aria-label="GIS 自然语言指令" maxlength="400" required rows="3" style="box-sizing:border-box;width:100%;resize:vertical;font:12px var(--sans)">查询高度至少100米的建筑，选中B01并定位，按30米剖切。</textarea>
+        <div class="grid" style="grid-template-columns:2fr 1fr"><button type="submit" data-gis-send disabled>发送并执行</button><button type="button" data-gis-cancel disabled>取消指令</button></div>
+      </form>
+      <p class="readout" role="status" aria-live="polite" data-gis-status>等待场景就绪。每页最多20次模型请求。</p>
+      <div class="grid" style="grid-template-columns:1fr 1fr" data-gis-results></div>
+      <details><summary>工具与执行记录</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:10px"></pre></details>
+    </section>
+    <section id="tool-demo" hidden aria-label="地图工具演示">
+      <h2>地图工具演示</h2>
+      <p class="hint">固定演示：查询至少 100 米的建筑，选中 B01 并剖切到 30 米。此按钮不调用语言模型。</p>
+      <div class="grid" style="grid-template-columns:2fr 1fr;margin-top:6px">
+        <button id="tool-run" type="button" disabled>查询并执行</button>
+        <button id="tool-cancel" type="button" disabled>取消</button>
+      </div>
+      <p id="tool-status" class="readout" role="status" aria-live="polite">等待场景就绪</p>
+      <div id="tool-results" class="grid" style="grid-template-columns:1fr 1fr"></div>
+    </section>    </div></details>
+    <p class="tools-footnote">点击模型选择建筑；Esc 取消选择。</p>
     <div id="status" role="status"></div>
-  </div>
-  <script type="module" src="main.js?v=6fd0fc2c1d73"></script>
+  </aside>
+  <section id="spatial-agent" class="chat-shell" hidden aria-label="空间助手">
+    <header class="chat-header">
+      <div class="chat-title"><span class="status-dot" aria-hidden="true"></span><div><h2>空间助手</h2><span class="chat-caption">QING / SPATIAL</span></div></div>
+      <div class="chat-header-actions"><button type="button" class="icon-button" data-spatial-clear aria-label="清空并直接开始" title="清空并直接开始">↺</button><button type="button" class="icon-button" data-chat-close aria-label="收起对话" title="收起对话">−</button></div>
+    </header>
+    <div class="chat-intro">从项目概览开始，或让查看器演示一次。</div>
+    <div class="chat-thread" data-spatial-thread role="log" aria-label="空间助手对话" aria-live="polite" aria-relevant="additions text"></div>
+    <div class="chat-suggestions"><button type="button" data-spatial-message="介绍一下项目" class="suggestion-chip">了解项目</button><button type="button" data-spatial-message="演示一次" class="suggestion-chip">演示一次</button></div>
+    <form class="chat-composer">
+      <label for="spatial-input" class="sr-only">空间助手消息</label>
+      <textarea id="spatial-input" aria-label="空间助手消息" placeholder="想了解什么？例如：选中 B02" maxlength="400" rows="2" required></textarea>
+      <button type="submit" class="chat-send" data-spatial-send aria-label="发送" title="发送" disabled>↑</button>
+    </form>
+    <div class="chat-taskbar"><p data-spatial-status role="status">正在连接助手…</p><button type="button" data-spatial-stop disabled>停止</button></div>
+    <footer class="chat-footer"><button type="button" data-spatial-restore>恢复选择与剖切</button><span>Enter 发送 · Shift + Enter 换行</span></footer>
+  </section>
+  <script type="module" src="main.js?v=102b8e627459"></script>
 </body>
 </html>

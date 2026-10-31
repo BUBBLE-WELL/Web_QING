@@ -66,3 +66,12 @@
 !page-transition.css
 
 !3d/huijing-huayuan/assets/final-floorplan-0704.geojson
+
+!widgets/
+!widgets/suggestions.css
+!3d/huijing-huayuan/viewer-ui.css
+!3d/huijing-huayuan/workspace-ui.js
+!3d/huijing-huayuan/spatial-agent.js
+!3d/huijing-huayuan/tool-actions.js
+!3d/huijing-huayuan/poi-panel.js
+!3d/huijing-huayuan/qing-gis.js

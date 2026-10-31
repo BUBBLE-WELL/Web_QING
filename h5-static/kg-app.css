@@ -622,39 +622,6 @@ body[data-view="split"] .chat-thread {
   margin-left: auto;
 }
 
-.choice-chip {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  max-width: 220px;
-  min-height: 28px;
-  padding: 0.42rem 0.7rem;
-  border: 1px solid var(--lavender-line);
-  border-radius: 999px;
-  background: rgba(241, 238, 251, 0.9);
-  color: var(--ink);
-  font-family: var(--mono);
-  font-size: 0.66rem;
-  text-align: center;
-  transition: border-color 0.16s ease, color 0.16s ease, background 0.16s ease, transform 0.16s ease;
-}
-
-.choice-chip.secondary {
-  border-color: rgba(143, 122, 229, 0.22);
-  background: rgba(255, 255, 255, 0.82);
-  color: var(--body);
-}
-
-.choice-chip:hover {
-  border-color: var(--green);
-  color: var(--ink);
-}
-
-.choice-chip:hover span::before {
-  content: "-> ";
-}
-
 .tag-chip {
   display: inline-flex;
   flex-direction: column;
@@ -691,13 +658,6 @@ body[data-view="split"] .chat-thread {
   border-color: var(--green);
   color: #ffffff;
   background: #13261d;
-}
-
-.choice-chip.keyboard-focus {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
-  border-color: var(--green);
-  color: var(--ink);
 }
 
 .tag-row {
@@ -3063,43 +3023,6 @@ body[data-workshop="active"] .qb-fab {
 
 .qb-widget--zoomed .qb-round-row {
   display: flex;
-}
-
-.qb-round-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.38rem 0.72rem;
-  border: 1px solid rgba(43, 182, 115, 0.5);
-  border-radius: 2px;
-  background: transparent;
-  color: var(--green, #2bb673);
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  line-height: 1.3;
-  cursor: pointer;
-  text-align: left;
-  transition: background 0.14s, color 0.14s, border-color 0.14s;
-  max-width: 90%;
-}
-
-.qb-round-chip::before {
-  content: "▶";
-  font-size: 0.52rem;
-  flex-shrink: 0;
-  opacity: 0.6;
-}
-
-.qb-round-chip:hover:not(:disabled) {
-  background: rgba(43, 182, 115, 0.1);
-  border-color: var(--green, #2bb673);
-}
-
-.qb-round-chip:disabled,
-.qb-round-chip--used {
-  opacity: 0.3;
-  cursor: default;
-  pointer-events: none;
 }
 
 /* Zoom hint inside thread when first entering (shown only in zoomed) */

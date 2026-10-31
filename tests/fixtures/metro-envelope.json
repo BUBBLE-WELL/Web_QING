@@ -1,0 +1,89 @@
+{
+  "request_id": "metro-round2",
+  "ok": true,
+  "results": [
+    {
+      "index": 0,
+      "tool": "show_metro_entrances",
+      "arguments": {},
+      "data_source": "local-osm-snapshot",
+      "building_ids": [],
+      "viewer_actions": [
+        {
+          "type": "show_metro_entrances",
+          "poi_catalog_sha256": "338c1538a1f557efb147ed17c147c1222ba778e5fcd14aff5d6115472474a04c",
+          "poi_ids": [
+            "osm:node/8044345101",
+            "osm:node/8044345099",
+            "osm:node/8044345100"
+          ]
+        }
+      ],
+      "status": "action_requested",
+      "pois": [
+        {
+          "poi_id": "osm:node/8044345101",
+          "category": "metro_entrance",
+          "label": "小行 2号口",
+          "coordinates": [
+            118.7400331,
+            31.9844854
+          ],
+          "station_hint": "小行",
+          "station_association": "nearest_station_in_export_unverified",
+          "exit_ref": "小行#2",
+          "exit_label": "2号口",
+          "opening_status": "unknown",
+          "accessibility": "unknown",
+          "source_url": "https://www.openstreetmap.org/node/8044345101"
+        },
+        {
+          "poi_id": "osm:node/8044345099",
+          "category": "metro_entrance",
+          "label": "小行 3号口",
+          "coordinates": [
+            118.7390766,
+            31.9843724
+          ],
+          "station_hint": "小行",
+          "station_association": "nearest_station_in_export_unverified",
+          "exit_ref": "小行#3",
+          "exit_label": "3号口",
+          "opening_status": "unknown",
+          "accessibility": "unknown",
+          "source_url": "https://www.openstreetmap.org/node/8044345099"
+        },
+        {
+          "poi_id": "osm:node/8044345100",
+          "category": "metro_entrance",
+          "label": "小行 1号口",
+          "coordinates": [
+            118.7392622,
+            31.9845846
+          ],
+          "station_hint": "小行",
+          "station_association": "nearest_station_in_export_unverified",
+          "exit_ref": "小行#1",
+          "exit_label": "1号口",
+          "opening_status": "unknown",
+          "accessibility": "unknown",
+          "source_url": "https://www.openstreetmap.org/node/8044345100"
+        }
+      ],
+      "poi_catalog_sha256": "338c1538a1f557efb147ed17c147c1222ba778e5fcd14aff5d6115472474a04c"
+    }
+  ],
+  "viewer_actions": [
+    {
+      "type": "show_metro_entrances",
+      "poi_catalog_sha256": "338c1538a1f557efb147ed17c147c1222ba778e5fcd14aff5d6115472474a04c",
+      "poi_ids": [
+        "osm:node/8044345101",
+        "osm:node/8044345099",
+        "osm:node/8044345100"
+      ]
+    }
+  ],
+  "catalog_sha256": "65d4dca761cfd8b65de070d24f04e6d486772dbd56991319395f13ddfab8be62",
+  "error": null
+}
