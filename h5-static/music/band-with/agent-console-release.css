@@ -1,7 +1,7 @@
 .console-shell [hidden]{display:none!important}
 .console-window{max-height:calc(100vh - 96px)}
 .console-window>.window-bar{position:sticky;top:0;z-index:5}
-.release-inspector{border-top:1px solid #162e1b;padding:10px 0;font:12px/1.35 'Space Mono','Courier New','Band CJK','PingFang SC','Microsoft YaHei','Noto Sans SC',monospace}
+.release-inspector{border-top:1px solid #162e1b;padding:10px 0;font:12px/1.35 var(--data)}
 .release-inspector summary{cursor:pointer;font-weight:700;letter-spacing:.08em;outline-offset:4px}
 .release-inspector__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 18px;padding:12px 0}
 .release-inspector__grid span{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dotted #405447}

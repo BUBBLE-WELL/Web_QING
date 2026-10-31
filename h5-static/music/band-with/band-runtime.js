@@ -90,15 +90,15 @@
   doc.documentElement.classList.add('band-locked');
   const lockStyle = doc.createElement('style');
   lockStyle.textContent = '.band-locked .console-shell,.band-locked .hud-field{visibility:hidden}' +
-    '.band-gate{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;background:#d9f6a2;font-family:"Space Mono","Courier New",monospace;color:#162e1b}' +
+    '.band-gate{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;background:#d9f6a2;font-family:var(--data);color:#162e1b}' +
     '.band-gate form{width:min(360px,calc(100vw - 32px));border:3px solid #162e1b;background:#f7f8ec;box-shadow:8px 8px 0 #162e1b}' +
-    '.band-gate header{background:#162e1b;color:#f7f8ec;padding:6px 10px;font:20px "VT323","Courier New",monospace}' +
+    '.band-gate header{background:#162e1b;color:#f7f8ec;padding:6px 10px;font:20px var(--pixel)}' +
     '.band-gate .band-gate-body{display:grid;gap:10px;padding:16px}.band-gate label{font-size:12px;letter-spacing:.08em}' +
-    '.band-gate input{font:16px "Space Mono",monospace;padding:8px;border:1px solid #162e1b;background:#fff}' +
-    '.band-gate button{font:14px "Space Mono",monospace;padding:8px;border:1px solid #162e1b;border-right-width:3px;border-bottom-width:3px;background:#162e1b;color:#f7f8ec;cursor:pointer}' +
+    '.band-gate input{font:16px var(--data);padding:8px;border:1px solid #162e1b;background:#fff}' +
+    '.band-gate button{font:14px var(--data);padding:8px;border:1px solid #162e1b;border-right-width:3px;border-bottom-width:3px;background:#162e1b;color:#f7f8ec;cursor:pointer}' +
     '.band-gate p{margin:0;font-size:12px;color:#405447}.band-gate .band-gate-error{color:#8a1c1c}' +
-    '.band-demo-bar{position:fixed;left:50%;top:44px;transform:translateX(-50%);z-index:60;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;max-width:calc(100vw - 32px);padding:6px 8px;border:2px solid #162e1b;background:#f7f8ec;box-shadow:4px 4px 0 #162e1b;font:12px "Space Mono","Courier New",monospace;color:#162e1b}' +
-    '.band-demo-bar button{font:12px "Space Mono",monospace;padding:5px 8px;border:1px solid #162e1b;border-right-width:3px;border-bottom-width:3px;background:#f7f8ec;color:#162e1b;cursor:pointer}' +
+    '.band-demo-bar{position:fixed;left:50%;top:44px;transform:translateX(-50%);z-index:60;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;max-width:calc(100vw - 32px);padding:6px 8px;border:2px solid #162e1b;background:#f7f8ec;box-shadow:4px 4px 0 #162e1b;font:12px var(--data);color:#162e1b}' +
+    '.band-demo-bar button{font:12px var(--data);padding:5px 8px;border:1px solid #162e1b;border-right-width:3px;border-bottom-width:3px;background:#f7f8ec;color:#162e1b;cursor:pointer}' +
     '.band-demo-bar button.is-primary{background:#162e1b;color:#f7f8ec}.band-demo-bar [data-band-label]{padding:0 4px}' +
     '.band-demo-bar button:focus-visible,.band-gate button:focus-visible,.band-gate input:focus-visible{outline:3px solid #8fbf3a;outline-offset:2px}' +
     // DEMO.EXE: a movable Desk window, docked bottom-left above the footer by default.

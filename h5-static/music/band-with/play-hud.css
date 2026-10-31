@@ -1,5 +1,5 @@
-@font-face{font-family:'Band CJK';src:url('fonts/band-cjk.woff2') format('woff2');font-weight:100 900;font-display:swap;unicode-range:U+2014,U+2018-2019,U+201C-201D,U+2026,U+00B7,U+3000-303F,U+3400-4DBF,U+4E00-9FFF,U+FF00-FFEF}
-:root{--lime:#d9f6a2;--lime-hi:#efffd0;--ink:#162e1b;--paper:#f7f8ec;--gray:#d8dad0;--apple-accent:#58c72c;--muted:#557354;--pixel:'VT323','Courier New','Band CJK','PingFang SC','Microsoft YaHei','Noto Sans SC',monospace}
+
+:root{--lime:#d9f6a2;--lime-hi:#efffd0;--ink:#162e1b;--paper:#f7f8ec;--gray:#d8dad0;--apple-accent:#58c72c;--muted:#557354}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--lime)}
 /* outer field: same as the desk (.desktop-field), constant across states */

@@ -6,27 +6,27 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Low-resolution Agent Companion control console.">
   <title>Agent Companion / Web Console</title>
-  <link rel="stylesheet" href="agent-console.css?v=pop-purple-1">
+  <link rel="stylesheet" href="agent-console.css?v=cjk-tokens-2">
   <link rel="stylesheet" href="agent-console-mvp.css?v=play-entry-1">
   <link rel="stylesheet" href="agent-console-mvp-v2.css">
   <link rel="stylesheet" href="agent-console-desk.css?v=today-grooves-1">
   <link rel="stylesheet" href="agent-console-entry-mode.css?v=welcome-actions-1">
   <link rel="stylesheet" href="agent-console-theme.css">
-  <link rel="stylesheet" href="agent-console-release.css?v=language-switch-1">
-  <link rel="stylesheet" href="agent-console-play-popup.css?v=pr8-inplace">
+  <link rel="stylesheet" href="agent-console-release.css?v=cjk-tokens-2">
+  <link rel="stylesheet" href="agent-console-play-popup.css?v=cjk-tokens-2">
   <style>
     .desktop-field{position:relative;min-height:calc(100vh - 74px);overflow:hidden}
     .console-window{position:absolute;left:50%;top:50%;transform:translate(-50%,-48%);z-index:2;width:min(820px,68vw);background:#f7f8ec;border:3px solid #162e1b;box-shadow:8px 8px 0 #162e1b}
     .entry-window{width:clamp(420px,50vw,760px);max-width:calc(100vw - 32px)}
     .window-bar{display:flex;align-items:center;justify-content:space-between;background:#162e1b;color:#f7f8ec;padding:4px 8px;min-height:36px}
     .window-body{padding:24px 28px;background:#f7f8ec;color:#162e1b}
-    .entry-title{display:inline-block!important;background:#162e1b!important;color:#f7f8ec!important;font:400 clamp(30px,5vw,54px)/.95 'VT323','Courier New','Band CJK','PingFang SC','Microsoft YaHei','Noto Sans SC',monospace!important;letter-spacing:-.06em;padding:4px 7px;white-space:pre-line;overflow-wrap:anywhere}
+    .entry-title{display:inline-block!important;background:#162e1b!important;color:#f7f8ec!important;font:400 clamp(30px,5vw,54px)/.95 var(--pixel)!important;letter-spacing:-.06em;padding:4px 7px;white-space:pre-line;overflow-wrap:anywhere}
     .entry-copy{color:#405447}
     .desk-dock{z-index:4}
     .settings-panel{position:absolute!important;z-index:20!important;right:5%!important;top:58px!important;width:min(360px,calc(100vw - 36px))!important;display:grid!important;gap:10px!important;padding:0 14px 16px!important;background:#f7f8ec!important;color:#162e1b!important;border:3px solid #162e1b!important;box-shadow:7px 7px 0 #162e1b!important;opacity:1!important}
     .settings-panel[hidden],.floating-tool[hidden]{display:none!important}
     .settings-panel .window-bar{margin:0 -14px 8px!important;background:#162e1b!important;color:#f7f8ec!important}
-    .settings-panel label{display:grid!important;gap:5px!important;color:#405447!important;font:11px 'Space Mono','Courier New','Band CJK','PingFang SC','Microsoft YaHei','Noto Sans SC',monospace!important}
+    .settings-panel label{display:grid!important;gap:5px!important;color:#405447!important;font:11px var(--data)!important}
     .settings-panel input,.settings-panel select{width:100%!important;background:#f7f8ec!important;color:#162e1b!important;border:1px solid #162e1b!important;padding:8px!important}
     .settings-panel button:not(.tool-close){justify-self:start!important;background:#162e1b!important;color:#f7f8ec!important;border:2px solid #162e1b!important;padding:7px 10px!important}
     .settings-reserved{color:#405447!important;border-color:#405447!important}
@@ -77,6 +77,7 @@
     .vision-tool .guitar-space-actions button{font-size:11px!important;line-height:1.4}
     .vision-tool .guitar-calibration-help summary:focus-visible{outline:2px solid #162e1b;outline-offset:3px}
   </style>
+  <link rel="stylesheet" href="band-typography.css?v=cjk-scale-1">
 <link rel="stylesheet" href="band-recording-ui.css?v=replay-tool-1">
 </head>
 <body>
@@ -166,7 +167,7 @@
   <footer class="console-footer"><span>FeatureFrame / WebSocket stream</span><span>Microphone observations require consent</span><button data-panic>PANIC / RESET</button></footer>
 </main>
     <script type="application/json" id="band-deploy">{"apiBase":"https://jiyiji.cn/webqing/music/band-with","accessKeySha256":"6f9f32de56196d55ad67d5cdf1777d3afcffcab666cf89d5cea1ef8455121698","fixture":"demo/session.jsonl","live":true,"reviewKeySha256s":["a891838ae842d8a1aac8488d8257cc289870160c3c71753bc08fb73157ba96a8"]}</script>
-    <script src="band-runtime.js?v=hosted-language-2"></script>
+    <script src="band-runtime.js?v=cjk-font-3"></script>
     <script src="agent-face-states.js?v=1"></script>
     <script src="guitar-space.js?v=4"></script>
     <script src="vision-capture-state.js?v=batch-a-1"></script>
@@ -179,7 +180,7 @@
 <script src="band-audio-export.js?v=record-ui-1"></script>
 <script src="band-session-card.js?v=card-3"></script>
 <script src="band-recording-ui.js?v=share-copy-2"></script>
-<script src="agent-console-mvp-v2.js?v=language-switch-1"></script>
+<script src="agent-console-mvp-v2.js?v=cjk-title-2"></script>
 <script src="agent-console-today.js?v=language-switch-1"></script>
 <script src="agent-console-desk.js?v=share-language-1"></script>
 <script src="agent-console-play-popup.js?v=pr8-popup"></script>
