@@ -80,6 +80,12 @@
   const parentRuntime = (() => { try { return root.parent !== root && root.parent.BandRuntime ? root.parent.BandRuntime : null; } catch { return null; } })();
   const storage = (area, key, value) => { try { if (value === undefined) return root[area].getItem(key); if (value === null) root[area].removeItem(key); else root[area].setItem(key, value); } catch { return null; } return null; };
 
+  const uiText = (english, chinese) => {
+    let language = 'en';
+    try { language = root.BandLanguage?.current() || JSON.parse(storage('localStorage', 'agent-companion-ui') || '{}').lang || 'en'; } catch {}
+    return language === 'zh' ? chinese : english;
+  };
+
   // ---- Access gate ----
   doc.documentElement.classList.add('band-locked');
   const lockStyle = doc.createElement('style');
@@ -127,11 +133,11 @@
     const gate = doc.createElement('div');
     gate.className = 'band-gate';
     gate.innerHTML = '<form><header>BAND-WITH / ACCESS</header><div class="band-gate-body">' +
-      '<label for="band-gate-key">访问口令 / ACCESS KEY</label>' +
+      '<label for="band-gate-key">' + uiText('ACCESS KEY','访问口令') + '</label>' +
       '<input id="band-gate-key" type="password" autocomplete="off" required>' +
-      '<button type="submit">进入 / ENTER</button>' +
-      '<p>Demo 目前凭访问口令体验。<br>The demo is available by access key.</p>' +
-      '<p class="band-gate-error" role="alert"' + (failed ? '' : ' hidden') + '>口令不正确 / Incorrect key</p></div></form>';
+      '<button type="submit">' + uiText('ENTER','进入') + '</button>' +
+      '<p>' + uiText('Open your invitation link or enter an access key.','请打开邀请链接，或输入访问口令。') + '</p>' +
+      '<p class="band-gate-error" role="alert"' + (failed ? '' : ' hidden') + '>' + uiText('Incorrect key','口令不正确') + '</p></div></form>';
     gate.querySelector('form').addEventListener('submit', async event => {
       event.preventDefault();
       const value = gate.querySelector('input').value.trim();
@@ -348,10 +354,10 @@
     bar.className = 'band-demo-bar';
     bar.setAttribute('role', 'group');
     bar.setAttribute('aria-label', 'Demo controls');
-    bar.innerHTML = '<span data-band-label>DEMO · 真实录制的一段演奏</span>' +
-      '<button type="button" class="is-primary" data-band-play>▶ 播放演示</button>' +
-      '<button type="button" data-band-restart>⟲ 重新开始</button>' +
-      (config.live ? '<button type="button" data-band-live>🎤 用麦克风实时体验</button>' : '') +
+    bar.innerHTML = '<span data-band-label>DEMO</span>' +
+      '<button type="button" class="is-primary" data-band-play>▶ Play demo</button>' +
+      '<button type="button" data-band-restart>⟲ Restart</button>' +
+      (config.live ? '<button type="button" data-band-live>🎤 Play live</button>' : '') +
       '<span data-band-progress aria-live="off">0:00 / 0:00</span>';
     const field = doc.querySelector('.desktop-field');
     if (field && typeof root.makeDraggable === 'function') {
@@ -404,10 +410,11 @@
       const live = mode === 'live';
       const title = field?.querySelector('[data-band-window-title]');
       if (title) title.textContent = live ? 'LIVE MIC.EXE' : 'DEMO.EXE';
-      label.textContent = live ? 'LIVE · 麦克风实时 · 服务器判断状态' : 'DEMO · 真实录制的一段演奏';
+      label.textContent = live ? uiText('LIVE · Play with your bandmate','LIVE · 和伙伴一起演奏') : uiText('DEMO · A recorded session','DEMO · 一段演奏回顾');
       playButton.hidden = live; bar.querySelector('[data-band-restart]').hidden = live; progress.hidden = live;
-      playButton.textContent = bus.isPlaying() ? '⏸ 暂停' : '▶ 播放演示';
-      if (liveButton) liveButton.textContent = live ? '■ 返回演示回放' : '🎤 用麦克风实时体验';
+      playButton.textContent = bus.isPlaying() ? uiText('⏸ Pause','⏸ 暂停') : uiText('▶ Play demo','▶ 播放演示');
+      bar.querySelector('[data-band-restart]').textContent = uiText('⟲ Restart','⟲ 重新开始');
+      if (liveButton) liveButton.textContent = live ? uiText('■ Return to demo','■ 返回演示回放') : uiText('🎤 Play live','🎤 实时演奏');
     };
     playButton.addEventListener('click', () => { bus.isPlaying() ? bus.pause() : bus.play(); });
     bar.querySelector('[data-band-restart]').addEventListener('click', () => bus.restart());
@@ -422,10 +429,10 @@
       const micStarted = observation ? observation.start() : Promise.resolve(false);
       try {
         await setMode('live');
-        if (!(await micStarted)) label.textContent = `LIVE · 麦克风不可用 / microphone unavailable (${observation?.lastError || 'no access'})`;
+        if (!(await micStarted)) label.textContent = uiText('Microphone unavailable. Check permission and try again.','麦克风不可用，请检查权限后重试。');
       } catch {
         if (observation) observation.stop();
-        label.textContent = 'LIVE 暂不可用，继续演示回放 / live unavailable';
+        label.textContent = uiText('Live is unavailable. You can still play the demo.','实时体验暂不可用，可以继续播放演示。');
       }
     });
     bus.subscribe((type, payload) => {
@@ -433,6 +440,7 @@
       if (type !== 'frame' && type !== 'progress') render();
     });
     modeListeners.add(render);
+    root.BandLanguage?.subscribe(render);
     bus.loaded.then(() => { progress.textContent = `0:00 / ${clock(bus.fixture().duration)}`; });
     render();
   }
