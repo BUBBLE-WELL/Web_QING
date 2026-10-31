@@ -1,0 +1,26 @@
+/* AFTERPLAY reuses the Desk's program frame and paper/ink tokens. */
+.replay-tool{left:16%;top:16%;width:min(480px,calc(100vw - 32px));display:flex;flex-direction:column;max-height:82vh}
+.replay-tool .window-bar{flex:none}
+.replay-tool .tool-body{min-height:0;overflow:auto;overscroll-behavior:contain;display:grid;gap:14px}
+.replay-tool .tool-body p{margin:0;line-height:1.6;overflow-wrap:anywhere}
+.replay-tool h2{margin:0;justify-self:start;font-size:22px;line-height:1.25}
+.replay-tool .recording-actions,.replay-tool .review-actions{display:flex;flex-wrap:wrap;gap:8px}
+.replay-tool .tool-body button{min-height:36px;font:12px var(--data);cursor:pointer}
+.replay-tool .tool-body button:disabled{opacity:.5;cursor:default}
+.replay-tool .record-consent{display:flex;align-items:flex-start;gap:9px;font:12px/1.6 var(--data)}
+.replay-tool .record-consent input{width:18px;height:18px;flex:none;accent-color:var(--ink);margin-top:2px}
+.replay-tool .recording-state{display:flex;justify-content:space-between;gap:12px;font:13px var(--data);border-block:1px solid var(--ink);padding:10px 0}
+.replay-tool[data-recording="true"] .recording-state{background:var(--apple-accent);color:var(--ink)}
+.replay-tool .record-review{display:grid;gap:12px;border-top:1px solid var(--ink);padding-top:14px;min-width:0}
+.replay-tool [hidden]{display:none!important}
+.replay-tool audio{width:100%;min-width:0;height:40px}
+.replay-tool canvas{width:100%;height:84px;border:1px solid var(--ink);background:var(--paper);touch-action:none;cursor:ew-resize}
+.replay-tool .selection-control{display:grid;grid-template-columns:1fr auto;gap:6px;font:12px var(--data)}
+.replay-tool .selection-control input{grid-column:1/-1;width:100%;min-width:0;accent-color:var(--ink)}
+.replay-tool details{font:11px/1.6 var(--data);color:var(--muted)}
+.replay-tool details summary{cursor:pointer;color:var(--ink)}
+.replay-tool :is(button,input,summary,audio,canvas):focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.replay-tool [data-record-status]{color:var(--ink);font-size:12px}
+.replay-tool .recording-badge{display:inline-flex;align-items:center;gap:4px}
+.desk-dock [data-replay-entry][data-recording="true"]:after{content:' ●';color:var(--apple-accent)}
+@media(max-width:650px){.replay-tool{left:16px;top:170px}.replay-tool .tool-body{padding:14px}.replay-tool .tool-body button{flex:1 1 auto}}

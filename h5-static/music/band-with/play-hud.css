@@ -1,0 +1,54 @@
+@font-face{font-family:'Band CJK';src:url('fonts/band-cjk.woff2') format('woff2');font-weight:100 900;font-display:swap;unicode-range:U+2014,U+2018-2019,U+201C-201D,U+2026,U+00B7,U+3000-303F,U+3400-4DBF,U+4E00-9FFF,U+FF00-FFEF}
+:root{--lime:#d9f6a2;--lime-hi:#efffd0;--ink:#162e1b;--paper:#f7f8ec;--gray:#d8dad0;--apple-accent:#58c72c;--muted:#557354;--pixel:'VT323','Courier New','Band CJK','PingFang SC','Microsoft YaHei','Noto Sans SC',monospace}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--lime)}
+/* outer field: same as the desk (.desktop-field), constant across states */
+.hud-field{position:relative;height:100vh;padding:3vh 3vw calc(3vh + 8px) 3vw;font-family:var(--pixel);color:var(--ink);overflow:hidden;background:linear-gradient(140deg,var(--lime-hi),var(--lime) 62%,#c7ed87)}
+.hud-field::before{content:"";position:absolute;inset:0;background-image:radial-gradient(var(--ink) 1px,transparent 1px);background-size:8px 8px;opacity:.38;pointer-events:none}
+/* one program window (as .console-window + .window-bar) */
+.hud{position:relative;height:100%;margin-right:8px;display:grid;grid-template-rows:auto 1fr;border:3px solid var(--ink);box-shadow:8px 8px 0 var(--ink);background:var(--paper)}
+.hud-bar{display:flex;align-items:center;justify-content:space-between;gap:1em;padding:2px 10px;min-height:36px;background:var(--ink);color:var(--paper);font-size:22px}
+.hud-bar-right{display:flex;align-items:center;gap:8px}
+.hud-demo{border:1px solid var(--paper);padding:0 .4em;font-size:16px}
+.hud-bar-left{display:flex;align-items:center;gap:10px}
+/* Agent sound indicator: lit while drums play, dimmed otherwise; deliberately not boxed (not a button) */
+.hud-output{font-size:22px;line-height:1;color:var(--apple-accent)}
+.hud-output::after{content:"♪"}
+.hud-output.is-muted{color:var(--paper);opacity:.3}
+/* × = Esc: exits fullscreen; shown only in fullscreen (same look as desk window buttons) */
+.hud-close{width:26px;height:22px;display:grid;place-items:center;padding:0;border:0;background:var(--paper);color:var(--ink);font:18px/1 var(--pixel);cursor:pointer}
+.hud-close[hidden]{display:none}
+/* window body carries the state colour cue (tokens from visual_styles.md) */
+.hud-body{display:grid;grid-template-rows:1fr auto;justify-items:center;align-items:end;padding:2vh 3vw 6vh;overflow:hidden;transition:background-color .3s steps(3,end)}
+.hud[data-state="LISTEN"] .hud-body{background:var(--lime);color:var(--ink)}
+.hud[data-state="FOLLOW"] .hud-body{background:var(--apple-accent);color:var(--ink)}
+.hud[data-state="REST"] .hud-body{background:var(--paper);color:var(--muted)}
+.hud[data-state="OFFLINE"] .hud-body{background:var(--gray);color:var(--muted)}
+.hud[data-state="PANIC"] .hud-body{background:var(--ink);color:var(--paper)}
+/* face = rasterized 1-bit ink kaomoji (FACE_VOCABULARY.md), integer-scaled in play-hud.js */
+.hud-face{align-self:center;image-rendering:pixelated;image-rendering:crisp-edges}
+.hud-word{margin:0;font-size:min(5.5vw,8vh);line-height:1;opacity:.82}
+/* foot row: selected-instrument pictogram + short word (FACE_VOCABULARY.md "Instrument pictogram") */
+.hud-foot{display:flex;align-items:center;gap:min(3vw,4vh)}
+.hud-instrument{height:min(7vw,10vh);image-rendering:pixelated}
+.hud-instrument[hidden],.hud.is-placeholder .hud-instrument{display:none}
+/* OFFLINE/PANIC have no face yet (FACE_VOCABULARY G1): the word takes the face's place */
+.hud.is-placeholder .hud-face{display:none}
+.hud.is-placeholder .hud-body{grid-template-rows:1fr}
+.hud.is-placeholder .hud-foot{align-self:center}
+.hud.is-placeholder .hud-word{font-size:min(14vw,22vh);opacity:1}
+/* one quiet motion per state */
+.hud[data-state="FOLLOW"] .hud-face.is-hit{transform:translateY(-4%)}
+.hud[data-state="REST"] .hud-face{animation:breathe 4s steps(4,end) infinite}
+.hud[data-state="PANIC"] .hud-word{animation:blink 1s steps(2,end) infinite}
+@keyframes breathe{50%{opacity:.55}}
+@keyframes blink{50%{opacity:.35}}
+.hud-hint{position:absolute;left:50%;bottom:calc(3vh + 14px);transform:translateX(-50%);margin:0;padding:.2em .6em;font-size:min(2.6vw,3.4vh);background:var(--ink);color:var(--paper);white-space:nowrap;transition:opacity .4s;z-index:2}
+.hud-hint.is-gone{opacity:0}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.hud-face.is-hit{transform:none!important}}
+@media(orientation:portrait){.hud-word{font-size:min(8vw,6vh)}.hud-bar{font-size:18px}}
+
+/* Brief evidence acknowledgement; primary face and audio state retain ownership. */
+.hud-body{position:relative}
+.hud-perception{position:absolute;top:1vh;right:2vw;font:clamp(14px,2vw,24px)/1.2 var(--pixel);color:inherit}
+.hud-perception[hidden]{display:none}

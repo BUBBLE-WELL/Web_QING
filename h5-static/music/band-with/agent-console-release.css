@@ -1,0 +1,54 @@
+.console-shell [hidden]{display:none!important}
+.console-window{max-height:calc(100vh - 96px)}
+.console-window>.window-bar{position:sticky;top:0;z-index:5}
+.release-inspector{border-top:1px solid #162e1b;padding:10px 0;font:12px/1.35 'Space Mono','Courier New','Band CJK','PingFang SC','Microsoft YaHei','Noto Sans SC',monospace}
+.release-inspector summary{cursor:pointer;font-weight:700;letter-spacing:.08em;outline-offset:4px}
+.release-inspector__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 18px;padding:12px 0}
+.release-inspector__grid span{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dotted #405447}
+.release-inspector__grid em{font-style:normal;text-align:right}
+.release-inspector__actions{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:8px 0}
+.release-inspector__actions>span{min-width:155px;font-weight:700}
+.release-inspector button{border:1px solid #162e1b;background:#f7f8ec;color:#162e1b;padding:5px 8px;font:inherit}
+.release-inspector button:hover,.release-inspector button:focus-visible{background:#162e1b;color:#f7f8ec;outline:2px solid #58c72c;outline-offset:2px}
+.release-inspector p{margin:8px 0 0;color:#405447}
+[data-control="drum_mix"]:disabled{cursor:not-allowed;opacity:.35}
+.fader.is-unavailable span:first-child::after{content:' / UNAVAILABLE';font-weight:700}
+.is-stale [data-release-stream]{background:#162e1b;color:#f7f8ec;padding:1px 4px}
+@media(max-width:650px){
+  html,body,.console-shell,.desktop-field{overflow-x:hidden}
+  .desktop-field{min-height:calc(100vh - 96px)!important}
+  .desk-dock{left:16px!important;right:16px!important;top:48px!important;width:auto;justify-content:flex-start;gap:5px}
+  .app-window{left:16px;top:118px;width:calc(100vw - 32px)!important;max-height:calc(100vh - 190px);overflow-x:hidden}
+  .console-window>.window-bar{min-height:34px}
+  .window-body{padding:14px!important;overflow-x:hidden}
+  .hero-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+  .hero-row h1{font-size:48px!important}
+  .state-face{font-size:24px!important;justify-self:end}
+  .chat-form{display:grid;grid-template-columns:minmax(0,1fr) auto}
+  .status-line{flex-wrap:wrap;gap:4px 12px}
+  .release-inspector__grid{grid-template-columns:1fr}
+  .release-inspector__actions>span{width:100%}
+}
+
+.desk-dock{z-index:100!important}
+.console-footer{z-index:100!important}
+/* Narrow Desk keeps one tool in front and reserves the live/demo title strip. */
+@media(max-width:650px){
+  .desk-dock{z-index:100!important}
+  .floating-tool,.settings-panel{max-width:calc(100vw - 16px)!important;min-height:0!important}
+  .floating-tool:not(.band-demo-window){width:calc(100vw - 32px)!important}
+  .floating-tool>.window-bar,.settings-panel>.window-bar{min-height:40px;box-sizing:border-box}
+  .window-bar>.tool-close,.window-bar>.window-buttons>button{width:36px;height:32px;line-height:32px}
+  .floating-tool:not(.band-demo-window)>.tool-body{overflow-y:auto}
+  .console-footer{z-index:100!important}
+}
+
+/* Visible language control shares the existing header's button style. */
+.has-language-switch .console-topbar{flex-wrap:wrap;gap:6px}
+.has-language-switch .topbar-actions{display:flex;flex-wrap:wrap;gap:6px}
+.language-toggle{white-space:nowrap}
+.language-toggle [data-active="true"]{text-decoration:underline;text-underline-offset:3px;font-weight:bold}
+.language-toggle:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+[data-language-status]{max-width:24em;font-size:11px;white-space:normal}
+
+@media(max-width:380px){.has-language-switch .topbar-actions{margin-left:auto}}

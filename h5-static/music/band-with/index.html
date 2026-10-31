@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex, nofollow">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Low-resolution Agent Companion control console.">
+  <title>Agent Companion / Web Console</title>
+  <link rel="stylesheet" href="agent-console.css?v=pop-purple-1">
+  <link rel="stylesheet" href="agent-console-mvp.css?v=play-entry-1">
+  <link rel="stylesheet" href="agent-console-mvp-v2.css">
+  <link rel="stylesheet" href="agent-console-desk.css?v=today-grooves-1">
+  <link rel="stylesheet" href="agent-console-entry-mode.css?v=welcome-actions-1">
+  <link rel="stylesheet" href="agent-console-theme.css">
+  <link rel="stylesheet" href="agent-console-release.css?v=language-switch-1">
+  <link rel="stylesheet" href="agent-console-play-popup.css?v=pr8-inplace">
+  <style>
+    .desktop-field{position:relative;min-height:calc(100vh - 74px);overflow:hidden}
+    .console-window{position:absolute;left:50%;top:50%;transform:translate(-50%,-48%);z-index:2;width:min(820px,68vw);background:#f7f8ec;border:3px solid #162e1b;box-shadow:8px 8px 0 #162e1b}
+    .entry-window{width:clamp(420px,50vw,760px);max-width:calc(100vw - 32px)}
+    .window-bar{display:flex;align-items:center;justify-content:space-between;background:#162e1b;color:#f7f8ec;padding:4px 8px;min-height:36px}
+    .window-body{padding:24px 28px;background:#f7f8ec;color:#162e1b}
+    .entry-title{display:inline-block!important;background:#162e1b!important;color:#f7f8ec!important;font:400 clamp(30px,5vw,54px)/.95 'VT323','Courier New','Band CJK','PingFang SC','Microsoft YaHei','Noto Sans SC',monospace!important;letter-spacing:-.06em;padding:4px 7px;white-space:pre-line;overflow-wrap:anywhere}
+    .entry-copy{color:#405447}
+    .desk-dock{z-index:4}
+    .settings-panel{position:absolute!important;z-index:20!important;right:5%!important;top:58px!important;width:min(360px,calc(100vw - 36px))!important;display:grid!important;gap:10px!important;padding:0 14px 16px!important;background:#f7f8ec!important;color:#162e1b!important;border:3px solid #162e1b!important;box-shadow:7px 7px 0 #162e1b!important;opacity:1!important}
+    .settings-panel[hidden],.floating-tool[hidden]{display:none!important}
+    .settings-panel .window-bar{margin:0 -14px 8px!important;background:#162e1b!important;color:#f7f8ec!important}
+    .settings-panel label{display:grid!important;gap:5px!important;color:#405447!important;font:11px 'Space Mono','Courier New','Band CJK','PingFang SC','Microsoft YaHei','Noto Sans SC',monospace!important}
+    .settings-panel input,.settings-panel select{width:100%!important;background:#f7f8ec!important;color:#162e1b!important;border:1px solid #162e1b!important;padding:8px!important}
+    .settings-panel button:not(.tool-close){justify-self:start!important;background:#162e1b!important;color:#f7f8ec!important;border:2px solid #162e1b!important;padding:7px 10px!important}
+    .settings-reserved{color:#405447!important;border-color:#405447!important}
+    .console-shell.offline{opacity:1!important}
+    .floating-tool{background:#f7f8ec!important;color:#162e1b!important;opacity:1!important;border:3px solid #162e1b!important;box-shadow:7px 7px 0 #162e1b!important}
+    .floating-tool .tool-body{background:#f7f8ec!important;color:#162e1b!important;opacity:1!important}
+    .floating-tool p,.floating-tool .micro-label{color:#405447!important}
+    .floating-tool .window-bar{background:#162e1b!important;color:#f7f8ec!important;opacity:1!important}
+    .floating-tool select,.floating-tool input,.floating-tool button{border-color:#162e1b!important}
+    .drum-pads button{background:#f7f8ec!important;color:#162e1b!important}
+    .drum-pads button.is-beating{background:#162e1b!important;color:#fffaf0!important}
+    .window-body .chatbox-panel code,.window-body .settings-reserved,.floating-tool .tool-body code{color:#62c92f!important}
+  [data-minimize] .feature-chevron{display:block;margin:auto;pointer-events:none}[data-minimize][aria-expanded="false"] .feature-chevron{transform:rotate(180deg)}
+</style>
+  <style>
+    .vision-tool{right:8%;top:12%;width:min(430px,calc(100vw - 32px))}
+    .vision-tool .tool-body{display:grid;gap:12px;align-content:start;grid-auto-rows:max-content}
+    .vision-tool .human-state-copy{display:grid;gap:5px}
+    .vision-tool .human-state-copy strong{font:26px/1 var(--pixel);letter-spacing:.04em}
+    .vision-tool .human-state-copy span:last-child{font:12px/1.5 var(--data);color:#405447;overflow-wrap:anywhere}
+    .vision-tool .human-state-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+    .vision-tool .human-state-grid span{display:grid;gap:4px;border-left:1px solid #162e1b;padding-left:8px}
+    .vision-tool .human-state-grid b{font:9px var(--data);font-weight:400;letter-spacing:.06em}
+    .vision-tool .human-state-grid em{font:14px/1 var(--pixel);font-style:normal;white-space:nowrap}
+    .vision-tool .vision-actions{display:flex;gap:6px;flex-wrap:wrap}
+    .vision-tool .vision-actions button{border:1px solid #162e1b;background:#162e1b;color:#f7f8ec;font:10px var(--data);padding:6px 8px}
+    .vision-tool .vision-instrument-choice{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:10px;border:1px solid #162e1b;padding:8px 10px;font:10px var(--data)}
+    .vision-tool .vision-instrument-choice select{min-width:0;border:1px solid #162e1b;background:#f7f8ec;color:#162e1b;font:11px var(--data);padding:5px 7px}
+    .vision-tool .vision-video{position:relative;width:100%;aspect-ratio:16/9;border:1px solid #162e1b;background:#d8dad0;overflow:hidden}
+    .vision-tool .vision-preview,.vision-tool .vision-overlay{display:block;width:100%;height:100%;object-fit:contain;border:0;filter:saturate(.65) contrast(1.05)}
+    .vision-tool .vision-preview{position:absolute;inset:0;z-index:1;width:100%;height:100%;max-height:none;object-fit:fill;background:#d8dad0}
+    .vision-tool .vision-overlay{position:absolute;inset:0;z-index:2;width:100%;height:100%;max-height:none;pointer-events:none;filter:none;background:transparent}
+    .vision-tool .vision-overlay.is-calibrating{cursor:crosshair;touch-action:none}
+    .vision-tool .vision-still{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:fill;background:#d8dad0;filter:saturate(.65) contrast(1.05)}
+    .vision-tool .vision-still[hidden]{display:none}
+    .vision-tool .vision-capture-status{min-height:1.5em;font:600 13px/1.5 var(--data);color:#162e1b}
+    .vision-tool .vision-countdown{font:30px/1 var(--pixel);color:#162e1b}
+    .vision-tool .vision-capture-actions{display:flex;flex-wrap:wrap;gap:6px}
+    .vision-tool .vision-capture-actions button:disabled{opacity:.38;cursor:not-allowed}
+    .vision-tool .guitar-calibration-help{border-top:1px dotted #405447;padding-top:8px;font:11px/1.6 var(--data)}
+    .vision-tool .guitar-calibration-help summary{cursor:pointer;font-weight:700}
+    .vision-tool .guitar-calibration-help ol{margin:8px 0 0;padding-left:22px}
+    .vision-tool .guitar-calibration-help li+li{margin-top:4px}
+    .vision-tool .hint{margin:0;font:12px/1.5 var(--data);color:#405447;overflow-wrap:anywhere}
+    .vision-tool .human-state-copy strong{overflow-wrap:anywhere}
+    .vision-tool .guitar-space-state span,.vision-tool .guitar-space-stats{font:11px/1.5 var(--data);overflow-wrap:anywhere}
+    .vision-tool .guitar-space-stats{flex-wrap:wrap;align-items:baseline}
+    .vision-tool .guitar-space-actions button{font-size:11px!important;line-height:1.4}
+    .vision-tool .guitar-calibration-help summary:focus-visible{outline:2px solid #162e1b;outline-offset:3px}
+  </style>
+<link rel="stylesheet" href="band-recording-ui.css?v=replay-tool-1">
+</head>
+<body>
+<main class="console-shell" data-api-base="https://jiyiji.cn/webqing/music/band-with" data-web-api="https://jiyiji.cn/webqing/music/band-with" data-runtime-mode="web">
+  <header class="console-topbar"><span>AGENT.EXE</span><span class="connection" data-connection>OFFLINE</span><span class="topbar-actions"><button class="settings-button play-button" data-open-play aria-expanded="false" title="Open the far-view PLAY HUD inside this Desk">▶ PLAY</button><button class="settings-button" data-settings>SETTINGS</button></span></header>
+  <section class="desktop-field">
+    <div class="pixel-stamp">MY<br>AGENT<br>COMPANION</div>
+    <div class="pixel-clock"><span data-date>--</span><br><span data-time>--:--:--</span><b data-pulse>●</b></div>
+    <div class="noise noise--one" aria-hidden="true"></div><div class="noise noise--two" aria-hidden="true"></div>
+    <div class="desk-label">DESK / LIVE INFORMATION STREAM</div>
+    <nav class="desk-dock" aria-label="Desk tools"><button type="button" data-dock-handle aria-label="Move tools bar" title="Drag or use arrow keys to move">TOOLS</button><button data-open-tool="tuner">TUNER</button><button data-open-tool="drums">DRUMS</button><button data-open-tool="pixel">PIXEL DRAW</button><button data-open-tool="vision">VISION</button><button data-open-tool="today">TODAY</button></nav>
+
+    <article class="console-window entry-window" data-entry>
+      <header class="window-bar"><span>WELCOME.EXE</span><span>SETUP / 01</span></header>
+      <div class="window-body">
+        <h1 class="entry-title" data-welcome-text>hi ____,<br>i am guitar-mate.</h1>
+        <p class="entry-slogan" data-welcome-slogan></p>
+        <div class="entry-actions"><button data-initialize>INITIALIZE COMPANION</button><button data-enter hidden>ENTER CHATBOX</button></div>
+        <form class="init-form" data-init-form hidden>
+          <label>YOUR NAME<input data-user-name autocomplete="name" required placeholder="your name"></label>
+          <label>COMPANION NAME<input data-agent-name value="guitar-mate" required></label>
+          <label>LANGUAGE / 语言<select data-lang><option value="zh">中文</option><option value="en">English</option></select></label>
+          <button type="submit">SAVE &amp; CONTINUE</button>
+        </form>
+      </div>
+    </article>
+    <article class="console-window app-window" data-window hidden>
+      <header class="window-bar"><span>Feature Monitor</span><div class="window-buttons"><button type="button" data-minimize aria-label="Collapse feature monitor" aria-expanded="true" aria-controls="feature-monitor-body"><svg class="feature-chevron" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><polyline points="6,18 12,7.608 18,18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></header>
+      <div class="window-body" id="feature-monitor-body">
+        <div class="hero-row"><div><span class="micro-label">MUSICAL STATE</span><h1 data-state>LISTEN</h1><p><span data-event>Waiting for signal.</span> <span class="cursor">▌</span></p></div><div class="state-face" data-face aria-label="Agent face">(・_・)</div></div>
+        <section class="chatbox-panel" aria-label="Agent chatbox"><header class="window-bar"><span data-agent-label>guitar-mate / CHATBOX</span><span>WEB</span></header><div class="chat-log" data-chat-log aria-live="polite"></div><form class="chat-form" data-chat-form><input data-chat-input autocomplete="off" placeholder="Tell me what you want to play…"><button type="submit">SEND</button></form><small>Try <code>/tune Eb standard</code> or <code>/tune drop D</code></small></section>
+        <div class="meter-panel"><div class="meter-heading"><span>INPUT WAVEFORM</span><span data-level>RMS --</span></div><canvas data-waveform width="160" height="48" aria-label="Low resolution input waveform" hidden></canvas><div class="waveform-empty" data-waveform-empty role="status">NO LIVE AUDIO</div></div>
+        <div class="control-stack" aria-label="Bounded control parameters">
+          <label class="fader" data-input-boost-panel hidden><span>INPUT BOOST <output data-input-boost-value>1.0×</output></span><input data-input-boost type="range" min="1" max="10" step="0.1" value="1" aria-label="Microphone input boost"><small data-input-boost-note aria-live="polite">LIVE MIC · 输入增益 / input gain</small></label>
+          <label class="fader"><span>CLEAN MIX <output data-output="clean_mix">0.00</output></span><input data-control="clean_mix" type="range" min="0" max="1" step="0.01" value="0" aria-label="Clean mix"></label>
+          <label class="fader"><span>DRUM MIX <output data-output="drum_mix">0.00</output></span><input data-control="drum_mix" type="range" min="0" max="1" step="0.01" value="0" aria-label="Drum mix"></label>
+        </div>
+        <section class="tuner-panel" aria-label="Local tuner">
+          <header class="window-bar"><span>TUNER / BROWSER AUDIO</span><div class="window-buttons"><button class="tool-close" data-close-tool aria-label="Close tuner">×</button></div></header>
+          <div class="tuner-grid"><div class="tuner-face" data-tuner-face>(・_・)</div><div><strong data-tuner-note>—</strong><span data-tuner-frequency>waiting for microphone</span><span data-tuner-cents>— cents</span></div></div>
+          <div class="tuner-meter"><i data-tuner-meter></i></div>
+          <div class="tuner-actions"><select data-instrument aria-label="Instrument"><option value="electric_guitar">Guitar</option><option value="bass_guitar">Bass / 4-string</option></select><select data-tuning aria-label="Tuning preset"></select><select data-string aria-label="Target string"></select><button data-tuner-start>START TUNER</button></div>
+        </section>
+        <details class="release-inspector" data-release-inspector>
+          <summary>INSPECT / EVIDENCE</summary>
+          <div class="release-inspector__grid">
+            <span><b>STREAM</b><em data-release-stream>WAITING</em></span>
+            <span><b>CANDIDATE</b><em data-release-candidate>NONE</em></span>
+            <span><b>RECEIPT</b><em data-release-receipt>NONE</em></span>
+            <span><b>PERSISTENCE</b><em data-release-persistence>NOT SENT</em></span>
+          </div>
+          <div class="release-inspector__actions" aria-label="Player response">
+            <span>PLAYER RESPONSE</span>
+            <button type="button" data-player-response="KEEP">KEEP</button>
+            <button type="button" data-player-response="LESS">LESS</button>
+            <button type="button" data-player-response="MORE">MORE</button>
+            <button type="button" data-player-response="REST">REST</button>
+            <button type="button" data-player-response="WRONG">WRONG</button>
+          </div>
+          <div class="release-inspector__actions" data-candidate-actions hidden aria-label="Candidate acknowledgement">
+            <span>ACKNOWLEDGE CANDIDATE</span>
+            <button type="button" data-candidate-receipt="ACCEPTED">ACCEPT</button>
+            <button type="button" data-candidate-receipt="REJECTED">REJECT</button>
+          </div>
+          <p data-release-note>No candidate is shown as executed without a separate runtime receipt.</p>
+        </details>
+        <div class="status-line"><span data-status>Safe default / monitor off.</span><span data-latency>LATENCY --</span></div>
+      </div>
+    </article>
+
+    <aside class="tool-block tool-block--state"><span class="tool-title">ROUTING</span><span data-routing>--</span><button data-monitor-toggle disabled aria-hidden="true">IN SETTINGS</button></aside>
+    <aside class="tool-block tool-block--event"><span class="tool-title">LAST EVENT</span><span data-event-log>none</span><span class="dot-status"><i data-event-dot></i> <span data-stage>idle</span></span></aside>
+    <aside class="desktop-icon desktop-icon--folder"><span class="folder-icon"></span><span>SCENES</span></aside>
+    <aside class="desktop-icon desktop-icon--trash"><span class="trash-icon"></span><span>TRASH</span></aside>
+    <aside class="settings-panel" data-settings-panel hidden><header class="window-bar"><span>SETTINGS</span><button class="tool-close" data-close-settings aria-label="Close settings">×</button></header><label>YOUR NAME<input data-setting-user></label><label>COMPANION NAME<input data-setting-agent></label><label>WELCOME SLOGAN<input data-setting-slogan></label><label>LANGUAGE / 语言<select data-setting-lang><option value="zh">中文</option><option value="en">English</option></select></label><fieldset class="settings-audio" data-audio-devices><legend>AUDIO</legend><label>INPUT<select data-audio-input></select></label><label>OUTPUT (LISTENING)<select data-audio-output></select></label><label class="settings-audio-check"><input type="checkbox" data-audio-monitor> SOFTWARE MONITOR (debug)</label><button type="button" data-audio-apply disabled>APPLY AUDIO</button><small data-audio-note aria-live="polite">Open SETTINGS with the service running.</small></fieldset><button data-save-settings>SAVE</button></aside>
+    <article class="floating-tool drum-tool" data-tool-window="drums" data-drums hidden><header class="window-bar"><span>DRUMS.EXE</span><button type="button" class="tool-close" data-close-tool aria-label="Close drums tool">×</button></header><div class="tool-body"><span class="micro-label">AGENT RHYTHM OBJECT</span><h2>DRUM MACHINE</h2><section class="drums-audition" aria-label="Test sounds"><span class="micro-label">TEST SOUNDS</span><small>Preview before playback</small><div class="drum-pads" role="group" aria-label="Test drum sounds"><button data-pad="kick">KICK</button><button data-pad="snare">SNARE</button><button data-pad="hat">HAT</button><button data-pad="tom">TOM</button><button data-pad="ride">RIDE</button><button data-pad="crash">CRASH</button></div></section><div class="drums-preset"><label>GROOVE SELECT<select data-drums-preset aria-label="Drum groove preset"><option value="AUTO">AUTO / FOLLOW ME</option><option value="BASIC">BASIC</option><option value="STICKS">STICKS</option><option value="BRUSH">BRUSH</option><option value="BODYS_DRIVE">BODYS</option><option value="WEIRD_FISHES_FLOW">FISH</option></select></label></div><div class="drums-transport"><button type="button" data-drums-transport disabled>START</button></div><div class="drums-response"><span class="micro-label">MUSICAL RESPONSE</span><div class="drums-actions" role="group" aria-label="Musical response"><button type="button" data-drums-action="MORE" disabled>MORE</button><button type="button" data-drums-action="LESS" disabled>LESS</button><button type="button" data-drums-action="KEEP" aria-pressed="false" disabled>KEEP</button><button type="button" data-drums-action="REST" disabled>REST</button></div><p class="drums-response-status" data-drums-response-status role="status" aria-live="polite">Start drums to use musical response.</p></div><div class="drums-tempo"><label for="drums-tempo-bpm">TEMPO BPM</label><div class="drums-tempo-setting"><input id="drums-tempo-bpm" type="number" data-metro-bpm value="100" min="40" max="240" step="1"><button type="button" data-tempo-set>SET</button><button type="button" data-metro-toggle title="Start Metronome" aria-label="Start Metronome" aria-pressed="false"><span aria-hidden="true">♩</span></button></div><div class="drums-tempo-quick" role="group" aria-label="Quick tempo adjustment"><button type="button" data-drums-action="HALF">HALF</button><button type="button" data-drums-action="DOUBLE">DOUBLE</button></div></div><div class="drums-toggles"><label><input type="checkbox" data-drums-auto-start> AUTO START / JOIN ME</label><label><input type="checkbox" data-drums-auto> AUTO REST / 2 BARS</label></div><p data-drums-status aria-live="polite">loading…</p></div></article>
+    <article class="floating-tool today-tool" data-tool-window="today" hidden aria-labelledby="today-title"><header class="window-bar"><span id="today-title">TODAY.EXE</span><button type="button" class="tool-close" data-close-tool aria-label="Close today review">×</button></header><div class="tool-body"><span class="micro-label">SESSION REVIEW / 今天</span><section class="today-card"><b>时长</b><p data-today-time></p><p data-today-states></p></section><section class="today-card"><b>发现</b><p data-today-busy></p></section><section class="today-card"><b>它跟得怎么样？</b><div class="today-choices"><button type="button" data-today-choice="too_much">太多 👎</button><button type="button" data-today-choice="just_right">刚好 👍</button><button type="button" data-today-choice="too_little">太少</button></div><p data-today-saved aria-live="polite"></p></section></div></article>
+    <article class="floating-tool pixel-tool" data-tool-window="pixel" hidden><header class="window-bar"><span>PIXEL.SKETCH</span><button type="button" class="tool-close" data-close-tool aria-label="Close pixel sketch">×</button></header><div class="tool-body"><span class="micro-label">AGENT TRACE / LIVE</span><h2>PIXEL TRACE</h2><canvas data-pixel-canvas width="180" height="120" aria-label="Live pixel trace"></canvas><p data-pixel-status>waiting for a musical event</p></div></article>
+  <article class="floating-tool vision-tool" data-tool-window="vision" hidden aria-label="Human and visual input"><header class="window-bar"><span>VISION.EXE</span><button class="tool-close" data-close-tool aria-label="Close vision tool">×</button></header><div class="tool-body"><div class="human-state-copy"><strong data-human-state>UNKNOWN</strong><span data-vision-note>Semantic visual stream offline.</span></div><div class="human-state-grid"><span><b>INSTRUMENT</b><em data-instrument-state>UNKNOWN</em></span><span><b>GESTURE</b><em data-gesture-state>NONE</em></span><span><b>VISION</b><em data-vision-state>OFFLINE</em></span></div><details class="hint" data-perception-inspector><summary>PERCEPTION / evidence</summary><p data-perception-summary></p><ol data-perception-receipts></ol></details><div class="vision-actions"><button type="button" data-camera-start aria-pressed="false">START CAMERA</button><button type="button" data-camera-stop hidden>STOP CAMERA</button><button type="button" data-roi-toggle hidden>OPTIONAL: SET ROI</button><button type="button" data-vision-capture hidden>CAPTURE GUITAR STILL (3S)</button></div><div class="vision-capture-status" data-vision-capture-status aria-live="polite"></div><div class="vision-countdown" data-vision-countdown aria-live="assertive"></div><div class="vision-video"><video class="vision-preview" data-camera-preview muted autoplay playsinline hidden aria-label="Local camera preview"></video><img class="vision-still" data-vision-still alt="Frozen guitar reference frame" hidden><canvas class="vision-overlay" data-vision-overlay width="640" height="360" hidden aria-label="Body, hand, and instrument overlay"></canvas></div><div class="vision-capture-actions"><button type="button" data-vision-annotate hidden>ANNOTATE 4 POINTS</button><button type="button" data-vision-undo hidden>UNDO LAST</button><button type="button" data-vision-cancel-annotation hidden>CANCEL ANNOTATION</button><button type="button" data-vision-confirm hidden disabled>CONFIRM CALIBRATION</button><button type="button" data-vision-retake hidden>RETAKE</button><button type="button" data-vision-resume hidden>RESUME LIVE TRACKING</button><button type="button" data-vision-multiview hidden>CAPTURE MULTI-VIEW (3S)</button></div><div class="hint" data-overlay-status>Overlay idle. Start the camera, then capture a frozen guitar still.</div></div></article>
+    <article class="play-popup" data-play-popup hidden role="dialog" aria-modal="true" aria-labelledby="play-popup-title">
+      <div class="play-popup__window">
+        <header class="play-popup__bar"><span id="play-popup-title">PLAY.EXE</span><button type="button" class="play-popup__close" data-play-close aria-label="Return to Desk">×</button></header>
+        <iframe class="play-popup__frame" data-play-frame title="PLAY performance HUD" src="about:blank" allow="fullscreen" allowfullscreen></iframe>
+      </div>
+    </article>
+  </section>
+  <footer class="console-footer"><span>FeatureFrame / WebSocket stream</span><span>Microphone observations require consent</span><button data-panic>PANIC / RESET</button></footer>
+</main>
+    <script type="application/json" id="band-deploy">{"apiBase":"https://jiyiji.cn/webqing/music/band-with","accessKeySha256":"6f9f32de56196d55ad67d5cdf1777d3afcffcab666cf89d5cea1ef8455121698","fixture":"demo/session.jsonl","live":true,"reviewKeySha256s":["a891838ae842d8a1aac8488d8257cc289870160c3c71753bc08fb73157ba96a8"]}</script>
+    <script src="band-runtime.js?v=review-access-1"></script>
+    <script src="agent-face-states.js?v=1"></script>
+    <script src="guitar-space.js?v=4"></script>
+    <script src="vision-capture-state.js?v=batch-a-1"></script>
+    <script src="perception-feedback-state.js"></script>
+    <script src="perception-clock.js"></script>
+    <script src="band-language.js?v=language-switch-1"></script>
+    <script src="band-capture-web.js?v=recording-1"></script>
+<script src="agent-console-web-mode.js?v=share-language-1"></script>
+<script src="band-drums-web.js?v=parity-2"></script>
+<script src="band-audio-export.js?v=record-ui-1"></script>
+<script src="band-session-card.js?v=card-3"></script>
+<script src="band-recording-ui.js?v=share-copy-2"></script>
+<script src="agent-console-mvp-v2.js?v=language-switch-1"></script>
+<script src="agent-console-today.js?v=language-switch-1"></script>
+<script src="agent-console-desk.js?v=share-language-1"></script>
+<script src="agent-console-play-popup.js?v=pr8-popup"></script>
+<script src="agent-console-entry-mode.js?v=dock-default-1"></script>
+<script src="agent-console-release.js?v=api-audit-1"></script>
+<script src="agent-console-state-guard-v1.js"></script>
+<script src="agent-console-audio-devices.js?v=parity-2-audio-devices-1"></script>
+<script src="agent-console-drums.js?v=share-language-1"></script>
+</body>
+</html>
