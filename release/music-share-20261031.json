@@ -1,0 +1,22 @@
+{
+  "source_repository": "BUBBLE-WELL/bandwithing",
+  "source_revision": "f5b9d05e46f50b0db316f91cd12c68884d171955",
+  "target": "https://jiyiji.cn/webqing/music/",
+  "scope": "China music landing and two Share media files only; runtime and credentials untouched",
+  "static_files": {
+    "agent-face-states.js": "c24e3be532d138cbcc5b187c45d46c3d2300d6ae60298d41ec3de96a628b9029",
+    "face.svg": "f92a638ea6dd0b261c3fd7a69f0afab68fa925ceabee811ecfe00d003e33a9b5",
+    "index.html": "bf483e5ceb5061839e67ed8ec33b7750cf8181bf5ed155c14ae1f1469a95fa83",
+    "landing.css": "b136ab1553707c786a2b90c5d1b3b0d579e00492301ab3c6921d12be206a53c6",
+    "landing.js": "f1dda23e53d4fd9540b5616e2c9079a409e5073d66ed677920324da845b74593",
+    "share-card.png": "aa09f1174745a3027caae1476076bf7c17374dd9af17dca4d332a679277e2bac",
+    "share-wordmark.svg": "1d580e2c99e5050011023fb2d79775c239c6888db8216fe19809379fc4c6be4d",
+    "wordmark.svg": "84b3c898a168aace3ba05b0f49c35b708f4fd0b7e52f9068273a18616bf689da",
+    "SHA256SUMS": "b4a8295c2b1d26ae23a02b4b40d1d348a3836d0ef98ca1838bf55b6b58df94f5"
+  },
+  "media_files": {
+    "media/share.mp4": "1caae51358e96775e8aa4255aafcc1e2e1bbd2f8af3eb4d961acce3fe0877e2a",
+    "media/share.jpg": "f4328a4c376445111a00510cb6080ff047ffd307ff5d41b13074edccd8ce4305"
+  },
+  "media_version": "20261031-share-1"
+}
