@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Band-with：更适合卧室练琴的 AI 乐队伙伴。">
+  <title>Band-with · Bedroom musician, now you have a band mate</title>
+  <link rel="stylesheet" href="landing.css?v=9a3b1f68">
+</head>
+<body>
+  <!-- Layout only. All text comes from site/music/content.yaml. -->
+  <main class="site-shell">
+    <header class="topbar">
+      <a class="brand" href="#top"><img class="brand-logo" src="wordmark.svg?v=9a3b1f68" alt="BAND-WITH" width="136" height="18"></a>
+      <a class="topbar-link" href="band-with/">进入 Demo</a>
+    </header>
+
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <span class="eyebrow">band-with :)</span>
+      <h1 id="hero-title" data-video-hover="demo">Bedroom musician,<br>now you can have<br>your band mate!</h1>
+      <p class="subline">更适合卧室练琴的乐队伙伴！吉他、贝斯，或许还会支持更多乐器。</p>
+      <p class="actions"><a class="text-link" href="band-with/">进入 Demo</a><a class="text-link" href="#video-demo" data-video-open="demo">演示视频</a></p>
+    </section>
+
+    <section class="video" id="video-prep" aria-labelledby="video-prep-title"><h2 id="video-prep-title"><span class="video-label">01</span>完整版</h2><p class="video-text">从搭琴、接线、调音，到它听你、看你、陪你合奏：Band-with 的完整演示。</p><div class="video-frame"><video controls preload="none" playsinline data-video-id="prep" src="media/prep.mp4?v=20261031-share-1" poster="media/prep.jpg?v=20261031-share-1"></video></div></section>
+    <section class="video" id="video-demo" aria-labelledby="video-demo-title"><h2 id="video-demo-title"><span class="video-label">02</span>Demo 演示</h2><p class="video-text">插上琴之后：它听你、看你，用鼓点跟你一起练。</p><div class="video-frame"><video controls preload="none" playsinline data-video-id="demo" src="media/demo.mp4?v=20261031-share-1" poster="media/demo.jpg?v=20261031-share-1"></video></div></section>
+    <section class="video" id="video-share" aria-labelledby="video-share-title"><h2 id="video-share-title"><span class="video-label">03</span>分享演示</h2><p class="video-text">从开始录音、拖动选段，到导出音频和结算卡。</p><div class="video-frame"><video controls preload="none" playsinline data-video-id="share" src="media/share.mp4?v=20261031-share-1" poster="media/share.jpg?v=20261031-share-1"></video></div></section>
+
+    <section class="share-section" id="share" aria-labelledby="share-title">
+      <div class="share-copy">
+        <h2 id="share-title"><span class="video-label">03</span>分享</h2>
+        <img class="share-wordmark" src="share-wordmark.svg?v=9a3b1f68" alt="share" width="542" height="131">
+        <p class="share-line">开始录音，弹完拖一下选段，拿到能发的音频和结算卡。</p>
+        <ol class="share-steps"><li>弹</li><li>选</li><li>导出</li></ol>
+        <p class="share-outputs">音频 WAV · 结算卡 PNG</p>
+        <div class="share-actions"><a class="share-cta" href="band-with/">试试分享</a><a class="share-watch" href="#video-share" data-video-open="share">观看分享演示 <span aria-hidden="true">↗</span></a></div>
+      </div>
+      <figure class="share-card"><img src="share-card.png?v=9a3b1f68" alt="Band-with 结算卡示例" width="1080" height="1350" loading="lazy"><figcaption>示例</figcaption></figure>
+    </section>
+
+    <section class="points" aria-label="BAND-WITH">
+      <ol><li><a class="point-link" href="band-with/" data-face="FOLLOW"><b>一起练 </b><p>约好速度，或者直接即兴，它用鼓点跟你一起走。</p></a></li><li><a class="point-link" href="band-with/" data-face="REST"><b>会停 </b><p>看到你放下琴、听到你不出声，它自己停下。</p></a></li><li><a class="point-link" href="band-with/" data-face="VIBRATO"><b>结算 </b><p>练完有每日结算卡，可以直接分享。</p></a></li><li><a class="point-link" href="band-with/" data-face="LISTEN"><b>拼装 </b><p>摄像头、效果器、开源音色、树莓派，想用什么加什么。</p></a></li></ol>
+    </section>
+
+    <footer class="footer">
+      <span>Band-with :)</span>
+      <a href="https://github.com/BUBBLE-WELL" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </footer>
+  </main>
+  <dialog class="video-dialog" data-video-dialog aria-labelledby="video-dialog-title">
+    <div class="video-dialog__bar"><span id="video-dialog-title" data-video-dialog-title></span><button type="button" data-video-close>关闭</button></div>
+    <div class="video-frame"><video controls playsinline data-video-dialog-player></video></div>
+  </dialog>
+  <div class="face-cursor" data-face-cursor aria-hidden="true"></div>
+  <div class="video-badge" data-video-badge aria-hidden="true"><span>band-with :)</span><i>&#9654;</i></div>
+  <script src="agent-face-states.js?v=9a3b1f68"></script>
+  <script src="/webqing/posthog-analytics.js" data-app-id="music-landing" data-app-version="9a3b1f68"></script>
+  <script src="landing.js?v=9a3b1f68"></script>
+</body>
+</html>
