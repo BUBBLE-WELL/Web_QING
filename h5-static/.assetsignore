@@ -66,3 +66,16 @@
 !page-transition.css
 
 !3d/huijing-huayuan/assets/final-floorplan-0704.geojson
+
+# Reviewed music landing; backend and media redirect to the existing host.
+!music/
+music/**
+!music/index.html
+!music/landing.css
+!music/landing.js
+!music/face.svg
+!music/wordmark.svg
+!music/agent-face-states.js
+!music/share-card.png
+!music/share-wordmark.svg
+!music/SHA256SUMS
