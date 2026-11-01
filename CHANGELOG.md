@@ -18,3 +18,7 @@
 ## 2026-10-22
 
 Add registered final master-plan linework with separate design/context/detail switches and on-demand loading; expose static building queries. Preserve PR #12 terrain and average-colour material fixes, fixed model placement and portfolio return position.
+
+## 2026-11-01 — PR14 sandbox
+
+Added design entrance and CAD reference labels, controlled place framing and return view. Semantic and visual acceptance remain separate; final introduction response quality awaits manual validation. No production release.

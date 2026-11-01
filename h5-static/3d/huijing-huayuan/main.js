@@ -1,13 +1,14 @@
+import { mountProjectPlaces } from './project-places.js?v=ac2bc6a87243';
 // Huijing site viewer: MapLibre basemap + three.js custom layer for the IFC massing.
 // Georeference = project origin (0,0) at origin_lng/lat, project X axis rotated rotation_deg CCW from east.
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
-import { createToolBridge, mountToolPanel } from './tool-actions.js?v=a4621ac9dbba';
+import { createToolBridge, mountToolPanel } from './tool-actions.js?v=6be11878ed23';
 import { mountPoiPanel } from './poi-panel.js?v=0ed5a68eac93';
 import { mountGisChat } from './qing-gis.js?v=af6bdbda9da7';
 import './workspace-ui.js?v=a2657035015c';
-import { mountSpatialAgent, isSpatialSandbox } from './spatial-agent.js?v=1235b739ab80';
+import { mountSpatialAgent, isSpatialSandbox } from './spatial-agent.js?v=8dd33295d06d';
 
 const $ = (id) => document.getElementById(id);
 const status = (msg) => { $('status').textContent = msg; };
@@ -17,6 +18,7 @@ let viewerReady = false, viewerCatalogHash = null, toolPanel = null, gisChat = n
 // GeoJSON sources by file path: { crs: 'project' | 'wgs84', raw } — re-projected for display on every refresh()
 const vectorSources = {};
 let metroCatalogHash = null;
+let projectPlaces = null;
 const pointItems = []; // { features, markers, crs, visible }
 const params = new URLSearchParams(location.search);
 // ?basemap=tencent|osm|sat picks the starting basemap (tencent for a mainland-China deployment)
@@ -830,6 +832,10 @@ async function showMetroEntrances() {
   return metroShownIds();
 }
 window.huijingViewer = {
+  showProjectPlaces: ids => projectPlaces.show(ids),
+  get placeCatalogHash() { return projectPlaces?.hash; },
+  get projectPlaces() { return projectPlaces?.rows || []; },
+  get placeShownIds() { return projectPlaces?.visibleIds || []; },
   showMetroEntrances,
   get metroCatalogHash() { return metroCatalogHash; },
   get metroPois() { return metroPois(); },
@@ -873,6 +879,7 @@ map.on('load', async () => {
       .map((byte) => byte.toString(16).padStart(2, '0')).join('');
     setSection(null);
     await buildScene(scene);
+    projectPlaces = await mountProjectPlaces({map,maplibregl,toDisplay,projectToLngLat,padding:()=>{updateFramePadding();return framePadding;},host:$('map-tools'),prepareContext:async()=>{await vectorSource('assets/final-floorplan-0704.geojson','project');const added=!map.getLayer('place-plan-context');if(added)map.addLayer({id:'place-plan-context',type:'line',source:'assets/final-floorplan-0704.geojson',filter:['==',['get','kind'],'design'],paint:{'line-color':'#264f67','line-width':1.6}});return ()=>{if(added&&map.getLayer('place-plan-context'))map.removeLayer('place-plan-context');};}});
     window.huijingTools = createToolBridge(window.huijingViewer);
     if (['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) && $('tool-demo')) {
       document.querySelectorAll('[data-local-tools]').forEach(node => { node.hidden = false; });

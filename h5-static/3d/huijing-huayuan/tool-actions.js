@@ -21,6 +21,10 @@ export function createToolBridge(viewer) {
     const ids = new Set(catalog.keys());
     const normalize = (action) => {
       if (!action || typeof action !== 'object') fail('invalid_action');
+      if(action.type==='show_project_places') {
+        if(!sameKeys(action,['type','place_catalog_sha256','place_ids']) || action.place_catalog_sha256!==viewer.placeCatalogHash || !/^[a-f0-9]{64}$/.test(action.place_catalog_sha256) || !Array.isArray(action.place_ids) || !action.place_ids.length || new Set(action.place_ids).size!==action.place_ids.length || action.place_ids.some(id=>!viewer.projectPlaces.some(p=>p.place_id===id)))fail('stale_place_catalog');
+        return {type:action.type,place_catalog_sha256:action.place_catalog_sha256,place_ids:[...action.place_ids]};
+      }
       if (action.type === 'show_metro_entrances') {
         if (!sameKeys(action,['type','poi_catalog_sha256','poi_ids']) || !/^[a-f0-9]{64}$/.test(action.poi_catalog_sha256)
           || action.poi_catalog_sha256 !== viewer.metroCatalogHash || !Array.isArray(action.poi_ids)
@@ -43,7 +47,12 @@ export function createToolBridge(viewer) {
     envelope.results.forEach((entry, index) => {
       if (!entry || entry.index !== index || !Array.isArray(entry.building_ids)
           || entry.building_ids.some((id) => !ids.has(id)) || !Array.isArray(entry.viewer_actions)) fail('invalid_result');
-      if (entry.tool === 'show_metro_entrances') {
+      if(entry.tool==='show_project_places') {
+        if(entry.status!=='action_requested'||entry.data_source!=='reviewed-design-and-cad-candidates'||entry.building_ids.length||entry.viewer_actions.length!==1||entry.place_catalog_sha256!==viewer.placeCatalogHash||!Array.isArray(entry.places))fail('invalid_result');
+        const action=normalize(entry.viewer_actions[0]);
+        if(action.type!==entry.tool||JSON.stringify(entry.places.map(p=>p.place_id))!==JSON.stringify(action.place_ids)||entry.places.some(p=>JSON.stringify(p)!==JSON.stringify(viewer.projectPlaces.find(q=>q.place_id===p.place_id))))fail('invalid_result');
+        fromResults.push(action);
+      } else if (entry.tool === 'show_metro_entrances') {
         if (entry.status!=='action_requested' || entry.data_source!=='local-osm-snapshot' || entry.viewer_actions.length!==1
           || !Array.isArray(entry.pois) || entry.pois.length>20 || entry.poi_catalog_sha256!==viewer.metroCatalogHash
           || entry.building_ids.length || entry.pois.length!==(viewer.metroPois||[]).length) fail('invalid_result');
@@ -88,7 +97,12 @@ export function createToolBridge(viewer) {
         seen.add(rid); running = true; ownsRun = true;
         for (const action of actions) {
           if (signal?.aborted) fail('cancelled');
-          if (action.type === 'show_metro_entrances') {
+          if(action.type==='show_project_places') {
+            await viewer.showProjectPlaces(action.place_ids);
+            if(signal?.aborted)fail('cancelled');
+            if(action.place_ids.some(id=>!viewer.placeShownIds.includes(id)))fail('state_mismatch');
+            acknowledgements.push({...action,status:'reference_points_confirmed',framing:'automatic_plan_view'});
+          } else if (action.type === 'show_metro_entrances') {
             await viewer.showMetroEntrances();
             if (JSON.stringify([...(viewer.metroShownIds||[])].sort())!==JSON.stringify([...action.poi_ids].sort())) fail('state_mismatch');
             acknowledgements.push({...action,status:'points_confirmed',navigation:'requested'});
