@@ -8,7 +8,7 @@ export async function mountProjectPlaces({map,maplibregl,toDisplay,projectToLngL
   const xy=p=>toDisplay(projectToLngLat(p));
   for(const row of rows){
     const el=document.createElement('button');el.type='button';el.className='poi project-place';el.dataset.placeId=row.place_id;
-    el.textContent=row.label;el.title=row.description;el.setAttribute('aria-label','查看'+row.label);
+    el.textContent=({E01:'E01 · 人行',E02:'E02 · 通车',E03:'E03 · 通车',L01:'景观 · 参考',F01:'养老院 · CAD',C01:'商业 · 待核'})[row.place_id]||row.label;el.title=row.description;el.setAttribute('aria-label','查看'+row.label);
     el.style.cssText='background:#fffef8;color:#222;border:1px solid #777;padding:5px 8px;font:12px monospace;cursor:pointer;max-width:140px;white-space:normal;text-align:left';
     el.addEventListener('click',()=>show([row.place_id]));
     markers.set(row.place_id,new maplibregl.Marker({element:el,anchor:row.place_id==='F01'?'right':row.place_id==='C01'?'right':'bottom',offset:row.place_id==='F01'?[-8,-16]:row.place_id==='C01'?[-8,16]:[0,0]}).setLngLat(xy(row.coordinates)).addTo(map));

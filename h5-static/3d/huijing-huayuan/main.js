@@ -1,4 +1,4 @@
-import { mountProjectPlaces } from './project-places.js?v=ac2bc6a87243';
+import { mountProjectPlaces } from './project-places.js?v=032acddaf1a8';
 // Huijing site viewer: MapLibre basemap + three.js custom layer for the IFC massing.
 // Georeference = project origin (0,0) at origin_lng/lat, project X axis rotated rotation_deg CCW from east.
 import * as THREE from 'three';
