@@ -9,7 +9,7 @@ import { createToolBridge, mountToolPanel } from './tool-actions.js?v=6be11878ed
 import { mountPoiPanel } from './poi-panel.js?v=0ed5a68eac93';
 import { mountGisChat } from './qing-gis.js?v=af6bdbda9da7';
 import './workspace-ui.js?v=a2657035015c';
-import { mountSpatialAgent, isSpatialSandbox } from './spatial-agent.js?v=8dd33295d06d';
+import { mountSpatialAgent, isSpatialSandbox } from './spatial-agent.js?v=953a46daae58';
 
 const $ = (id) => document.getElementById(id);
 const status = (msg) => { $('status').textContent = msg; };
