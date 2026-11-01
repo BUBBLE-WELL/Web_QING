@@ -58,3 +58,5 @@ widgets/suggestions.css
 3d/huijing-huayuan/project-places.js
 
 3d/huijing-huayuan/assets/site/project_places.geojson
+
+3d/huijing-huayuan/layer-state.js

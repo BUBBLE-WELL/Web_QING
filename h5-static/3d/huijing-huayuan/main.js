@@ -1,4 +1,5 @@
-import { mountProjectPlaces } from './project-places.js?v=032acddaf1a8';
+import { createLayerState } from './layer-state.js?v=a4f982db6cde';
+import { mountProjectPlaces } from './project-places.js?v=57cf42df751e';
 // Huijing site viewer: MapLibre basemap + three.js custom layer for the IFC massing.
 // Georeference = project origin (0,0) at origin_lng/lat, project X axis rotated rotation_deg CCW from east.
 import * as THREE from 'three';
@@ -608,7 +609,7 @@ async function lineItem(def) {
   const ensure = () => ready ||= vectorSource(def.source, def.crs).then(() => {
     map.addLayer({ id: def.id, type: 'line', source: def.source, ...(def.filter ? { filter: def.filter } : {}),
       layout: { visibility: 'none', 'line-cap': 'round', 'line-join': 'round' },
-      paint: { 'line-color': def.color, 'line-width': def.width || 1.5 } }, 'ifc-model');
+      paint: { 'line-color': def.color, 'line-width': def.width || 1.5 } }, def.overlay ? undefined : 'ifc-model');
   }).catch((err) => {
     ready = null;
     if (!vectorSources[def.source]?.raw) delete vectorSources[def.source];
@@ -663,6 +664,7 @@ function itemRow(it, onChange) {
   return { row, box };
 }
 
+const layerState = createLayerState();
 const itemsById = {}; // scene item / massing layer id -> setter(bool)
 
 async function buildScene(scene) {
@@ -671,7 +673,8 @@ async function buildScene(scene) {
   for (const g of scene.groups) {
     const resolved = [];
     for (const def of g.items) {
-      if (def.type === 'glb-set') resolved.push(...await glbItems(def));
+      if (def.type === 'project-places') resolved.push(projectPlaces.layerItem);
+      else if (def.type === 'glb-set') resolved.push(...await glbItems(def));
       else if (def.type === 'line') resolved.push(await lineItem(def));
       else if (def.type === 'point') resolved.push(await pointItem(def));
       else if (def.type === 'gltf') resolved.push(gltfItem(def));
@@ -707,16 +710,17 @@ async function buildScene(scene) {
       all.indeterminate = n > 0 && n < rows.length;
     };
     for (const it of resolved) {
-      const r = itemRow(it, (v) => { Promise.resolve(it.setVisible(v)).catch((err) => status(`图层加载失败：${err.message}`)); syncGroup(); });
+      const r = itemRow(it, (v) => { Promise.resolve(itemsById[it.id](v)).catch((err) => status(`图层加载失败：${err.message}`)); });
       r.box.checked = g.on !== false && it.on;
       rows.push(r);
       // setLayer() goes through the same checkbox state as a click
-      if (it.id) itemsById[it.id] = (v) => { r.box.checked = v; const pending = it.setVisible(v); syncGroup(); return pending; };
+      if (it.id) { layerState.register(it.id,r.box.checked,(v)=>{r.box.checked=v;syncGroup();return it.setVisible(v);});itemsById[it.id]=(v)=>layerState.set(it.id,v); }
       body.appendChild(r.row);
       if (r.box.checked) pending.push(it.setVisible(true));
     }
     all.addEventListener('change', () => {
-      rows.forEach((r, i) => { if (r.box.checked !== all.checked) { r.box.checked = all.checked; Promise.resolve(resolved[i].setVisible(all.checked)).catch((err) => status(`图层加载失败：${err.message}`)); } });
+      const target = all.checked;
+      rows.forEach((r, i) => { if (r.box.checked !== target) { Promise.resolve(itemsById[resolved[i].id](target)).catch((err) => status(`图层加载失败：${err.message}`)); } });
       syncGroup();
     });
     const setOpen = (open) => { body.hidden = !open; caret.setAttribute('aria-expanded', String(open)); caret.textContent = open ? '▾' : '▸'; };
@@ -861,7 +865,7 @@ window.huijingViewer = {
 // ---------- boot ----------
 map.on('load', async () => {
   try {
-    const [g, scene] = await Promise.all([fetchJSON('georef.json'), fetchJSON('scene.json')]);
+    const [g, scene] = await Promise.all([fetchJSON('georef.json'), fetchJSON('scene.json?v=managed-layers-20261101')]);
     geo = Object.freeze({ origin_lng: g.origin_lng, origin_lat: g.origin_lat, rotation_deg: g.rotation_deg });
 
     map.addLayer(modelLayer); // vector layers are inserted beneath it
@@ -878,8 +882,8 @@ map.on('load', async () => {
     viewerCatalogHash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', catalogBytes))]
       .map((byte) => byte.toString(16).padStart(2, '0')).join('');
     setSection(null);
+    projectPlaces = await mountProjectPlaces({map,maplibregl,toDisplay,projectToLngLat,padding:()=>{updateFramePadding();return framePadding;},host:$('map-tools'),prepareContext:()=>layerState.borrow(['project-places','final-floorplan'])});
     await buildScene(scene);
-    projectPlaces = await mountProjectPlaces({map,maplibregl,toDisplay,projectToLngLat,padding:()=>{updateFramePadding();return framePadding;},host:$('map-tools'),prepareContext:async()=>{await vectorSource('assets/final-floorplan-0704.geojson','project');const added=!map.getLayer('place-plan-context');if(added)map.addLayer({id:'place-plan-context',type:'line',source:'assets/final-floorplan-0704.geojson',filter:['==',['get','kind'],'design'],paint:{'line-color':'#264f67','line-width':1.6}});return ()=>{if(added&&map.getLayer('place-plan-context'))map.removeLayer('place-plan-context');};}});
     window.huijingTools = createToolBridge(window.huijingViewer);
     if (['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) && $('tool-demo')) {
       document.querySelectorAll('[data-local-tools]').forEach(node => { node.hidden = false; });

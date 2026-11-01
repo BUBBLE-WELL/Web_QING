@@ -46,7 +46,7 @@
       "open": true,
       "attribution": "线稿不含文字、填充及图像；与三维体块分别显示",
       "items": [
-        { "id": "final-floorplan", "type": "line", "label": "总平设计线稿", "source": "assets/final-floorplan-0704.geojson", "crs": "project",
+        { "id": "final-floorplan", "overlay": true, "type": "line", "label": "总平设计线稿", "source": "assets/final-floorplan-0704.geojson", "crs": "project",
           "filter": ["==", ["get", "kind"], "design"], "color": "#264f67", "width": 1.0, "on": true, "lazy": true },
         { "id": "final-context", "type": "line", "label": "周边测绘参考", "source": "assets/final-floorplan-0704.geojson", "crs": "project",
           "filter": ["==", ["get", "kind"], "context"], "color": "#7b8589", "width": 0.7, "on": false, "lazy": true },
@@ -73,6 +73,7 @@
       "on": false,
       "open": false,
       "items": []
-    }
+    },
+    {"id": "project-annotations", "label": "空间标注", "on": false, "open": true, "items": [{"type": "project-places"}]}
   ]
 }
